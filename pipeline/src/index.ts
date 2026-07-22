@@ -1,18 +1,24 @@
 import { loadAssessment } from "./stages/01-load-assessment.js";
 import { buildCompanyContext } from "./stages/02-build-company-context.js";
 import { normalizeWorkflowSignals } from "./stages/03-normalize-workflow.js";
+import { generateBusinessProblems } from "./stages/03-intervention-planning.js";
+import { generateInterventionOptions } from "./stages/03-intervention-planning.js";
 import { generateOpportunityCandidates } from "./stages/04-generate-candidates.js";
+import { rankInterventions } from "./stages/05-rank-interventions.js";
 import { rankOpportunities } from "./stages/05-rank-opportunities.js";
 import { buildEvidenceTraces } from "./stages/06-build-evidence.js";
 import { generateExplanations } from "./stages/07-generate-explanations.js";
 import { persistOpportunityMap } from "./stages/08-persist.js";
-import type { PipelineContext, PipelineRunRecord, OpportunityMap, RunAssessmentInput } from "./types/index.js";
+import type { PipelineContext, PipelineRunRecord, OpportunityMap, RunAssessmentInput, RankedIntervention, BusinessProblem, InterventionOption, ProposedIntervention, BusinessImpact, CostEstimate, TimeEstimate, Assumption, SuccessMetric, EscalationRequirement } from "./types/index.js";
 
-export const PIPELINE_VERSION = "1.0.0";
-export const ALGORITHM_VERSION = "1.0.0";
+export const PIPELINE_VERSION = "2.0.0";
+export const ALGORITHM_VERSION = "2.0.0";
+export const INTERVENTION_ENGINE_VERSION = "intervention_v1";
+export const PRIORITIZATION_VERSION = "four_pass_v2";
 export const PROMPT_VERSIONS = {
   company_intelligence: "1.0.0",
   opportunity_explanation: "1.0.0",
+  intervention_explanation: "1.0.0",
 };
 
 export async function runAssessment(input: RunAssessmentInput, supabase: any): Promise<OpportunityMap> {
