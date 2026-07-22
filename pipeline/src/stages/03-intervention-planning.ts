@@ -394,6 +394,7 @@ export function deterministicSuitability(c: ProblemCharacteristics): Suitability
   if (c.errorTolerance === "low") { score += 1; reasons.push("Exactness requirement favors deterministic automation"); }
   if (c.volume === "high") { score += 1; reasons.push("Repeatability at volume"); }
   if (c.exceptionVolume === "high") { dqs.push("High exception volume defeats stable routing rules"); }
+  if (c.ownershipClarity === "unclear") { dqs.push("No clear owner to maintain and change-control encoded rules"); }
   if (c.regulatoryAccountability) { reasons.push("Auditability of deterministic rules supports compliance"); }
 
   return { score: Math.min(score, 10), disqualifiers: dqs, reasons };
@@ -452,6 +453,7 @@ export function noActionSuitability(c: ProblemCharacteristics, impact: BusinessI
   if (impact.strategicImportance === "low") { score += 3; reasons.push("Low expected value relative to other problems"); }
   if (c.ownershipClarity === "unclear") { score += 3; reasons.push("Missing owner — no intervention can land until ownership is resolved"); }
   if (c.volume === "low" && impact.userHoursPerWeek <= 5) { score += 2; reasons.push("Insufficient impact to justify change now"); }
+  else if (impact.userHoursPerWeek <= 6) { score += 2; reasons.push("Weekly burden too small to prioritize over higher-impact problems"); }
   if (impact.strategicImportance === "high") { dqs.push("Strategically important — deferring is itself a decision with cost"); }
   if (impact.userHoursPerWeek >= 20) { dqs.push("Weekly burden too large to defer without explicit rationale"); }
 
