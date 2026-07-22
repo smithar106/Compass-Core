@@ -1,3 +1,5 @@
+import { InterventionPath } from ".";
+
 export const RANKING_ALGORITHM_VERSION = "four_pass_v1";
 export type Tier = 1 | 2 | 3 | 4;
 export type Recommendation = "build_now" | "validate_next" | "defer" | "do_not_pursue";
@@ -38,6 +40,7 @@ export interface OpportunityCandidate {
   risks: string[];
   evidenceIds: string[];
   candidateSource: "blueprint" | "composite" | "custom";
+  compatiblePaths: InterventionPath[];
 }
 
 export interface RankedOpportunity {

@@ -65,6 +65,17 @@ export type Department =
   | "Sales" | "Marketing" | "Customer Success" | "Support"
   | "Finance" | "Product" | "Engineering" | "People/HR" | "Legal" | "Operations";
 
+export type InterventionPath =
+  | "ai"
+  | "deterministic_software"
+  | "process_redesign"
+  | "human_work"
+  | "hybrid"
+  | "no_action_yet";
+
+export const INTERVENTION_ENGINE_VERSION = "intervention_v1";
+export const PRIORITIZATION_VERSION = "four_pass_v2";
+
 export interface NormalizedWorkflowSignals {
   departments: Department[];
   manualProcessDensity: number;
@@ -101,6 +112,7 @@ export interface OpportunityCandidate {
   risks: string[];
   evidenceIds: string[];
   candidateSource: "blueprint" | "composite" | "custom";
+  compatiblePaths: InterventionPath[];
 }
 
 export interface DimensionResult {
