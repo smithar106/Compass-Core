@@ -1,0 +1,676 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/company.schema.json",
+  "title": "Company",
+  "description": "Complete company profile used as foundation for all downstream reasoning.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "companyId",
+    "companyName",
+    "websiteUrl",
+    "profileGeneratedAt",
+    "identity",
+    "size",
+    "organizationalStructure"
+  ],
+  "properties": {
+    "companyId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for the company profile"
+    },
+    "companyName": {
+      "type": "string",
+      "description": "Legal or primary brand name of the company"
+    },
+    "websiteUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Primary website URL of the company"
+    },
+    "profileVersion": {
+      "type": "string",
+      "description": "Version identifier for this profile snapshot"
+    },
+    "profileGeneratedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when this profile was generated"
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "industry": {
+          "type": "string",
+          "description": "Primary industry the company operates in"
+        },
+        "subIndustry": {
+          "type": "string",
+          "description": "More granular classification within the primary industry"
+        },
+        "businessModel": {
+          "type": "string",
+          "enum": [
+            "SaaS",
+            "Usage-based",
+            "Hybrid",
+            "Marketplace",
+            "Other"
+          ],
+          "description": "Revenue model classification"
+        },
+        "customerSegments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "SMB",
+              "Mid-Market",
+              "Enterprise"
+            ]
+          },
+          "description": "Customer segments the company serves"
+        },
+        "yearFounded": {
+          "type": "integer",
+          "description": "Year the company was founded"
+        },
+        "geography": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "headquarters": {
+              "type": "string",
+              "description": "Location of the company's headquarters"
+            },
+            "remote": {
+              "type": "boolean",
+              "description": "Whether the company supports remote or distributed work"
+            }
+          },
+          "description": "Geographic footprint of the company"
+        }
+      },
+      "description": "Core identity and positioning attributes of the company"
+    },
+    "size": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "headcountEstimate": {
+          "type": "integer",
+          "description": "Estimated total number of employees"
+        },
+        "headcountConfidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence in the headcount estimate"
+        },
+        "headcountRange": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "min": {
+              "type": "integer",
+              "description": "Lower bound of headcount estimate"
+            },
+            "max": {
+              "type": "integer",
+              "description": "Upper bound of headcount estimate"
+            }
+          },
+          "description": "Range of possible headcount values"
+        },
+        "revenueStage": {
+          "type": "string",
+          "enum": [
+            "Seed",
+            "Series A",
+            "Series B",
+            "Series C",
+            "Growth",
+            "Mature",
+            "Unknown"
+          ],
+          "description": "Stage of revenue maturity"
+        },
+        "growthStage": {
+          "type": "string",
+          "enum": [
+            "Early",
+            "Scaling",
+            "Established",
+            "Mature",
+            "Unknown"
+          ],
+          "description": "Organizational growth phase"
+        }
+      },
+      "description": "Size and scale metrics for the company"
+    },
+    "funding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "totalRaised": {
+          "type": "string",
+          "description": "Total funding raised across all rounds"
+        },
+        "lastRound": {
+          "type": "string",
+          "description": "Label or series of the most recent funding round"
+        },
+        "lastRoundDate": {
+          "type": "string",
+          "description": "Date of the most recent funding round"
+        },
+        "notableInvestors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Prominent investors or firms involved"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence in the funding data"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+          },
+          "description": "Supporting evidence for funding information"
+        }
+      },
+      "description": "Funding and investment profile of the company"
+    },
+    "organizationalStructure": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "departments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "enum": [
+                  "Engineering",
+                  "Product",
+                  "Sales",
+                  "Marketing",
+                  "Customer Success",
+                  "Finance",
+                  "HR",
+                  "Operations",
+                  "Legal",
+                  "Executive"
+                ],
+                "description": "Department name"
+              },
+              "estimatedSize": {
+                "type": "integer",
+                "description": "Estimated number of employees in this department"
+              },
+              "confidence": {
+                "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+                "description": "Confidence in the department size estimate"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+                },
+                "description": "Evidence supporting this department's profile"
+              }
+            },
+            "description": "A single department within the company"
+          },
+          "description": "Departments and their estimated sizes"
+        },
+        "orgComplexity": {
+          "type": "string",
+          "enum": [
+            "Flat",
+            "Hierarchical",
+            "Matrix"
+          ],
+          "description": "Organizational complexity classification"
+        },
+        "reportingStyle": {
+          "type": "string",
+          "enum": [
+            "Direct",
+            "Cross-functional",
+            "Hybrid"
+          ],
+          "description": "Typical reporting structure within the organization"
+        }
+      },
+      "description": "Organizational structure and hierarchy details"
+    },
+    "executivePriorities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "priority": {
+            "type": "string",
+            "description": "Description of the executive priority"
+          },
+          "owner": {
+            "type": "string",
+            "description": "Role responsible for this priority"
+          },
+          "source": {
+            "type": "string",
+            "description": "Origin or reference for this priority"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting this priority"
+          }
+        },
+        "description": "A strategic priority held by company leadership"
+      },
+      "description": "Known strategic priorities from executive leadership"
+    },
+    "knownBottlenecks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "area": {
+            "type": "string",
+            "description": "Functional area where the bottleneck exists"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed explanation of the bottleneck"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ],
+            "description": "Impact severity of the bottleneck"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting this bottleneck"
+          }
+        },
+        "description": "A known operational bottleneck within the company"
+      },
+      "description": "Known operational bottlenecks or blockers"
+    },
+    "aiMaturity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": [
+            "None",
+            "Experimental",
+            "Adopting",
+            "Embedded",
+            "Leading"
+          ],
+          "description": "AI maturity level of the company"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence in the AI maturity assessment"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+          },
+          "description": "Evidence supporting the AI maturity level"
+        },
+        "knownAiTools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "AI tools or platforms known to be used by the company"
+        },
+        "aiStrategy": {
+          "type": "string",
+          "description": "Description of the company's stated or inferred AI strategy"
+        }
+      },
+      "description": "Assessment of the company's AI adoption and maturity"
+    },
+    "techMaturity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": [
+            "Legacy",
+            "Transitioning",
+            "Modern",
+            "Advanced"
+          ],
+          "description": "Technology maturity level of the company"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence in the technology maturity assessment"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+          },
+          "description": "Evidence supporting the technology maturity level"
+        }
+      },
+      "description": "Assessment of the company's technology maturity"
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "technical",
+              "regulatory",
+              "organizational",
+              "cultural",
+              "resource"
+            ],
+            "description": "Category of constraint"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed explanation of the constraint"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "major",
+              "minor"
+            ],
+            "description": "Impact severity of the constraint"
+          }
+        },
+        "description": "A constraint that may impact adoption or integration"
+      },
+      "description": "Known constraints that could affect opportunities"
+    },
+    "approvalStructure": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "style": {
+          "type": "string",
+          "enum": [
+            "Centralized",
+            "Decentralized",
+            "Consensus-driven",
+            "Founder-led",
+            "Unknown"
+          ],
+          "description": "Approval style within the organization"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence in the approval structure assessment"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+          },
+          "description": "Evidence supporting the approval structure"
+        },
+        "approvalLevels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "level": {
+                "type": "string",
+                "description": "Name or title of the approval level"
+              },
+              "authority": {
+                "type": "string",
+                "description": "Role or person with authority at this level"
+              },
+              "threshold": {
+                "type": "string",
+                "description": "Decision threshold or limit at this level"
+              }
+            },
+            "description": "A single level in the approval hierarchy"
+          },
+          "description": "Hierarchy of approval levels within the organization"
+        }
+      },
+      "description": "How decisions and approvals are structured within the company"
+    },
+    "complianceProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "frameworks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Compliance frameworks the company adheres to"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence in the compliance profile assessment"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+          },
+          "description": "Evidence supporting compliance framework claims"
+        },
+        "complianceOfficer": {
+          "type": "boolean",
+          "description": "Whether the company has a dedicated compliance officer"
+        },
+        "lastAuditDate": {
+          "type": "string",
+          "description": "Date of the most recent compliance audit"
+        }
+      },
+      "description": "Compliance and regulatory posture of the company"
+    },
+    "kpiPriorities": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "revenue": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Revenue-focused KPIs the company tracks"
+        },
+        "efficiency": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Efficiency-focused KPIs the company tracks"
+        },
+        "growth": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Growth-focused KPIs the company tracks"
+        },
+        "quality": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Quality-focused KPIs the company tracks"
+        }
+      },
+      "description": "Key performance indicator priorities by category"
+    },
+    "customerProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "icp": {
+          "type": "string",
+          "description": "Ideal customer profile description"
+        },
+        "averageDealSize": {
+          "type": "string",
+          "description": "Average deal size or contract value"
+        },
+        "averageSalesCycle": {
+          "type": "string",
+          "description": "Average length of the sales cycle"
+        },
+        "churnRate": {
+          "type": "string",
+          "description": "Customer churn rate"
+        },
+        "ndr": {
+          "type": "string",
+          "description": "Net dollar retention rate"
+        }
+      },
+      "description": "Profile of the company's customer base and sales dynamics"
+    },
+    "evidenceSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "totalFacts": {
+          "type": "integer",
+          "description": "Total number of facts collected for this profile"
+        },
+        "verifiedCount": {
+          "type": "integer",
+          "description": "Number of facts that have been verified"
+        },
+        "researchCount": {
+          "type": "integer",
+          "description": "Number of facts derived from research"
+        },
+        "inferenceCount": {
+          "type": "integer",
+          "description": "Number of facts derived from inference"
+        },
+        "overallConfidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Aggregate confidence across all evidence"
+        }
+      },
+      "description": "Aggregate summary of evidence quality and quantity for this profile"
+    }
+  },
+  "$defs": {
+    "confidenceLevel": {
+      "type": "string",
+      "enum": [
+        "Confirmed",
+        "High",
+        "Medium",
+        "Low",
+        "Unknown"
+      ],
+      "description": "Confidence level indicating reliability of a piece of evidence"
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "User",
+            "Research",
+            "Inference"
+          ],
+          "description": "Classification of how this evidence was obtained"
+        },
+        "source": {
+          "type": "string",
+          "description": "The origin or source of this evidence"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Detailed description of the evidence content"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL reference to the source of this evidence"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this evidence was recorded"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence level in this evidence item"
+        }
+      },
+      "description": "A single evidence item used across the Compass platform"
+    },
+    "sourceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sourceType": {
+          "type": "string",
+          "description": "Classification of the source"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of the source"
+        },
+        "accessedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the source was accessed"
+        },
+        "relevance": {
+          "type": "string",
+          "description": "Description of why this source is relevant"
+        }
+      },
+      "description": "Reference to an external source of information"
+    }
+  }
+}

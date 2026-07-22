@@ -1,0 +1,5826 @@
+[
+  {
+    "id": "BP-SALES-01",
+    "name": "Automated Lead Qualification",
+    "department": "Sales",
+    "description": "Process of researching, enriching, and scoring inbound leads to determine sales readiness before routing to appropriate reps.",
+    "typicalTriggers": [
+      "New inbound lead from website form",
+      "Lead imported from event or webinar",
+      "Lead scored above threshold by marketing automation"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Lead Capture",
+        "owner": "Marketing Automation",
+        "duration": "Instant",
+        "dependsOn": [],
+        "description": "Lead enters system via web form, API, or import",
+        "aiOpportunity": "Auto-enrich with company data from public sources"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Lead Research",
+        "owner": "SDR/BDR",
+        "duration": "15-30 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Research lead's company, role, fit, and intent signals",
+        "aiOpportunity": "AI research agent performs this in 30 seconds"
+      },
+      {
+        "stepOrder": 3,
+        "name": "ICP Scoring",
+        "owner": "SDR/BDR",
+        "duration": "5 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Score lead against ideal customer profile criteria",
+        "aiOpportunity": "Automated ICP scoring from enriched data"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Lead Routing",
+        "owner": "Sales Operations",
+        "duration": "5 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Route qualified lead to appropriate AE or territory",
+        "aiOpportunity": "Intelligent routing based on fit, availability, relationship"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Outreach Preparation",
+        "owner": "SDR/BDR",
+        "duration": "10 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "Draft personalized outreach message based on lead research",
+        "aiOpportunity": "AI-generated personalized email with research context"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Lead Response Time",
+        "description": "Time from lead capture to first contact",
+        "typicalBenchmark": "5 min (best), 60 min (average)"
+      },
+      {
+        "name": "Qualification Rate",
+        "description": "Percentage of leads that qualify for sales",
+        "typicalBenchmark": "20-30%"
+      },
+      {
+        "name": "Lead-to-Opportunity Rate",
+        "description": "Percentage of qualified leads that become opportunities",
+        "typicalBenchmark": "40-60%"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Salesforce",
+        "category": "CRM",
+        "typicalUsage": "Lead tracking and routing"
+      },
+      {
+        "name": "HubSpot",
+        "category": "Marketing",
+        "typicalUsage": "Lead capture and initial scoring"
+      },
+      {
+        "name": "ZoomInfo",
+        "category": "Other",
+        "typicalUsage": "Lead enrichment data"
+      },
+      {
+        "name": "Outreach",
+        "category": "Other",
+        "typicalUsage": "Sequences and engagement tracking"
+      }
+    ],
+    "complianceNotes": [
+      "Data privacy regulations apply to lead data (GDPR, CCPA)",
+      "Opt-out requests must propagate immediately"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "SDRs spend 40% of time on lead research that could be automated",
+      "Lead routing rules are static and miss ideal routing paths",
+      "Manual enrichment leads to inconsistent data quality",
+      "Qualification criteria applied inconsistently across team"
+    ],
+    "estimatedEffort": "4-6 weeks for AI enrichment agent; 2-3 weeks for routing logic"
+  },
+  {
+    "id": "BP-SALES-02",
+    "name": "Intelligent Deal Forecasting",
+    "department": "Sales",
+    "description": "Process of collecting, updating, and analyzing pipeline data to produce accurate revenue forecasts.",
+    "typicalTriggers": [
+      "Weekly forecast review meeting",
+      "End of quarter/month close",
+      "Deal stage change notification"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Deal Data Collection",
+        "owner": "AE",
+        "duration": "30 min",
+        "dependsOn": [],
+        "description": "AEs manually update deal stages, amounts, close dates in CRM",
+        "aiOpportunity": "AI infers deal stage from email, meeting, and activity data"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Deal Status Verification",
+        "owner": "Sales Manager",
+        "duration": "20 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Manager reviews deal updates for accuracy and flags risks",
+        "aiOpportunity": "Automated risk flagging based on historical patterns"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Pipeline Analysis",
+        "owner": "Revenue Operations",
+        "duration": "2 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "RevOps compiles pipeline reports, identifies trends, builds forecast models",
+        "aiOpportunity": "AI generates forecast from CRM data with confidence intervals"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Forecast Review",
+        "owner": "VP Sales",
+        "duration": "1 hour",
+        "dependsOn": [
+          3
+        ],
+        "description": "Executive review of pipeline, commit numbers, and risks",
+        "aiOpportunity": "AI briefing with key risks, upsides, and recommended actions"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Forecast Publishing",
+        "owner": "Revenue Operations",
+        "duration": "30 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "Final forecast published to exec team and board reporting",
+        "aiOpportunity": "Automated report generation with narrative context"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Forecast Accuracy",
+        "description": "Difference between forecast and actual revenue",
+        "typicalBenchmark": "85%+ (best), <60% (needs improvement)"
+      },
+      {
+        "name": "Pipeline Coverage Ratio",
+        "description": "Pipeline value vs. revenue target",
+        "typicalBenchmark": "3x-5x coverage"
+      },
+      {
+        "name": "Forecast Update Cadence",
+        "description": "How often forecasts are refreshed",
+        "typicalBenchmark": "Weekly"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Salesforce",
+        "category": "CRM",
+        "typicalUsage": "Deal stage tracking and pipeline data"
+      },
+      {
+        "name": "Clari",
+        "category": "Analytics",
+        "typicalUsage": "Forecasting and revenue intelligence"
+      },
+      {
+        "name": "Gong",
+        "category": "AI",
+        "typicalUsage": "Deal risk signals from call analysis"
+      }
+    ],
+    "complianceNotes": [
+      "Revenue forecasts may be material information for public companies"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "High",
+    "typicalPainPoints": [
+      "AEs spend hours each week manually updating deal data",
+      "Forecast accuracy degrades as month-end approaches",
+      "Deal risks detected too late to intervene",
+      "Multiple spreadsheets with conflicting numbers"
+    ],
+    "estimatedEffort": "8-12 weeks for initial AI pipeline; ongoing model tuning"
+  },
+  {
+    "id": "BP-SALES-03",
+    "name": "Automated Sales Meeting Intelligence",
+    "department": "Sales",
+    "description": "Capturing, transcribing, analyzing, and extracting action items from sales calls and demos.",
+    "typicalTriggers": [
+      "Sales call or demo completed",
+      "New prospect meeting scheduled",
+      "Discovery call recording available"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Call Recording",
+        "owner": "AE/SDR",
+        "duration": "Instant",
+        "dependsOn": [],
+        "description": "Sales call recorded via video conferencing platform",
+        "aiOpportunity": "Auto-record and transcribe all calls"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Note Taking",
+        "owner": "AE/SDR",
+        "duration": "10-20 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Rep manually takes notes during or after call",
+        "aiOpportunity": "AI generates notes from transcript automatically"
+      },
+      {
+        "stepOrder": 3,
+        "name": "CRM Update",
+        "owner": "AE/SDR",
+        "duration": "10 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Rep updates CRM with call notes, next steps, and deal stage",
+        "aiOpportunity": "AI auto-populates CRM fields from call content"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Action Item Tracking",
+        "owner": "AE/SDR",
+        "duration": "5 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Track follow-up items, commitments, and deadlines",
+        "aiOpportunity": "AI extracts and tracks action items with reminders"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Deal Signal Analysis",
+        "owner": "Sales Manager",
+        "duration": "10 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Manager reviews call for coaching insights and deal signals",
+        "aiOpportunity": "AI flags objection handling, competitive mentions, buying signals"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Time Spent on Admin",
+        "description": "Hours per week spent on call-related admin",
+        "typicalBenchmark": "5-8 hours/week"
+      },
+      {
+        "name": "CRM Data Completeness",
+        "description": "Percentage of calls with complete CRM notes",
+        "typicalBenchmark": "60-80%"
+      },
+      {
+        "name": "Action Item Completion",
+        "description": "Percentage of follow-ups completed on time",
+        "typicalBenchmark": "70-85%"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Salesforce",
+        "category": "CRM",
+        "typicalUsage": "Call logging and next steps"
+      },
+      {
+        "name": "Gong",
+        "category": "AI",
+        "typicalUsage": "Call recording and analysis"
+      },
+      {
+        "name": "Zoom",
+        "category": "Communication",
+        "typicalUsage": "Video conferencing"
+      },
+      {
+        "name": "Notion",
+        "category": "Documentation",
+        "typicalUsage": "Meeting notes and action items"
+      }
+    ],
+    "complianceNotes": [
+      "Call recording consent required in some jurisdictions",
+      "Customer data handled in transcripts"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Reps spend 5+ hours/week on manual note-taking",
+      "CRM notes are inconsistent and miss key details",
+      "Action items from calls are lost or delayed",
+      "Managers cannot review every call for coaching"
+    ],
+    "estimatedEffort": "3-4 weeks for transcript AI; 2-3 weeks for CRM integration"
+  },
+  {
+    "id": "BP-SALES-04",
+    "name": "Pipeline Health Monitoring",
+    "department": "Sales",
+    "description": "Continuous monitoring of sales pipeline for stalled deals, engagement drops, competitive threats, and forecasting risks.",
+    "typicalTriggers": [
+      "Deal inactive for >7 days",
+      "Deal stage duration exceeds expected time",
+      "Competitive mention detected"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Pipeline Data Aggregation",
+        "owner": "RevOps",
+        "duration": "30 min",
+        "dependsOn": [],
+        "description": "Collect pipeline data from CRM, email, and call platforms",
+        "aiOpportunity": "Real-time pipeline data aggregation from all sources"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Health Signal Detection",
+        "owner": "Sales Manager",
+        "duration": "20 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Review each deal for engagement, activity, and progression signals",
+        "aiOpportunity": "AI flags deals with risk patterns automatically"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Risk Assessment",
+        "owner": "AE",
+        "duration": "15 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Assess individual deal risks and document mitigation plan",
+        "aiOpportunity": "AI suggests risk mitigation actions based on similar deals"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Pipeline Review Meeting",
+        "owner": "Sales Team",
+        "duration": "1 hour",
+        "dependsOn": [
+          3
+        ],
+        "description": "Weekly team review of pipeline health, risks, and actions",
+        "aiOpportunity": "Pre-generated brief with risk summary for each rep"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Forecast Adjustment",
+        "owner": "VP Sales",
+        "duration": "15 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "Adjust forecast based on pipeline health assessment",
+        "aiOpportunity": "AI-adjusted forecast with confidence range changes"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Deal Velocity",
+        "description": "Average time from creation to close",
+        "typicalBenchmark": "30-90 days depending on deal size"
+      },
+      {
+        "name": "Stale Deal Ratio",
+        "description": "Percentage of pipeline deals inactive >14 days",
+        "typicalBenchmark": "<15%"
+      },
+      {
+        "name": "Risk Detection Latency",
+        "description": "Time from risk emergence to detection",
+        "typicalBenchmark": "<48 hours"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Salesforce",
+        "category": "CRM",
+        "typicalUsage": "Pipeline data source"
+      },
+      {
+        "name": "Gong",
+        "category": "AI",
+        "typicalUsage": "Call analysis for engagement signals"
+      },
+      {
+        "name": "Outreach",
+        "category": "Other",
+        "typicalUsage": "Email engagement tracking"
+      },
+      {
+        "name": "Chorus",
+        "category": "AI",
+        "typicalUsage": "Deal intelligence platform"
+      }
+    ],
+    "complianceNotes": [],
+    "aiReadiness": "Medium",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Deal risks detected days or weeks late",
+      "Stale pipeline deals consume forecast space",
+      "No automated health scoring for individual deals",
+      "Pipeline reviews are backward-looking, not predictive"
+    ],
+    "estimatedEffort": "6-8 weeks for risk detection models; 3-4 weeks for dashboards"
+  },
+  {
+    "id": "BP-SALES-05",
+    "name": "Contract Renewal Intelligence",
+    "department": "Sales",
+    "description": "Managing the end-to-end contract renewal process including timing, pricing, terms, and risk assessment.",
+    "typicalTriggers": [
+      "Contract expiry approaching (60/30/14 day markers)",
+      "Usage spike or drop indicating renewal risk/opportunity",
+      "Customer requests renewal proposal"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Renewal Date Tracking",
+        "owner": "Customer Success",
+        "duration": "Ongoing",
+        "dependsOn": [],
+        "description": "Track all contract end dates and renewal windows",
+        "aiOpportunity": "AI monitors renewal calendar and flags upcoming renewals"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Health Assessment",
+        "owner": "CSM",
+        "duration": "30 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Assess customer health: usage, support tickets, satisfaction",
+        "aiOpportunity": "Automated health score combining usage, support, engagement signals"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Renewal Strategy",
+        "owner": "AE/CSM",
+        "duration": "30 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Determine pricing, upsell opportunities, and negotiation strategy",
+        "aiOpportunity": "AI recommends pricing strategy based on usage and benchmark data"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Proposal Generation",
+        "owner": "Revenue Operations",
+        "duration": "1 hour",
+        "dependsOn": [
+          3
+        ],
+        "description": "Create renewal proposal with pricing, terms, and SLA",
+        "aiOpportunity": "AI generates proposal from template with customer-specific data"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Negotiation Support",
+        "owner": "AE",
+        "duration": "Varies",
+        "dependsOn": [
+          4
+        ],
+        "description": "Negotiate terms, handle objections, secure signature",
+        "aiOpportunity": "AI provides real-time negotiation guidance and competitive intel"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Renewal Rate",
+        "description": "Percentage of contracts renewed",
+        "typicalBenchmark": "90%+ (SaaS average 85-95%)"
+      },
+      {
+        "name": "Time to Renew",
+        "description": "Average days from start of renewal process to signature",
+        "typicalBenchmark": "30-60 days"
+      },
+      {
+        "name": "Expansion Revenue",
+        "description": "Upsell/cross-sell attached to renewals",
+        "typicalBenchmark": "10-30% of renewal value"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Salesforce",
+        "category": "CRM",
+        "typicalUsage": "Contract and opportunity tracking"
+      },
+      {
+        "name": "Stripe",
+        "category": "Finance",
+        "typicalUsage": "Subscription billing and invoicing"
+      },
+      {
+        "name": "Gainsight",
+        "category": "Other",
+        "typicalUsage": "Customer health and lifecycle management"
+      },
+      {
+        "name": "Ironclad",
+        "category": "Compliance",
+        "typicalUsage": "Contract lifecycle management"
+      }
+    ],
+    "complianceNotes": [
+      "Auto-renewal terms subject to regulatory requirements",
+      "Pricing changes may require notice periods"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Renewal dates missed due to poor tracking",
+      "Health assessment is subjective and inconsistent",
+      "Each renewal proposal built from scratch",
+      "Revenue at risk from undetected churn signals"
+    ],
+    "estimatedEffort": "4-6 weeks for renewal tracking + health scoring; 3-4 weeks for proposal generation"
+  },
+  {
+    "id": "BP-MKTG-01",
+    "name": "Content Brief Generation",
+    "department": "Marketing",
+    "description": "Researching topics, analyzing competitors, and producing detailed content briefs for writers and creators.",
+    "typicalTriggers": [
+      "Content calendar planning session",
+      "New keyword opportunity identified",
+      "Competitor content launch detected"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Topic Research",
+        "owner": "Content Marketing",
+        "duration": "2-3 hours",
+        "dependsOn": [],
+        "description": "Research topic, audience, search intent, keyword data",
+        "aiOpportunity": "AI aggregates search data, SERP analysis, and audience signals"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Competitor Analysis",
+        "owner": "Content Marketing",
+        "duration": "1-2 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Analyze top-ranking content on topic for gaps and opportunities",
+        "aiOpportunity": "AI analyzes top 10 results and identifies content gaps"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Brief Outline",
+        "owner": "Content Marketing",
+        "duration": "2 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Create outline: headings, key points, target audience, CTA",
+        "aiOpportunity": "AI generates outline from research with SEO structure"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Internal Review",
+        "owner": "Content Manager",
+        "duration": "1 hour",
+        "dependsOn": [
+          3
+        ],
+        "description": "Review brief for strategic alignment and quality",
+        "aiOpportunity": "AI checks brief against content strategy and guidelines"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Brief Finalization",
+        "owner": "Content Marketing",
+        "duration": "30 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "Finalize brief with feedback, assign to writer",
+        "aiOpportunity": "Auto-assign to best-fit writer based on expertise"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Brief Production Time",
+        "description": "Time from topic selection to completed brief",
+        "typicalBenchmark": "6-10 hours (manual), target 1-2 hours (AI)"
+      },
+      {
+        "name": "Content Performance",
+        "description": "Organic traffic to content produced from briefs",
+        "typicalBenchmark": "Varies by keyword difficulty"
+      },
+      {
+        "name": "Brief Quality Score",
+        "description": "Writer satisfaction rating for brief completeness",
+        "typicalBenchmark": "4+/5"
+      }
+    ],
+    "systems": [
+      {
+        "name": "HubSpot",
+        "category": "Marketing",
+        "typicalUsage": "Content calendar and SEO tools"
+      },
+      {
+        "name": "SEMRush",
+        "category": "Marketing",
+        "typicalUsage": "Keyword research and competitor analysis"
+      },
+      {
+        "name": "Google Docs",
+        "category": "Documentation",
+        "typicalUsage": "Brief creation and collaboration"
+      },
+      {
+        "name": "Clearscope",
+        "category": "AI",
+        "typicalUsage": "Content optimization and NLP"
+      }
+    ],
+    "complianceNotes": [
+      "AI-generated content requires human review per platform guidelines"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Content marketers spend 10+ hours per brief on research",
+      "Brief quality varies with writer experience",
+      "SEO optimization is an afterthought, not built-in",
+      "Competitor content analysis is manual and inconsistent"
+    ],
+    "estimatedEffort": "3-4 weeks for research aggregation; 2 weeks for outline generation"
+  },
+  {
+    "id": "BP-MKTG-02",
+    "name": "Campaign Performance Analysis",
+    "department": "Marketing",
+    "description": "Collecting, analyzing, and reporting on multi-channel marketing campaign performance.",
+    "typicalTriggers": [
+      "Campaign conclusion or milestone",
+      "Monthly/quarterly reporting cycle",
+      "Performance anomaly detected"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Data Collection",
+        "owner": "Marketing Operations",
+        "duration": "2-4 hours",
+        "dependsOn": [],
+        "description": "Pull data from all channels: email, ads, social, web, events",
+        "aiOpportunity": "AI auto-aggregates from all platform APIs"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Attribution Analysis",
+        "owner": "Marketing Operations",
+        "duration": "3-4 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Map touchpoints to conversions across channels",
+        "aiOpportunity": "AI applies attribution models and identifies top-performing paths"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Insight Generation",
+        "owner": "Marketing Manager",
+        "duration": "2 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Identify trends, anomalies, and optimization opportunities",
+        "aiOpportunity": "AI generates natural-language insights from data"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Report Creation",
+        "owner": "Marketing Operations",
+        "duration": "2-3 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Build presentation with charts, key findings, recommendations",
+        "aiOpportunity": "AI creates report deck from insights template"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Review & Action",
+        "owner": "Marketing Team",
+        "duration": "1 hour",
+        "dependsOn": [
+          4
+        ],
+        "description": "Review results and decide on budget and strategy adjustments",
+        "aiOpportunity": "AI recommends budget reallocation based on performance"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Report Compilation Time",
+        "description": "Time from campaign end to report delivery",
+        "typicalBenchmark": "2-3 days (manual), target <2 hours"
+      },
+      {
+        "name": "Actionable Insights per Report",
+        "description": "Number of specific optimization recommendations",
+        "typicalBenchmark": "3-5"
+      },
+      {
+        "name": "Attribution Accuracy",
+        "description": "Confidence in touchpoint-to-revenue mapping",
+        "typicalBenchmark": "Multi-touch attribution improves accuracy 30%+"
+      }
+    ],
+    "systems": [
+      {
+        "name": "HubSpot",
+        "category": "Marketing",
+        "typicalUsage": "Campaign management and analytics"
+      },
+      {
+        "name": "Google Analytics",
+        "category": "Analytics",
+        "typicalUsage": "Web traffic and conversion data"
+      },
+      {
+        "name": "Tableau",
+        "category": "Analytics",
+        "typicalUsage": "Dashboard and visualization"
+      },
+      {
+        "name": "Salesforce",
+        "category": "CRM",
+        "typicalUsage": "Revenue attribution data"
+      }
+    ],
+    "complianceNotes": [
+      "Attribution data subject to privacy regulations"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Reporting takes 2+ days to compile across channels",
+      "Attribution is single-touch or missing",
+      "Reports are backward-looking, not prescriptive",
+      "Data silos across tools prevent unified analysis"
+    ],
+    "estimatedEffort": "5-7 weeks for data aggregation; 4-6 weeks for insight model"
+  },
+  {
+    "id": "BP-MKTG-03",
+    "name": "Lead Scoring Optimization",
+    "department": "Marketing",
+    "description": "Continuously improving lead scoring models to better predict conversion likelihood and prioritize sales outreach.",
+    "typicalTriggers": [
+      "Lead scoring model drift detected",
+      "Conversion rate changes significantly",
+      "New data sources available for scoring"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Model Performance Review",
+        "owner": "Marketing Operations",
+        "duration": "4 hours",
+        "dependsOn": [],
+        "description": "Review current scoring model accuracy against conversions",
+        "aiOpportunity": "AI continuously monitors model drift and performance"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Feature Analysis",
+        "owner": "Data Analyst",
+        "duration": "3 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Identify which signals best predict conversion",
+        "aiOpportunity": "AI automatically tests feature importance and discovers new signals"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Model Update",
+        "owner": "Data Analyst",
+        "duration": "6 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Update scoring rules or retrain model with new parameters",
+        "aiOpportunity": "AI retrains and tests multiple model variations"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Validation",
+        "owner": "Marketing Operations",
+        "duration": "4 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Validate new model against holdout data and A/B test",
+        "aiOpportunity": "AI runs A/B test between old and new models automatically"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Deployment",
+        "owner": "Marketing Operations",
+        "duration": "2 hours",
+        "dependsOn": [
+          4
+        ],
+        "description": "Deploy updated model to production scoring pipeline",
+        "aiOpportunity": "Automated deployment with rollback capability"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Lead-to-Opportunity Rate",
+        "description": "Percentage of MQLs that become opportunities",
+        "typicalBenchmark": "15-25%"
+      },
+      {
+        "name": "Scoring Accuracy",
+        "description": "Precision and recall of lead scoring at top decile",
+        "typicalBenchmark": "80%+"
+      },
+      {
+        "name": "Model Update Frequency",
+        "description": "How often scoring model is refreshed",
+        "typicalBenchmark": "Quarterly (static rules), Continuous (AI)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "HubSpot",
+        "category": "Marketing",
+        "typicalUsage": "Lead scoring and management"
+      },
+      {
+        "name": "Salesforce",
+        "category": "CRM",
+        "typicalUsage": "Lead conversion data"
+      },
+      {
+        "name": "Python/ML Pipeline",
+        "category": "Engineering",
+        "typicalUsage": "Model training and deployment"
+      },
+      {
+        "name": "Segment",
+        "category": "Analytics",
+        "typicalUsage": "Customer data platform for scoring signals"
+      }
+    ],
+    "complianceNotes": [
+      "Scoring models must avoid bias against protected characteristics"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Lead scoring rules are static and quickly become stale",
+      "New data sources require manual integration",
+      "Model improvements are quarterly at best",
+      "Scoring logic is a black box to sales team"
+    ],
+    "estimatedEffort": "6-8 weeks for ML pipeline; 3-4 weeks for integration with CRM"
+  },
+  {
+    "id": "BP-MKTG-04",
+    "name": "SEO Content Gap Analysis",
+    "department": "Marketing",
+    "description": "Identifying content gaps in the existing library compared to target keywords and competitor content coverage.",
+    "typicalTriggers": [
+      "Quarterly content planning",
+      "Competitor content ranking above owned content",
+      "New keyword opportunities identified"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Keyword Universe Mapping",
+        "owner": "SEO Specialist",
+        "duration": "4 hours",
+        "dependsOn": [],
+        "description": "Build comprehensive list of target keywords by topic cluster",
+        "aiOpportunity": "AI auto-discovers keyword universe from search intent analysis"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Competitor Coverage Analysis",
+        "owner": "SEO Specialist",
+        "duration": "6 hours",
+        "dependsOn": [],
+        "description": "Analyze which keywords competitors rank for that we don't",
+        "aiOpportunity": "AI crawls and compares content coverage across competitors"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Gap Identification",
+        "owner": "Content Strategist",
+        "duration": "3 hours",
+        "dependsOn": [
+          1,
+          2
+        ],
+        "description": "Identify content gaps: keywords with high volume and low owned coverage",
+        "aiOpportunity": "AI scores gaps by opportunity (volume, difficulty, relevance)"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Content Prioritization",
+        "owner": "Content Strategist",
+        "duration": "2 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Rank content opportunities by impact, effort, and strategic fit",
+        "aiOpportunity": "AI generates ranked content roadmap with estimated impact"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Brief Creation",
+        "owner": "Content Marketing",
+        "duration": "3 hours per brief",
+        "dependsOn": [
+          4
+        ],
+        "description": "Create detailed content briefs for highest-priority opportunities",
+        "aiOpportunity": "AI generates full briefs for each content gap"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Content Gap Fill Rate",
+        "description": "Percentage of identified gaps addressed per quarter",
+        "typicalBenchmark": "20-30% per quarter"
+      },
+      {
+        "name": "New Keyword Rankings",
+        "description": "Number of new keywords ranking in top 10",
+        "typicalBenchmark": "50-100 per month"
+      },
+      {
+        "name": "Organic Traffic Growth",
+        "description": "Traffic increase from gap-closing content",
+        "typicalBenchmark": "20-40% YoY"
+      }
+    ],
+    "systems": [
+      {
+        "name": "SEMRush",
+        "category": "Marketing",
+        "typicalUsage": "Keyword research and competitor analysis"
+      },
+      {
+        "name": "Ahrefs",
+        "category": "Marketing",
+        "typicalUsage": "Backlink and content gap analysis"
+      },
+      {
+        "name": "Google Search Console",
+        "category": "Analytics",
+        "typicalUsage": "Current ranking and click-through data"
+      },
+      {
+        "name": "Contentful",
+        "category": "Documentation",
+        "typicalUsage": "Content management and inventory"
+      }
+    ],
+    "complianceNotes": [],
+    "aiReadiness": "Medium",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Content gap analysis is manual and done quarterly at best",
+      "Keyword research is too broad, missing niche opportunities",
+      "Competitor content changes between monthly reviews",
+      "Content prioritization is driven by opinion, not data"
+    ],
+    "estimatedEffort": "4-5 weeks for automated gap analysis; 2-3 weeks for prioritization engine"
+  },
+  {
+    "id": "BP-MKTG-05",
+    "name": "Automated ABM Personalization",
+    "department": "Marketing",
+    "description": "Creating personalized content, campaigns, and outreach for target account lists based on account intelligence.",
+    "typicalTriggers": [
+      "New target account list finalized",
+      "Account shows buying intent signal",
+      "Account enters a triggered campaign"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Account Research",
+        "owner": "ABM Manager",
+        "duration": "2-3 hours per account",
+        "dependsOn": [],
+        "description": "Research each target account: tech stack, initiatives, priorities",
+        "aiOpportunity": "AI researches and profiles each account automatically"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Content Mapping",
+        "owner": "Content Marketing",
+        "duration": "1-2 hours per account",
+        "dependsOn": [
+          1
+        ],
+        "description": "Map existing content to account needs, identify content gaps",
+        "aiOpportunity": "AI matches account needs to content library"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Personalized Content Creation",
+        "owner": "Content Marketing",
+        "duration": "4-6 hours per piece",
+        "dependsOn": [
+          2
+        ],
+        "description": "Create account-specific content: case studies, landing pages, emails",
+        "aiOpportunity": "AI drafts personalized content from account data"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Campaign Orchestration",
+        "owner": "Marketing Operations",
+        "duration": "2 hours per campaign",
+        "dependsOn": [
+          3
+        ],
+        "description": "Set up multi-channel campaign for each account segment",
+        "aiOpportunity": "AI builds campaign flows from account intelligence"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Engagement Monitoring",
+        "owner": "ABM Manager",
+        "duration": "Ongoing",
+        "dependsOn": [
+          4
+        ],
+        "description": "Monitor account engagement and adjust personalization in real-time",
+        "aiOpportunity": "AI adapts content and outreach based on engagement signals"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Account Engagement Rate",
+        "description": "Percentage of target accounts showing engagement",
+        "typicalBenchmark": "30-50%"
+      },
+      {
+        "name": "Pipeline from ABM",
+        "description": "Pipeline value attributed to ABM campaigns",
+        "typicalBenchmark": "20-40% of total pipeline"
+      },
+      {
+        "name": "Personalization Scalability",
+        "description": "Number of accounts that can be personalized per team member",
+        "typicalBenchmark": "10-20 accounts per ABM manager"
+      }
+    ],
+    "systems": [
+      {
+        "name": "HubSpot",
+        "category": "Marketing",
+        "typicalUsage": "Campaign management and personalization"
+      },
+      {
+        "name": "Demandbase",
+        "category": "Marketing",
+        "typicalUsage": "Account identification and engagement"
+      },
+      {
+        "name": "Salesforce",
+        "category": "CRM",
+        "typicalUsage": "Account and contact data"
+      },
+      {
+        "name": "6sense",
+        "category": "AI",
+        "typicalUsage": "Account intelligence and intent data"
+      }
+    ],
+    "complianceNotes": [
+      "Personalized outreach must comply with data privacy regulations"
+    ],
+    "aiReadiness": "Low",
+    "complexity": "High",
+    "typicalPainPoints": [
+      "Personalization doesn't scale beyond top 20 accounts",
+      "Account research takes hours per account",
+      "Content creation is too slow for real-time personalization",
+      "Campaign orchestration requires multiple tools and manual setup"
+    ],
+    "estimatedEffort": "8-12 weeks for initial personalization engine; ongoing model refinement"
+  },
+  {
+    "id": "BP-CS-01",
+    "name": "Automated Health Score Calculation",
+    "department": "Customer Success",
+    "description": "Continuous calculation of customer health scores based on product usage, support activity, NPS data, and engagement signals.",
+    "typicalTriggers": [
+      "Health scoring cycle (weekly/monthly)",
+      "New usage data ingested",
+      "Customer milestone (renewal, QBR)"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Data Aggregation",
+        "owner": "Customer Success Operations",
+        "duration": "4 hours",
+        "dependsOn": [],
+        "description": "Collect data from product analytics, support, CRM, survey tools",
+        "aiOpportunity": "Continuous real-time data aggregation from all sources"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Score Calculation",
+        "owner": "CS Operations",
+        "duration": "2 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Apply health scoring formula to each customer account",
+        "aiOpportunity": "AI calculates health scores in real-time from all data streams"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Threshold Review",
+        "owner": "CSM",
+        "duration": "1 hour",
+        "dependsOn": [
+          2
+        ],
+        "description": "Review accounts that crossed health thresholds (green/yellow/red)",
+        "aiOpportunity": "AI segments accounts by health and recommends action priority"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Alert Assignment",
+        "owner": "CSM Manager",
+        "duration": "30 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Assign at-risk accounts to appropriate CSMs for intervention",
+        "aiOpportunity": "AI auto-assigns with workload balancing and skill matching"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Action Tracking",
+        "owner": "CSM",
+        "duration": "Ongoing",
+        "dependsOn": [
+          4
+        ],
+        "description": "Track interventions and health score changes over time",
+        "aiOpportunity": "AI monitors intervention effectiveness and suggests adjustments"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Health Score Accuracy",
+        "description": "Correlation between health score and actual churn/renewal",
+        "typicalBenchmark": "70-85% predictive accuracy"
+      },
+      {
+        "name": "Health Score Freshness",
+        "description": "Time since last health score update",
+        "typicalBenchmark": "Monthly (manual), Real-time (AI)"
+      },
+      {
+        "name": "At-Risk Detection Time",
+        "description": "How early health score flags at-risk accounts",
+        "typicalBenchmark": "30-60 days before churn"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Gainsight",
+        "category": "Other",
+        "typicalUsage": "Health scoring and customer lifecycle"
+      },
+      {
+        "name": "Totango",
+        "category": "Other",
+        "typicalUsage": "Customer success platform"
+      },
+      {
+        "name": "Salesforce",
+        "category": "CRM",
+        "typicalUsage": "Account and opportunity data"
+      },
+      {
+        "name": "Mixpanel",
+        "category": "Analytics",
+        "typicalUsage": "Product usage data"
+      }
+    ],
+    "complianceNotes": [],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Health scores calculated monthly, too stale for proactive action",
+      "Scoring criteria are arbitrary and not data-driven",
+      "Data silos prevent comprehensive health assessment",
+      "Threshold changes require manual recalculation"
+    ],
+    "estimatedEffort": "4-6 weeks for real-time scoring pipeline; 2-3 weeks for dashboard"
+  },
+  {
+    "id": "BP-CS-02",
+    "name": "Churn Risk Prediction",
+    "department": "Customer Success",
+    "description": "Predictive modeling to identify customers at risk of churning before they disengage, enabling proactive intervention.",
+    "typicalTriggers": [
+      "Product usage decline detected",
+      "Support ticket sentiment shift",
+      "Account health score dropping"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Feature Engineering",
+        "owner": "Data Science",
+        "duration": "40 hours",
+        "dependsOn": [],
+        "description": "Build feature set from usage, support, billing, engagement data",
+        "aiOpportunity": "AI auto-discovers predictive features from all data sources"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Model Training",
+        "owner": "Data Science",
+        "duration": "20 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Train churn prediction model on historical churn data",
+        "aiOpportunity": "AI trains and evaluates multiple model types automatically"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Risk Scoring",
+        "owner": "CS Platform",
+        "duration": "Real-time",
+        "dependsOn": [
+          2
+        ],
+        "description": "Score all customers daily/monthly for churn risk",
+        "aiOpportunity": "Continuous real-time risk scoring with streaming data"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Risk Alerting",
+        "owner": "CSM",
+        "duration": "30 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Review high-risk accounts and plan intervention strategies",
+        "aiOpportunity": "AI generates intervention playbook for each at-risk account"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Intervention Tracking",
+        "owner": "CSM",
+        "duration": "Ongoing",
+        "dependsOn": [
+          4
+        ],
+        "description": "Execute interventions and monitor risk score changes",
+        "aiOpportunity": "AI tracks intervention efficacy and adjusts risk models"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Prediction Accuracy",
+        "description": "Precision and recall of churn predictions",
+        "typicalBenchmark": "70-85% AUC-ROC"
+      },
+      {
+        "name": "Lead Time",
+        "description": "Days before churn that risk is identified",
+        "typicalBenchmark": "30-90 days"
+      },
+      {
+        "name": "Intervention Success Rate",
+        "description": "Percentage of at-risk accounts retained after intervention",
+        "typicalBenchmark": "40-60%"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Snowflake",
+        "category": "Data",
+        "typicalUsage": "Data warehouse for feature engineering"
+      },
+      {
+        "name": "Gainsight",
+        "category": "Other",
+        "typicalUsage": "Health score and risk data"
+      },
+      {
+        "name": "Python/ML Pipeline",
+        "category": "Engineering",
+        "typicalUsage": "Model training and deployment"
+      },
+      {
+        "name": "dbt",
+        "category": "Engineering",
+        "typicalUsage": "Data transformation and feature engineering"
+      }
+    ],
+    "complianceNotes": [
+      "Predictive models must be auditable for bias"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "High",
+    "typicalPainPoints": [
+      "Churn detected after customer has already decided to leave",
+      "Churn prediction models are black boxes to CSMs",
+      "Feature engineering requires significant data science effort",
+      "Model accuracy degrades as customer behavior evolves"
+    ],
+    "estimatedEffort": "10-14 weeks for ML pipeline; 4-6 weeks for integration with CS platform"
+  },
+  {
+    "id": "BP-CS-03",
+    "name": "Automated QBR Preparation",
+    "department": "Customer Success",
+    "description": "Compiling customer data, usage analytics, success metrics, and recommendations into quarterly business review presentations.",
+    "typicalTriggers": [
+      "Quarterly business review scheduled",
+      "Customer annual planning session",
+      "Executives request account health overview"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Data Compilation",
+        "owner": "CSM",
+        "duration": "3-4 hours",
+        "dependsOn": [],
+        "description": "Collect usage data, support history, NPS scores, and metrics",
+        "aiOpportunity": "AI auto-compiles all customer data from integrated systems"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Data Analysis",
+        "owner": "CSM",
+        "duration": "2 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Analyze trends, identify wins, risks, and growth opportunities",
+        "aiOpportunity": "AI identifies key trends, anomalies, and insights from data"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Presentation Creation",
+        "owner": "CSM",
+        "duration": "2-3 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Build QBR deck with charts, scorecards, and recommendations",
+        "aiOpportunity": "AI generates complete QBR deck from data analysis"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Internal Review",
+        "owner": "CSM Manager",
+        "duration": "1 hour",
+        "dependsOn": [
+          3
+        ],
+        "description": "Review QBR content for accuracy, tone, and strategic alignment",
+        "aiOpportunity": "AI checks QBR against success plan and flags inconsistencies"
+      },
+      {
+        "stepOrder": 5,
+        "name": "QBR Delivery",
+        "owner": "CSM",
+        "duration": "1 hour",
+        "dependsOn": [
+          4
+        ],
+        "description": "Present QBR to customer stakeholders",
+        "aiOpportunity": "AI provides real-time talking points and objection handling"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "QBR Preparation Time",
+        "description": "Hours CSM spends preparing per QBR",
+        "typicalBenchmark": "8-10 hours (manual), target 1-2 hours (AI)"
+      },
+      {
+        "name": "QBR Consistency",
+        "description": "Standard deviation of content quality across CSMs",
+        "typicalBenchmark": "High variance (manual), Low variance (AI)"
+      },
+      {
+        "name": "Customer QBR Satisfaction",
+        "description": "Customer rating of QBR value",
+        "typicalBenchmark": "3.5-4/5"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Gainsight",
+        "category": "Other",
+        "typicalUsage": "Customer data and health scores"
+      },
+      {
+        "name": "Google Slides",
+        "category": "Documentation",
+        "typicalUsage": "QBR deck creation"
+      },
+      {
+        "name": "Tableau",
+        "category": "Analytics",
+        "typicalUsage": "Data visualization and charts"
+      },
+      {
+        "name": "Salesforce",
+        "category": "CRM",
+        "typicalUsage": "Account and renewal data"
+      }
+    ],
+    "complianceNotes": [
+      "Customer data shared in QBR must comply with confidentiality agreements"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "CSMs spend 8+ hours per QBR on data compilation",
+      "QBR quality varies significantly between CSMs",
+      "Data is manually pulled from multiple systems",
+      "Strategic insights often missing due to time constraints"
+    ],
+    "estimatedEffort": "4-6 weeks for data compilation; 4-5 weeks for deck generation"
+  },
+  {
+    "id": "BP-CS-04",
+    "name": "Intelligent Escalation Routing",
+    "department": "Customer Success",
+    "description": "Routing customer escalations to the appropriate CSM or specialist based on account, issue type, severity, and skills.",
+    "typicalTriggers": [
+      "Customer requests executive escalation",
+      "Support ticket severity raised to critical",
+      "Renewal risk detected on high-value account"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Escalation Triage",
+        "owner": "Support/CS",
+        "duration": "15 min",
+        "dependsOn": [],
+        "description": "Initial assessment of escalation: severity, urgency, type",
+        "aiOpportunity": "AI auto-classifies escalation by type, severity, account value"
+      },
+      {
+        "stepOrder": 2,
+        "name": "CSM Assignment",
+        "owner": "CS Manager",
+        "duration": "15 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Assign escalation to appropriate CSM based on workload and fit",
+        "aiOpportunity": "AI recommends best CSM based on skills, capacity, relationship"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Context Compilation",
+        "owner": "CSM",
+        "duration": "30 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Gather account history, recent interactions, and relevant context",
+        "aiOpportunity": "AI compiles escalation brief from all systems"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Response Planning",
+        "owner": "CSM",
+        "duration": "30 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Plan resolution approach and communication strategy",
+        "aiOpportunity": "AI suggests resolution playbook based on similar escalations"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Resolution & Follow-up",
+        "owner": "CSM",
+        "duration": "Varies",
+        "dependsOn": [
+          4
+        ],
+        "description": "Execute resolution, communicate with customer, document outcome",
+        "aiOpportunity": "AI tracks resolution progress and auto-schedules follow-ups"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Escalation Response Time",
+        "description": "Time from escalation to CSM assignment",
+        "typicalBenchmark": "<30 min (best practice)"
+      },
+      {
+        "name": "Escalation Resolution Rate",
+        "description": "Percentage of escalations resolved to satisfaction",
+        "typicalBenchmark": "85%+"
+      },
+      {
+        "name": "Resolution Time",
+        "description": "Average time from escalation to resolution",
+        "typicalBenchmark": "24-48 hours"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Salesforce",
+        "category": "CRM",
+        "typicalUsage": "Account and contact data"
+      },
+      {
+        "name": "Zendesk",
+        "category": "Support",
+        "typicalUsage": "Support ticket and escalation tracking"
+      },
+      {
+        "name": "Gainsight",
+        "category": "Other",
+        "typicalUsage": "Customer health and risk data"
+      },
+      {
+        "name": "Slack",
+        "category": "Communication",
+        "typicalUsage": "Escalation notifications and collaboration"
+      }
+    ],
+    "complianceNotes": [
+      "Escalation handling may need audit trail for compliance"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Escalations routed to wrong CSM causing delays",
+      "Account context is scattered across multiple systems",
+      "CSM assignment doesn't consider current workload",
+      "Escalation response time varies widely"
+    ],
+    "estimatedEffort": "3-4 weeks for classification and routing; 2 weeks for context compilation"
+  },
+  {
+    "id": "BP-CS-05",
+    "name": "Expansion Opportunity Detection",
+    "department": "Customer Success",
+    "description": "Identifying upsell and cross-sell opportunities based on usage patterns, feature adoption, and business need signals.",
+    "typicalTriggers": [
+      "Usage threshold exceeded",
+      "New feature adoption detected",
+      "Customer asks about new functionality"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Usage Monitoring",
+        "owner": "CS Platform",
+        "duration": "Ongoing",
+        "dependsOn": [],
+        "description": "Monitor product usage and feature adoption across accounts",
+        "aiOpportunity": "AI continuously monitors and detects expansion signals"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Opportunity Identification",
+        "owner": "CSM",
+        "duration": "2 hours/week",
+        "dependsOn": [
+          1
+        ],
+        "description": "Identify accounts showing expansion readiness",
+        "aiOpportunity": "AI scores accounts by expansion likelihood and timing"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Qualification",
+        "owner": "CSM",
+        "duration": "30 min per account",
+        "dependsOn": [
+          2
+        ],
+        "description": "Assess business need, budget, authority for expansion",
+        "aiOpportunity": "AI gathers qualification signals from public and interaction data"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Expansion Pitch Preparation",
+        "owner": "CSM",
+        "duration": "2 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Prepare expansion proposal with usage data and value justification",
+        "aiOpportunity": "AI generates expansion proposal from usage and case studies"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Pitch & Close",
+        "owner": "CSM/AE",
+        "duration": "Varies",
+        "dependsOn": [
+          4
+        ],
+        "description": "Present expansion opportunity and negotiate terms",
+        "aiOpportunity": "AI provides expansion talking points and competitive intel"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Expansion Revenue per Account",
+        "description": "Average additional revenue from expansion",
+        "typicalBenchmark": "10-30% of initial contract value"
+      },
+      {
+        "name": "Expansion Win Rate",
+        "description": "Percentage of identified opportunities converted",
+        "typicalBenchmark": "30-50%"
+      },
+      {
+        "name": "Time to First Expansion",
+        "description": "Average time from initial sale to first expansion",
+        "typicalBenchmark": "6-12 months"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Gainsight",
+        "category": "Other",
+        "typicalUsage": "Expansion opportunity tracking"
+      },
+      {
+        "name": "Product Analytics",
+        "category": "Analytics",
+        "typicalUsage": "Feature usage and adoption data"
+      },
+      {
+        "name": "Salesforce",
+        "category": "CRM",
+        "typicalUsage": "Opportunity and contract management"
+      },
+      {
+        "name": "ChurnZero",
+        "category": "Other",
+        "typicalUsage": "Customer health and expansion signals"
+      }
+    ],
+    "complianceNotes": [],
+    "aiReadiness": "Medium",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Expansion opportunities missed because signals drown in noise",
+      "CSMs lack data to justify upsell recommendations",
+      "Expansion timing is guesswork, not data-driven",
+      "No systematic approach to identifying cross-sell triggers"
+    ],
+    "estimatedEffort": "6-8 weeks for signal detection; 3-4 weeks for scoring model"
+  },
+  {
+    "id": "BP-SUPP-01",
+    "name": "Automated Ticket Triage and Routing",
+    "department": "Support",
+    "description": "Intelligently categorizing, prioritizing, and routing incoming support tickets to the appropriate team or agent.",
+    "typicalTriggers": [
+      "New support ticket submitted via email, web, or chat",
+      "Ticket reassignment requested",
+      "Ticket priority escalation"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Ticket Receipt",
+        "owner": "Support Platform",
+        "duration": "Instant",
+        "dependsOn": [],
+        "description": "Ticket enters the system from any channel",
+        "aiOpportunity": "AI normalizes tickets from all channels into standard format"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Ticket Classification",
+        "owner": "Support Agent",
+        "duration": "2-5 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Agent reads and categorizes ticket: type, urgency, topic",
+        "aiOpportunity": "AI auto-classifies ticket with confidence score"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Priority Assignment",
+        "owner": "Support Agent",
+        "duration": "1 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Assign priority level based on severity and customer SLA",
+        "aiOpportunity": "AI assigns priority from classification and customer tier"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Agent Assignment",
+        "owner": "Support Manager",
+        "duration": "2 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Assign ticket to appropriate agent based on skills, load, availability",
+        "aiOpportunity": "AI routes to best-fit agent with workload balancing"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Customer Acknowledgment",
+        "owner": "Support Platform",
+        "duration": "Instant",
+        "dependsOn": [
+          4
+        ],
+        "description": "Send automated acknowledgment with expected response time",
+        "aiOpportunity": "AI generates personalized acknowledgment with relevant helpful content"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Time to First Response",
+        "description": "Time from ticket creation to first agent response",
+        "typicalBenchmark": "<1 hour (best), <4 hours (standard)"
+      },
+      {
+        "name": "First Contact Resolution Rate",
+        "description": "Percentage of tickets resolved on first response",
+        "typicalBenchmark": "60-75%"
+      },
+      {
+        "name": "Ticket Misrouting Rate",
+        "description": "Percentage of tickets requiring reassignment",
+        "typicalBenchmark": "10-20% (manual), <5% (AI)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Zendesk",
+        "category": "Support",
+        "typicalUsage": "Ticket management and routing"
+      },
+      {
+        "name": "Intercom",
+        "category": "Support",
+        "typicalUsage": "Customer messaging and chatbot"
+      },
+      {
+        "name": "Jira",
+        "category": "Engineering",
+        "typicalUsage": "Bug tracking and engineering handoff"
+      },
+      {
+        "name": "Freshdesk",
+        "category": "Support",
+        "typicalUsage": "Alternative support platform"
+      }
+    ],
+    "complianceNotes": [
+      "Ticket data may contain PII requiring proper handling"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "30%+ of tickets are misrouted, causing delays",
+      "Classification is inconsistent across support agents",
+      "Priority assignment is subjective, not data-driven",
+      "Routing doesn't consider real-time agent availability"
+    ],
+    "estimatedEffort": "3-5 weeks for classification model; 2 weeks for routing engine"
+  },
+  {
+    "id": "BP-SUPP-02",
+    "name": "AI Knowledge Base Assistant",
+    "department": "Support",
+    "description": "AI-powered assistant that helps support agents quickly find relevant knowledge base articles, past solutions, and documentation.",
+    "typicalTriggers": [
+      "Agent starts responding to a ticket",
+      "Agent searches knowledge base",
+      "Agent asks for help in internal channel"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Ticket Context Extraction",
+        "owner": "Support Platform",
+        "duration": "Instant",
+        "dependsOn": [],
+        "description": "Extract key context from ticket: issue, product, customer tier",
+        "aiOpportunity": "AI extracts entities, intent, and context from ticket content"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Knowledge Search",
+        "owner": "Support Agent",
+        "duration": "3-5 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Agent searches knowledge base for relevant articles",
+        "aiOpportunity": "AI retrieves top 3-5 relevant articles automatically"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Solution Synthesis",
+        "owner": "Support Agent",
+        "duration": "5-10 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Agent reads articles and synthesizes solution for customer",
+        "aiOpportunity": "AI summarizes relevant articles into actionable response"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Response Drafting",
+        "owner": "Support Agent",
+        "duration": "5-10 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Draft response to customer using knowledge base content",
+        "aiOpportunity": "AI drafts response with knowledge base citations"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Knowledge Gap Detection",
+        "owner": "Knowledge Manager",
+        "duration": "Monthly",
+        "dependsOn": [],
+        "description": "Identify topics where agents struggle to find answers",
+        "aiOpportunity": "AI monitors search failures and recommends new KB articles"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Average Handle Time",
+        "description": "Average time from ticket assignment to resolution",
+        "typicalBenchmark": "15-30 min (target)"
+      },
+      {
+        "name": "KB Article Utilization",
+        "description": "Percentage of tickets resolved using KB content",
+        "typicalBenchmark": "40-60%"
+      },
+      {
+        "name": "Agent Search Time",
+        "description": "Time agents spend searching for information per ticket",
+        "typicalBenchmark": "5-10 min"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Zendesk Guide",
+        "category": "Documentation",
+        "typicalUsage": "Knowledge base management"
+      },
+      {
+        "name": "Intercom",
+        "category": "Support",
+        "typicalUsage": "Help center and chatbot"
+      },
+      {
+        "name": "Confluence",
+        "category": "Documentation",
+        "typicalUsage": "Internal documentation"
+      },
+      {
+        "name": "Guru",
+        "category": "AI",
+        "typicalUsage": "AI knowledge management"
+      }
+    ],
+    "complianceNotes": [
+      "KB content must be reviewed for accuracy and compliance"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Agents spend 20% of time searching for answers",
+      "Knowledge base is outdated, making searches unreliable",
+      "Multiple knowledge sources are not centrally searchable",
+      "New agents take months to learn where to find information"
+    ],
+    "estimatedEffort": "4-6 weeks for search and retrieval; 3-4 weeks for knowledge gap detection"
+  },
+  {
+    "id": "BP-SUPP-03",
+    "name": "Sentiment-Driven Priority Escalation",
+    "department": "Support",
+    "description": "Using sentiment analysis to detect customer frustration, anger, or urgency in support interactions and escalate accordingly.",
+    "typicalTriggers": [
+      "Customer uses negative language in ticket/chat",
+      "Customer mentions competitor, lawyer, or cancel",
+      "Repeated ticket submissions on same issue"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Sentiment Detection",
+        "owner": "Support Platform",
+        "duration": "Instant",
+        "dependsOn": [],
+        "description": "Analyze incoming message for sentiment and emotional tone",
+        "aiOpportunity": "AI scores sentiment in real-time across all communication channels"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Sentiment Alerting",
+        "owner": "Support Manager",
+        "duration": "5 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Flag tickets with negative sentiment for priority handling",
+        "aiOpportunity": "AI auto-escalates tickets based on sentiment severity thresholds"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Priority Override",
+        "owner": "Support Manager",
+        "duration": "5 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Override ticket priority and assign to senior agent if needed",
+        "aiOpportunity": "AI suggests priority override with justification"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Special Handling",
+        "owner": "Senior Agent",
+        "duration": "Varies",
+        "dependsOn": [
+          3
+        ],
+        "description": "Handle escalated ticket with appropriate tone and urgency",
+        "aiOpportunity": "AI provides escalation-specific response guidance"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Sentiment Tracking",
+        "owner": "CS Manager",
+        "duration": "Monthly",
+        "dependsOn": [],
+        "description": "Track sentiment trends across accounts and over time",
+        "aiOpportunity": "AI generates sentiment trend reports with account-level breakdowns"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Negative Sentiment Response Time",
+        "description": "Time to respond to negative-sentiment tickets",
+        "typicalBenchmark": "<15 min"
+      },
+      {
+        "name": "Sentiment Recovery Rate",
+        "description": "Percentage of interactions where sentiment improves after intervention",
+        "typicalBenchmark": "60-80%"
+      },
+      {
+        "name": "Escalation Accuracy",
+        "description": "Precision of sentiment-based escalation flags",
+        "typicalBenchmark": "85%+"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Zendesk",
+        "category": "Support",
+        "typicalUsage": "Ticket management and sentiment integrations"
+      },
+      {
+        "name": "Intercom",
+        "category": "Support",
+        "typicalUsage": "In-app chat with sentiment analysis"
+      },
+      {
+        "name": "Clarabridge",
+        "category": "AI",
+        "typicalUsage": "Customer sentiment and analytics"
+      },
+      {
+        "name": "Slack",
+        "category": "Communication",
+        "typicalUsage": "Escalation notifications"
+      }
+    ],
+    "complianceNotes": [
+      "Sentiment analysis must account for language and cultural differences"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Frustrated customers handled with same priority as routine inquiries",
+      "Negative sentiment detected hours or days late",
+      "Escalation decisions are subjective and inconsistent",
+      "No systematic tracking of account-level sentiment trends"
+    ],
+    "estimatedEffort": "2-3 weeks for sentiment model; 1-2 weeks for escalation rules"
+  },
+  {
+    "id": "BP-SUPP-04",
+    "name": "Automated Response Generation",
+    "department": "Support",
+    "description": "Generating draft responses to common support inquiries using AI, freeing agents to focus on complex issues.",
+    "typicalTriggers": [
+      "Ticket received with known issue pattern",
+      "Customer asks FAQ question",
+      "Agent requests response draft"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Issue Classification",
+        "owner": "Support Platform",
+        "duration": "Instant",
+        "dependsOn": [],
+        "description": "Classify issue type from ticket content",
+        "aiOpportunity": "AI classifies with confidence, identifies known resolution patterns"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Response Draft Generation",
+        "owner": "AI Agent",
+        "duration": "5 seconds",
+        "dependsOn": [
+          1
+        ],
+        "description": "Generate draft response based on issue classification and KB content",
+        "aiOpportunity": "AI generates response draft with KB citations"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Agent Review",
+        "owner": "Support Agent",
+        "duration": "1-3 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Agent reviews, edits, and approves AI-generated response",
+        "aiOpportunity": "AI learns from agent edits to improve future drafts"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Response Personalization",
+        "owner": "Support Agent",
+        "duration": "1-2 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Personalize response with customer name, context, tone adjustments",
+        "aiOpportunity": "AI auto-personalizes with customer context from CRM"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Send & Log",
+        "owner": "Support Platform",
+        "duration": "Instant",
+        "dependsOn": [
+          4
+        ],
+        "description": "Send response to customer, log in ticket history",
+        "aiOpportunity": "AI logs response effectiveness and customer satisfaction"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Response Generation Speed",
+        "description": "Time from ticket classification to available draft",
+        "typicalBenchmark": "<5 seconds"
+      },
+      {
+        "name": "Agent Edit Rate",
+        "description": "Percentage of AI drafts requiring <20% edits",
+        "typicalBenchmark": "60-80%"
+      },
+      {
+        "name": "CSAT with AI-Assisted Responses",
+        "description": "Customer satisfaction for AI-assisted tickets",
+        "typicalBenchmark": "4+/5"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Zendesk",
+        "category": "Support",
+        "typicalUsage": "Ticket management and macros"
+      },
+      {
+        "name": "Intercom",
+        "category": "Support",
+        "typicalUsage": "In-app chat and response automation"
+      },
+      {
+        "name": "OpenAI API",
+        "category": "AI",
+        "typicalUsage": "Response generation model"
+      },
+      {
+        "name": "Knowledge Base",
+        "category": "Documentation",
+        "typicalUsage": "Source content for responses"
+      }
+    ],
+    "complianceNotes": [
+      "AI-generated responses must be reviewed before sending",
+      "Accuracy monitoring required for regulated industries"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Repetitive responses consume 40% of support capacity",
+      "Response quality varies with agent experience",
+      "Agents spend time retyping similar solutions",
+      "Consistency in tone and accuracy is hard to maintain"
+    ],
+    "estimatedEffort": "5-7 weeks for response generation pipeline; 3-4 weeks for quality monitoring"
+  },
+  {
+    "id": "BP-SUPP-05",
+    "name": "Post-Ticket Quality Analysis",
+    "department": "Support",
+    "description": "Automated quality assurance analysis of support tickets to assess agent performance, identify coaching opportunities, and improve outcomes.",
+    "typicalTriggers": [
+      "Ticket marked resolved",
+      "Customer satisfaction survey completed",
+      "Periodic quality audit cycle"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Ticket Selection",
+        "owner": "QA Manager",
+        "duration": "1 hour",
+        "dependsOn": [],
+        "description": "Select random sample of resolved tickets for QA review",
+        "aiOpportunity": "AI scores all tickets for quality, selects highest-value reviews"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Quality Scoring",
+        "owner": "QA Specialist",
+        "duration": "15 min per ticket",
+        "dependsOn": [
+          1
+        ],
+        "description": "Score ticket against quality rubric: accuracy, tone, completeness, timeliness",
+        "aiOpportunity": "AI auto-scores tickets on quality dimensions"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Coaching Identification",
+        "owner": "QA Specialist",
+        "duration": "10 min per ticket",
+        "dependsOn": [
+          2
+        ],
+        "description": "Identify specific coaching opportunities from low-scoring areas",
+        "aiOpportunity": "AI groups quality issues into coaching themes"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Feedback Delivery",
+        "owner": "Support Manager",
+        "duration": "20 min per agent",
+        "dependsOn": [
+          3
+        ],
+        "description": "Deliver feedback to agents with examples and recommendations",
+        "aiOpportunity": "AI generates feedback report with specific improvement suggestions"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Trend Analysis",
+        "owner": "Support Manager",
+        "duration": "2 hours monthly",
+        "dependsOn": [],
+        "description": "Analyze quality trends across team over time",
+        "aiOpportunity": "AI generates quality dashboards with trend identification"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "QA Coverage",
+        "description": "Percentage of tickets receiving quality review",
+        "typicalBenchmark": "2-5% (manual), 100% (AI)"
+      },
+      {
+        "name": "Quality Score Trend",
+        "description": "Improvement in quality scores over time",
+        "typicalBenchmark": "10-20% improvement per quarter"
+      },
+      {
+        "name": "Coaching Effectiveness",
+        "description": "Improvement in agent scores after coaching",
+        "typicalBenchmark": "15-30%"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Zendesk",
+        "category": "Support",
+        "typicalUsage": "Ticket data for QA review"
+      },
+      {
+        "name": "Intercom",
+        "category": "Support",
+        "typicalUsage": "Conversation quality analysis"
+      },
+      {
+        "name": "MaestroQA",
+        "category": "Other",
+        "typicalUsage": "Quality assurance platform"
+      },
+      {
+        "name": "Lessonly",
+        "category": "Other",
+        "typicalUsage": "Agent coaching and training"
+      }
+    ],
+    "complianceNotes": [
+      "Quality scoring must be fair and consistent across agents"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "QA coverage is <5% of tickets due to manual effort",
+      "Quality scoring is subjective and varies between QA reviewers",
+      "Coaching is reactive, based on complaints not analysis",
+      "No systematic way to identify team-wide quality trends"
+    ],
+    "estimatedEffort": "3-5 weeks for quality scoring model; 2-3 weeks for coaching recommendations"
+  },
+  {
+    "id": "BP-FIN-01",
+    "name": "Automated Invoice Processing",
+    "department": "Finance",
+    "description": "Processing incoming invoices: data extraction, validation, approval routing, and payment scheduling with minimal manual entry.",
+    "typicalTriggers": [
+      "Invoice received from vendor via email or portal",
+      "Purchase order matched with invoice",
+      "Monthly/quarterly payment run"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Invoice Receipt",
+        "owner": "AP",
+        "duration": "5 min",
+        "dependsOn": [],
+        "description": "Receive invoice via email, mail, or vendor portal",
+        "aiOpportunity": "AI auto-captures from email, scans attached PDFs"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Data Extraction",
+        "owner": "AP Clerk",
+        "duration": "10 min per invoice",
+        "dependsOn": [
+          1
+        ],
+        "description": "Manually enter invoice data: vendor, amount, date, PO, GL codes",
+        "aiOpportunity": "AI extracts all fields with >95% accuracy"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Validation & Matching",
+        "owner": "AP Clerk",
+        "duration": "10 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Match invoice to PO and receipt, validate accuracy",
+        "aiOpportunity": "AI auto-matches to PO, flags discrepancies"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Approval Routing",
+        "owner": "AP Manager",
+        "duration": "5 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Route invoice to appropriate approver based on amount and department",
+        "aiOpportunity": "AI routes based on approval matrix, sends reminders"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Payment Scheduling",
+        "owner": "AP",
+        "duration": "5 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "Schedule payment within terms, optimize for cash flow",
+        "aiOpportunity": "AI optimizes payment timing based on cash position and terms"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Invoice Processing Time",
+        "description": "Time from receipt to payment",
+        "typicalBenchmark": "5-10 days (manual), <2 days (AI)"
+      },
+      {
+        "name": "Processing Cost per Invoice",
+        "description": "Cost to process a single invoice",
+        "typicalBenchmark": "$10-20 (manual), $2-5 (AI)"
+      },
+      {
+        "name": "Error Rate",
+        "description": "Percentage of invoices with data entry errors",
+        "typicalBenchmark": "3-8% (manual), <1% (AI)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "QuickBooks",
+        "category": "Finance",
+        "typicalUsage": "AP and accounting system"
+      },
+      {
+        "name": "Bill.com",
+        "category": "Finance",
+        "typicalUsage": "AP automation platform"
+      },
+      {
+        "name": "NetSuite",
+        "category": "Finance",
+        "typicalUsage": "ERP and financial management"
+      },
+      {
+        "name": "Sage",
+        "category": "Finance",
+        "typicalUsage": "Enterprise accounting"
+      }
+    ],
+    "complianceNotes": [
+      "Invoice processing subject to audit requirements",
+      "Vendor data must be protected"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "AP team manually enters 200+ invoices per week",
+      "Invoice discrepancies detected after payment, not before",
+      "Approval routing is manual and slow",
+      "Paper invoices require physical handling"
+    ],
+    "estimatedEffort": "4-6 weeks for extraction and validation; 2-3 weeks for approval routing"
+  },
+  {
+    "id": "BP-FIN-02",
+    "name": "Intelligent Expense Classification",
+    "department": "Finance",
+    "description": "Automatically classifying and categorizing business expenses from receipts, credit card transactions, and expense reports.",
+    "typicalTriggers": [
+      "Employee submits expense report",
+      "Corporate card transaction posted",
+      "Receipt uploaded via mobile app"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Receipt Capture",
+        "owner": "Employee",
+        "duration": "2 min",
+        "dependsOn": [],
+        "description": "Take photo of receipt or forward email receipt",
+        "aiOpportunity": "AI extracts data from receipt image automatically"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Expense Categorization",
+        "owner": "Employee/Finance",
+        "duration": "3 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Select expense category: travel, meals, software, etc.",
+        "aiOpportunity": "AI auto-categorizes based on merchant, amount, and context"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Policy Check",
+        "owner": "Finance",
+        "duration": "2 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Check expense against company policy for compliance",
+        "aiOpportunity": "AI checks policy compliance and flags violations"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Approval Routing",
+        "owner": "Manager",
+        "duration": "2 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Manager approves expense in system",
+        "aiOpportunity": "AI routes to appropriate approver, auto-approves low-risk expenses"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Reimbursement/Export",
+        "owner": "Finance",
+        "duration": "5 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "Process reimbursement or export to accounting system",
+        "aiOpportunity": "AI batch processes expenses for payment"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Expense Processing Time",
+        "description": "Time from submission to reimbursement",
+        "typicalBenchmark": "5-10 days (manual), <2 days (AI)"
+      },
+      {
+        "name": "Classification Accuracy",
+        "description": "Percentage of expenses correctly categorized",
+        "typicalBenchmark": "70% (manual), 90%+ (AI)"
+      },
+      {
+        "name": "Policy Compliance Rate",
+        "description": "Percentage of expenses compliant with policy",
+        "typicalBenchmark": "85-95%"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Expensify",
+        "category": "Finance",
+        "typicalUsage": "Expense management and OCR"
+      },
+      {
+        "name": "Concur",
+        "category": "Finance",
+        "typicalUsage": "Corporate travel and expense"
+      },
+      {
+        "name": "QuickBooks",
+        "category": "Finance",
+        "typicalUsage": "Accounting integration"
+      },
+      {
+        "name": "Brex",
+        "category": "Finance",
+        "typicalUsage": "Corporate card and expense management"
+      }
+    ],
+    "complianceNotes": [
+      "Expense records subject to tax and audit requirements"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Employees miscategorize expenses, causing end-of-quarter chaos",
+      "Manual policy checking is inconsistent",
+      "Receipt matching to credit card transactions is manual",
+      "International expenses with different currencies are error-prone"
+    ],
+    "estimatedEffort": "3-4 weeks for classification model; 2 weeks for policy engine"
+  },
+  {
+    "id": "BP-FIN-03",
+    "name": "Automated Revenue Reconciliation",
+    "department": "Finance",
+    "description": "Reconciling revenue data across billing systems, payment processors, CRM, and accounting platforms to ensure accuracy.",
+    "typicalTriggers": [
+      "Monthly closing cycle",
+      "Billing run completed",
+      "Payment processor settlement received"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Data Collection",
+        "owner": "Accounting",
+        "duration": "4-6 hours",
+        "dependsOn": [],
+        "description": "Pull transaction data from billing, payments, CRM, and ERP",
+        "aiOpportunity": "AI auto-pulls and normalizes data from all sources"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Transaction Matching",
+        "owner": "Accounting",
+        "duration": "6-8 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Match payments to invoices, subscriptions to revenue entries",
+        "aiOpportunity": "AI matches transactions across systems with fuzzy matching"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Discrepancy Investigation",
+        "owner": "Accounting",
+        "duration": "4 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Investigate unmatched or mis-matched transactions",
+        "aiOpportunity": "AI flags discrepancies with root cause analysis"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Adjustment Entry",
+        "owner": "Accounting",
+        "duration": "2 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Post adjusting entries to correct discrepancies",
+        "aiOpportunity": "AI suggests adjusting entries with supporting evidence"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Reconciliation Report",
+        "owner": "Accounting",
+        "duration": "2 hours",
+        "dependsOn": [
+          4
+        ],
+        "description": "Document reconciliation results for audit trail",
+        "aiOpportunity": "AI generates reconciliation report with exception summary"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Reconciliation Time",
+        "description": "Time to complete monthly reconciliation",
+        "typicalBenchmark": "3-5 days (manual), <1 day (AI)"
+      },
+      {
+        "name": "Reconciliation Accuracy",
+        "description": "Percentage of transactions correctly reconciled",
+        "typicalBenchmark": "95-99%"
+      },
+      {
+        "name": "Discrepancy Detection Rate",
+        "description": "Percentage of errors caught before reporting",
+        "typicalBenchmark": "60-80% (manual), 95%+ (AI)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Stripe",
+        "category": "Finance",
+        "typicalUsage": "Payment processing and billing"
+      },
+      {
+        "name": "NetSuite",
+        "category": "Finance",
+        "typicalUsage": "ERP and revenue recognition"
+      },
+      {
+        "name": "Salesforce",
+        "category": "CRM",
+        "typicalUsage": "Subscription and opportunity data"
+      },
+      {
+        "name": "Chargebee",
+        "category": "Finance",
+        "typicalUsage": "Subscription billing and reconciliation"
+      }
+    ],
+    "complianceNotes": [
+      "Revenue reconciliation subject to ASC 606 compliance",
+      "Audit trail required for all adjustments"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Monthly reconciliation takes 3+ business days",
+      "Transactions out of sync between billing, payments, and accounting",
+      "Discrepancies found during audit, not proactively",
+      "Manual matching is tedious and error-prone"
+    ],
+    "estimatedEffort": "6-8 weeks for matching engine; 3-4 weeks for discrepancy detection"
+  },
+  {
+    "id": "BP-FIN-04",
+    "name": "Subscription Billing Anomaly Detection",
+    "department": "Finance",
+    "description": "Detecting billing anomalies: failed charges, unexpected discounts, pricing errors, and subscription changes that affect revenue.",
+    "typicalTriggers": [
+      "Billing run completed",
+      "Failed payment notification",
+      "Subscription plan change"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Billing Data Ingestion",
+        "owner": "Finance Platform",
+        "duration": "Real-time",
+        "dependsOn": [],
+        "description": "Collect billing events: charges, credits, adjustments, failures",
+        "aiOpportunity": "AI streams billing events and builds real-time anomaly model"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Pattern Baseline",
+        "owner": "Finance",
+        "duration": "Initial setup",
+        "dependsOn": [],
+        "description": "Establish normal billing patterns per customer segment",
+        "aiOpportunity": "AI auto-establishes baselines from historical billing data"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Anomaly Detection",
+        "owner": "Finance",
+        "duration": "Daily review",
+        "dependsOn": [
+          1,
+          2
+        ],
+        "description": "Review billing exceptions and anomalies flagged by rules",
+        "aiOpportunity": "AI detects statistical anomalies in real-time"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Investigation",
+        "owner": "Billing Specialist",
+        "duration": "30 min per anomaly",
+        "dependsOn": [
+          3
+        ],
+        "description": "Investigate flagged anomalies and determine root cause",
+        "aiOpportunity": "AI provides root cause analysis with supporting data"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Correction & Prevention",
+        "owner": "Billing Specialist",
+        "duration": "1 hour",
+        "dependsOn": [
+          4
+        ],
+        "description": "Correct billing errors and update processes to prevent recurrence",
+        "aiOpportunity": "AI suggests preventive measures and updates detection rules"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Anomaly Detection Time",
+        "description": "Time from billing event to anomaly detection",
+        "typicalBenchmark": "Days to weeks (manual), Real-time (AI)"
+      },
+      {
+        "name": "Billing Error Rate",
+        "description": "Percentage of transactions with billing errors",
+        "typicalBenchmark": "1-3% (industry average)"
+      },
+      {
+        "name": "False Positive Rate",
+        "description": "Percentage of flagged anomalies that are not errors",
+        "typicalBenchmark": "<10%"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Stripe",
+        "category": "Finance",
+        "typicalUsage": "Billing and payment processing"
+      },
+      {
+        "name": "Chargebee",
+        "category": "Finance",
+        "typicalUsage": "Subscription management and billing"
+      },
+      {
+        "name": "Recurly",
+        "category": "Finance",
+        "typicalUsage": "Subscription billing platform"
+      },
+      {
+        "name": "NetSuite",
+        "category": "Finance",
+        "typicalUsage": "Revenue recognition and accounting"
+      }
+    ],
+    "complianceNotes": [
+      "Billing errors may trigger regulatory notification requirements"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Billing errors detected weeks after charge, requiring refunds",
+      "Failed payments not proactively addressed",
+      "Pricing errors from plan changes go unnoticed",
+      "No systematic approach to monitoring billing health"
+    ],
+    "estimatedEffort": "5-7 weeks for anomaly detection model; 2-3 weeks for alerting"
+  },
+  {
+    "id": "BP-FIN-05",
+    "name": "Financial Report Generation",
+    "department": "Finance",
+    "description": "Compiling financial data into standard reports: income statements, balance sheets, cash flow, board decks, and variance analysis.",
+    "typicalTriggers": [
+      "Month-end close completed",
+      "Quarterly board meeting preparation",
+      "Investor reporting cycle"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Data Aggregation",
+        "owner": "Finance",
+        "duration": "4 hours",
+        "dependsOn": [],
+        "description": "Pull financial data from ERP, billing, banking, and planning tools",
+        "aiOpportunity": "AI auto-aggregates from all financial systems"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Report Compilation",
+        "owner": "Finance",
+        "duration": "6-8 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Build financial statements, variance analysis, and commentary",
+        "aiOpportunity": "AI generates standard financial reports from aggregated data"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Variance Analysis",
+        "owner": "Finance",
+        "duration": "4 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Analyze actual vs budget/forecast, identify drivers of variance",
+        "aiOpportunity": "AI identifies variance drivers and generates narrative explanation"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Executive Summary",
+        "owner": "CFO/Finance",
+        "duration": "2 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Create executive summary with key metrics and strategic insights",
+        "aiOpportunity": "AI drafts executive summary with key financial narratives"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Board Deck Preparation",
+        "owner": "CFO",
+        "duration": "4 hours",
+        "dependsOn": [
+          4
+        ],
+        "description": "Compile board presentation with financial highlights and KPIs",
+        "aiOpportunity": "AI generates board deck with charts and narrative"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Report Generation Time",
+        "description": "Time from close to report delivery",
+        "typicalBenchmark": "3-5 days (manual), <1 day (AI)"
+      },
+      {
+        "name": "Report Accuracy",
+        "description": "Error rate in financial reports",
+        "typicalBenchmark": "<0.5%"
+      },
+      {
+        "name": "Variance Insight Quality",
+        "description": "Percentage of variances with identified root causes",
+        "typicalBenchmark": "60-80%"
+      }
+    ],
+    "systems": [
+      {
+        "name": "NetSuite",
+        "category": "Finance",
+        "typicalUsage": "ERP and financial reporting"
+      },
+      {
+        "name": "QuickBooks",
+        "category": "Finance",
+        "typicalUsage": "Small business accounting"
+      },
+      {
+        "name": "Adaptive Insights",
+        "category": "Finance",
+        "typicalUsage": "Financial planning and reporting"
+      },
+      {
+        "name": "Tableau",
+        "category": "Analytics",
+        "typicalUsage": "Financial dashboards and visualization"
+      }
+    ],
+    "complianceNotes": [
+      "Financial reports must comply with GAAP/IFRS standards",
+      "Board reports may be material information"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Board reports require 2+ days of manual compilation",
+      "Variance analysis is superficial due to time constraints",
+      "Report formats change each period, no standardization",
+      "Narrative commentary is written from scratch each cycle"
+    ],
+    "estimatedEffort": "5-7 weeks for report generation; 3-4 weeks for variance analysis"
+  },
+  {
+    "id": "BP-PROD-01",
+    "name": "User Feedback Synthesis",
+    "department": "Product",
+    "description": "Collecting, categorizing, and synthesizing user feedback from multiple sources into actionable product insights.",
+    "typicalTriggers": [
+      "Product review cycle",
+      "Customer interview batch completed",
+      "Feedback volume threshold exceeded"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Feedback Collection",
+        "owner": "Product Ops",
+        "duration": "Ongoing",
+        "dependsOn": [],
+        "description": "Gather feedback from support tickets, interviews, NPS, app reviews, social media",
+        "aiOpportunity": "AI auto-collects from all feedback channels"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Feedback Categorization",
+        "owner": "PM",
+        "duration": "4-6 hours/week",
+        "dependsOn": [
+          1
+        ],
+        "description": "Read and categorize feedback: feature request, bug, complaint, praise",
+        "aiOpportunity": "AI classifies feedback by type, topic, sentiment, and urgency"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Thematic Analysis",
+        "owner": "PM",
+        "duration": "6 hours/week",
+        "dependsOn": [
+          2
+        ],
+        "description": "Identify themes, patterns, and trending topics across feedback",
+        "aiOpportunity": "AI identifies emergent themes and tracks trend velocity"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Insight Prioritization",
+        "owner": "PM",
+        "duration": "3 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Prioritize insights by frequency, severity, and strategic alignment",
+        "aiOpportunity": "AI scores insights by impact, frequency, and strategic fit"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Recommendation Briefing",
+        "owner": "PM",
+        "duration": "2 hours",
+        "dependsOn": [
+          4
+        ],
+        "description": "Produce recommendation document with supporting evidence",
+        "aiOpportunity": "AI generates recommendation brief with evidence synthesis"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Feedback Processing Time",
+        "description": "Time from feedback receipt to insight generation",
+        "typicalBenchmark": "2-4 weeks (manual), <1 week (AI)"
+      },
+      {
+        "name": "Feedback Coverage",
+        "description": "Percentage of feedback items reviewed and categorized",
+        "typicalBenchmark": "30-50% (manual), 100% (AI)"
+      },
+      {
+        "name": "Insight-to-Action Rate",
+        "description": "Percentage of insights that lead to product changes",
+        "typicalBenchmark": "20-40%"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Productboard",
+        "category": "Product",
+        "typicalUsage": "Feedback management and prioritization"
+      },
+      {
+        "name": "Canny",
+        "category": "Product",
+        "typicalUsage": "Feature request collection and voting"
+      },
+      {
+        "name": "Zendesk",
+        "category": "Support",
+        "typicalUsage": "Support ticket feedback"
+      },
+      {
+        "name": "Notion",
+        "category": "Documentation",
+        "typicalUsage": "Insight documentation and sharing"
+      }
+    ],
+    "complianceNotes": [
+      "User feedback may contain PII requiring anonymization"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Thousands of feedback items with no systematic aggregation",
+      "PMs spend hours manually reviewing feedback",
+      "Important signals lost in noise",
+      "Feedback insights delivered too late for roadmap decisions"
+    ],
+    "estimatedEffort": "3-5 weeks for collection and categorization; 3-4 weeks for thematic analysis"
+  },
+  {
+    "id": "BP-PROD-02",
+    "name": "Feature Request Prioritization",
+    "department": "Product",
+    "description": "Evaluating and prioritizing feature requests based on customer demand, strategic alignment, engineering effort, and business impact.",
+    "typicalTriggers": [
+      "Quarterly roadmap planning",
+      "Feature request threshold reached",
+      "Customer executive request"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Request Aggregation",
+        "owner": "Product Ops",
+        "duration": "4 hours",
+        "dependsOn": [],
+        "description": "Collect feature requests from all channels: in-app, support, CS, sales",
+        "aiOpportunity": "AI auto-aggregates from all sources and deduplicates"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Request Scoring",
+        "owner": "PM",
+        "duration": "2 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Score each request: customer count, revenue, strategic fit, effort",
+        "aiOpportunity": "AI scores with consistent criteria across all requests"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Engineering Estimation",
+        "owner": "Engineering",
+        "duration": "3 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Estimate engineering effort for top-scored requests",
+        "aiOpportunity": "AI provides effort estimates from historical data"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Prioritization Review",
+        "owner": "PM/VP Product",
+        "duration": "3 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Review prioritized list, adjust for strategy and dependencies",
+        "aiOpportunity": "AI generates ranked list with rationale for each position"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Roadmap Integration",
+        "owner": "PM",
+        "duration": "2 hours",
+        "dependsOn": [
+          4
+        ],
+        "description": "Integrate prioritized requests into product roadmap",
+        "aiOpportunity": "AI suggests roadmap placement based on dependencies and capacity"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Prioritization Cycle Time",
+        "description": "Time from request to roadmap decision",
+        "typicalBenchmark": "1-3 months (manual), <2 weeks (AI)"
+      },
+      {
+        "name": "Stakeholder Satisfaction",
+        "description": "Satisfaction with prioritization transparency and rationale",
+        "typicalBenchmark": "3/5 (manual), 4+/5 (AI with rationale)"
+      },
+      {
+        "name": "Feature Adoption Rate",
+        "description": "Adoption of prioritized feature after release",
+        "typicalBenchmark": "Target: >40% adoption"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Productboard",
+        "category": "Product",
+        "typicalUsage": "Feedback prioritization and roadmap"
+      },
+      {
+        "name": "Jira",
+        "category": "Engineering",
+        "typicalUsage": "Issue tracking and engineering estimation"
+      },
+      {
+        "name": "Salesforce",
+        "category": "CRM",
+        "typicalUsage": "Customer and revenue data for scoring"
+      },
+      {
+        "name": "Aha!",
+        "category": "Product",
+        "typicalUsage": "Roadmap planning and strategy"
+      }
+    ],
+    "complianceNotes": [],
+    "aiReadiness": "Medium",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Feature requests from different sources never aggregated",
+      "Prioritization is political, not data-driven",
+      "Engineering effort estimates are inaccurate",
+      "Stakeholders don't understand why requests are deprioritized"
+    ],
+    "estimatedEffort": "4-6 weeks for scoring model; 3-4 weeks for effort estimation"
+  },
+  {
+    "id": "BP-PROD-03",
+    "name": "Automated Spec Writing",
+    "department": "Product",
+    "description": "Generating product specification documents from feature briefs, user research, and technical requirements.",
+    "typicalTriggers": [
+      "Feature approved for development",
+      "Product spec template update",
+      "Technical discovery completed"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Requirements Gathering",
+        "owner": "PM",
+        "duration": "4-6 hours",
+        "dependsOn": [],
+        "description": "Collect requirements from stakeholders, user research, design",
+        "aiOpportunity": "AI compiles requirements from research and feedback data"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Spec Outline",
+        "owner": "PM",
+        "duration": "2 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Create spec outline: problem statement, requirements, acceptance criteria",
+        "aiOpportunity": "AI generates outline from requirements and similar specs"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Detailed Spec Writing",
+        "owner": "PM",
+        "duration": "8-12 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Write detailed spec: user stories, edge cases, APIs, error states",
+        "aiOpportunity": "AI drafts full spec with technical context"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Technical Review",
+        "owner": "Engineering Lead",
+        "duration": "2-3 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Review spec for technical feasibility and completeness",
+        "aiOpportunity": "AI checks spec for common gaps and inconsistencies"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Spec Finalization",
+        "owner": "PM",
+        "duration": "2 hours",
+        "dependsOn": [
+          4
+        ],
+        "description": "Incorporate feedback and finalize specification",
+        "aiOpportunity": "AI incorporates review feedback and formats final spec"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Spec Writing Time",
+        "description": "Hours from feature approval to completed spec",
+        "typicalBenchmark": "16-24 hours (manual), 4-6 hours (AI)"
+      },
+      {
+        "name": "Spec Quality Score",
+        "description": "Engineering rating of spec completeness",
+        "typicalBenchmark": "3/5 (manual), 4+/5 (AI)"
+      },
+      {
+        "name": "Spec Revision Count",
+        "description": "Number of revision cycles before approval",
+        "typicalBenchmark": "2-3 (manual), 1-2 (AI)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Confluence",
+        "category": "Documentation",
+        "typicalUsage": "Spec creation and collaboration"
+      },
+      {
+        "name": "Notion",
+        "category": "Documentation",
+        "typicalUsage": "Product documentation"
+      },
+      {
+        "name": "Jira",
+        "category": "Engineering",
+        "typicalUsage": "User stories and acceptance criteria"
+      },
+      {
+        "name": "Figma",
+        "category": "Product",
+        "typicalUsage": "Design specs and prototypes"
+      }
+    ],
+    "complianceNotes": [
+      "Specs for regulated features require additional compliance review"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "PMs spend 40% of time on documentation",
+      "Spec quality and detail varies with PM experience",
+      "Edge cases are often missed until development",
+      "Specs take too long to produce, delaying engineering"
+    ],
+    "estimatedEffort": "5-7 weeks for spec generation; 3-4 weeks for quality checking"
+  },
+  {
+    "id": "BP-PROD-04",
+    "name": "Competitive Intelligence Monitoring",
+    "department": "Product",
+    "description": "Continuous monitoring of competitor product changes, pricing updates, positioning shifts, and market moves.",
+    "typicalTriggers": [
+      "Competitor product launch or update",
+      "Competitor pricing change",
+      "Quarterly competitive review"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Competitor Identification",
+        "owner": "PM",
+        "duration": "2 hours",
+        "dependsOn": [],
+        "description": "Maintain list of competitors to monitor",
+        "aiOpportunity": "AI auto-discovers competitors from market signals"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Signal Monitoring",
+        "owner": "PM",
+        "duration": "2 hours/week",
+        "dependsOn": [
+          1
+        ],
+        "description": "Monitor competitor websites, blogs, changelogs, pricing pages, press",
+        "aiOpportunity": "AI monitors all sources continuously and summarizes changes"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Change Analysis",
+        "owner": "PM",
+        "duration": "3 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Analyze competitive moves: what changed, why it matters",
+        "aiOpportunity": "AI generates impact analysis with recommended responses"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Intelligence Briefing",
+        "owner": "PM",
+        "duration": "2 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Create competitive intelligence brief for product and leadership",
+        "aiOpportunity": "AI generates briefing with key changes and strategic implications"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Strategy Adjustment",
+        "owner": "Product Leadership",
+        "duration": "2 hours",
+        "dependsOn": [
+          4
+        ],
+        "description": "Adjust product strategy and roadmap based on competitive intel",
+        "aiOpportunity": "AI suggests strategic adjustments with scenario analysis"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Detection Latency",
+        "description": "Time from competitor change to internal notification",
+        "typicalBenchmark": "Days to weeks (manual), <24 hours (AI)"
+      },
+      {
+        "name": "Competitive Coverage",
+        "description": "Percentage of relevant competitors monitored",
+        "typicalBenchmark": "50-70% (manual), 90%+ (AI)"
+      },
+      {
+        "name": "Intel Actionability",
+        "description": "Percentage of intel items that lead to roadmap actions",
+        "typicalBenchmark": "20-40%"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Crayon",
+        "category": "AI",
+        "typicalUsage": "Competitive intelligence platform"
+      },
+      {
+        "name": "Klue",
+        "category": "AI",
+        "typicalUsage": "Competitive intelligence aggregation"
+      },
+      {
+        "name": "Google Alerts",
+        "category": "Marketing",
+        "typicalUsage": "Web monitoring (basic)"
+      },
+      {
+        "name": "Product Hunt",
+        "category": "Product",
+        "typicalUsage": "New product and feature launches"
+      }
+    ],
+    "complianceNotes": [
+      "Competitive intelligence must be gathered from public sources only"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Competitor moves detected weeks after they happen",
+      "Competitive monitoring is reactive, not continuous",
+      "No systematic way to assess competitive threat level",
+      "Intel is scattered across individuals, not centralized"
+    ],
+    "estimatedEffort": "3-4 weeks for monitoring pipeline; 2-3 weeks for analysis model"
+  },
+  {
+    "id": "BP-PROD-05",
+    "name": "Usage Pattern Analysis",
+    "department": "Product",
+    "description": "Analyzing product usage data to identify adoption patterns, feature stickiness, power users, and optimization opportunities.",
+    "typicalTriggers": [
+      "Product analytics review cycle",
+      "Feature release analysis",
+      "User segmentation refresh"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Event Data Collection",
+        "owner": "Data Engineering",
+        "duration": "Ongoing",
+        "dependsOn": [],
+        "description": "Collect product usage events from product analytics",
+        "aiOpportunity": "AI auto-tracks and normalizes event data"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Pattern Discovery",
+        "owner": "Data Analyst/PM",
+        "duration": "10-15 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Analyze usage data for patterns: adoption funnels, retention cohorts, feature stickiness",
+        "aiOpportunity": "AI discovers patterns automatically from event streams"
+      },
+      {
+        "stepOrder": 3,
+        "name": "User Segmentation",
+        "owner": "PM",
+        "duration": "4 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Segment users by behavior: power users, at-risk, dormant, explorers",
+        "aiOpportunity": "AI generates behavioral segments from usage data"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Opportunity Identification",
+        "owner": "PM",
+        "duration": "4 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Identify optimization opportunities: onboarding gaps, feature discovery, power user paths",
+        "aiOpportunity": "AI prioritizes optimization opportunities by potential impact"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Recommendation Report",
+        "owner": "PM",
+        "duration": "3 hours",
+        "dependsOn": [
+          4
+        ],
+        "description": "Produce recommendation report with evidence and expected impact",
+        "aiOpportunity": "AI generates report with data visualizations and recommendations"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Analysis Cadence",
+        "description": "How often usage analysis is conducted",
+        "typicalBenchmark": "Monthly (manual), Continuous (AI)"
+      },
+      {
+        "name": "Feature Adoption Rate",
+        "description": "Percentage of users adopting new features within 30 days",
+        "typicalBenchmark": "20-40%"
+      },
+      {
+        "name": "Activation Rate",
+        "description": "Percentage of signups reaching key activation milestone",
+        "typicalBenchmark": "30-60%"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Mixpanel",
+        "category": "Analytics",
+        "typicalUsage": "Product usage analytics"
+      },
+      {
+        "name": "Amplitude",
+        "category": "Analytics",
+        "typicalUsage": "Product analytics and behavioral insights"
+      },
+      {
+        "name": "Segment",
+        "category": "Analytics",
+        "typicalUsage": "Customer data pipeline"
+      },
+      {
+        "name": "Heap",
+        "category": "Analytics",
+        "typicalUsage": "Auto-capture product analytics"
+      }
+    ],
+    "complianceNotes": [
+      "Usage data privacy must comply with GDPR/CCPA"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Product usage data is siloed and not cross-referenced",
+      "Usage patterns are explored manually with SQL queries",
+      "Feature adoption measured reactively after launch",
+      "No predictive understanding of user behavior"
+    ],
+    "estimatedEffort": "5-7 weeks for pattern discovery; 4-5 weeks for segmentation"
+  },
+  {
+    "id": "BP-ENG-01",
+    "name": "Automated Code Review Assistance",
+    "department": "Engineering",
+    "description": "AI-assisted code review that catches bugs, style issues, security vulnerabilities, and architectural concerns before human review.",
+    "typicalTriggers": [
+      "New pull request created",
+      "Code review requested",
+      "PR stale >24 hours without review"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "PR Submission",
+        "owner": "Developer",
+        "duration": "5 min",
+        "dependsOn": [],
+        "description": "Developer submits pull request with code changes",
+        "aiOpportunity": "AI auto-describes changes and generates summary"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Automated Analysis",
+        "owner": "CI/Platform",
+        "duration": "5 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Run linters, tests, and static analysis on PR code",
+        "aiOpportunity": "AI reviews code for logic bugs, security, style, and architecture"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Review Assignment",
+        "owner": "Engineering Manager",
+        "duration": "5 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Assign reviewer based on expertise and availability",
+        "aiOpportunity": "AI assigns optimal reviewer from expertise and context data"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Human Review",
+        "owner": "Senior Developer",
+        "duration": "30-60 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Senior dev reviews code, adds comments, requests changes",
+        "aiOpportunity": "AI prioritizes review comments by severity, surfaces only novel issues"
+      },
+      {
+        "stepOrder": 5,
+        "name": "PR Merge",
+        "owner": "Developer",
+        "duration": "5 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "Address review feedback and merge PR",
+        "aiOpportunity": "AI verifies all review comments addressed before merge"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "PR Review Cycle Time",
+        "description": "Time from PR creation to merge",
+        "typicalBenchmark": "4-24 hours (target), days (without AI)"
+      },
+      {
+        "name": "Bug Escape Rate",
+        "description": "Bugs found in production vs. caught in review",
+        "typicalBenchmark": "<5% with thorough review"
+      },
+      {
+        "name": "Reviewer Bandwidth",
+        "description": "PRs reviewed per developer per week",
+        "typicalBenchmark": "10-20 (with AI assistance)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "GitHub",
+        "category": "Engineering",
+        "typicalUsage": "Code repository and PR management"
+      },
+      {
+        "name": "GitLab",
+        "category": "Engineering",
+        "typicalUsage": "Alternative code platform"
+      },
+      {
+        "name": "SonarQube",
+        "category": "Engineering",
+        "typicalUsage": "Static code analysis"
+      },
+      {
+        "name": "CodeRabbit",
+        "category": "AI",
+        "typicalUsage": "AI code review assistant"
+      }
+    ],
+    "complianceNotes": [
+      "Code review processes may need audit trail for compliance"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "PR review queues grow to 50+ pending, delaying releases",
+      "Senior developers spend hours on routine review comments",
+      "Code style consistency is hard to maintain across team",
+      "Security vulnerabilities detected weeks after PR merge"
+    ],
+    "estimatedEffort": "6-10 weeks for review integration; 3-4 weeks for model tuning"
+  },
+  {
+    "id": "BP-ENG-02",
+    "name": "Intelligent Documentation Generation",
+    "department": "Engineering",
+    "description": "Automatically generating and maintaining technical documentation from code, APIs, architecture decisions, and engineering discussions.",
+    "typicalTriggers": [
+      "Code merged to main branch",
+      "API endpoint created or modified",
+      "Architecture decision recorded"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Code Change Detection",
+        "owner": "CI/Platform",
+        "duration": "Instant",
+        "dependsOn": [],
+        "description": "Detect code changes that warrant documentation updates",
+        "aiOpportunity": "AI identifies documentation-impacting changes automatically"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Doc Content Generation",
+        "owner": "Developer",
+        "duration": "20-40 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Write or update documentation for code changes",
+        "aiOpportunity": "AI generates doc draft from code, comments, and commit messages"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Doc Placement",
+        "owner": "Developer",
+        "duration": "5 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Place documentation in appropriate location in doc structure",
+        "aiOpportunity": "AI suggests doc location based on content and existing structure"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Review & Approval",
+        "owner": "Tech Lead",
+        "duration": "15 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Review documentation for accuracy and completeness",
+        "aiOpportunity": "AI checks docs for accuracy against current code state"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Publishing",
+        "owner": "CI/Platform",
+        "duration": "Instant",
+        "dependsOn": [
+          4
+        ],
+        "description": "Publish documentation to internal or external docs site",
+        "aiOpportunity": "AI auto-publishes and updates doc indexes"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Documentation Coverage",
+        "description": "Percentage of code with associated documentation",
+        "typicalBenchmark": "30-50% (manual), 80%+ (AI)"
+      },
+      {
+        "name": "Doc Freshness",
+        "description": "Time between code change and doc update",
+        "typicalBenchmark": "Months (manual), Hours (AI)"
+      },
+      {
+        "name": "Developer Time on Docs",
+        "description": "Weekly hours spent on documentation",
+        "typicalBenchmark": "4-8 hours (manual), <2 hours (AI)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "GitHub",
+        "category": "Engineering",
+        "typicalUsage": "Code repository and wikis"
+      },
+      {
+        "name": "Confluence",
+        "category": "Documentation",
+        "typicalUsage": "Internal documentation"
+      },
+      {
+        "name": "ReadMe",
+        "category": "Documentation",
+        "typicalUsage": "API documentation and developer hub"
+      },
+      {
+        "name": "Notion",
+        "category": "Documentation",
+        "typicalUsage": "Engineering documentation"
+      }
+    ],
+    "complianceNotes": [
+      "Documentation must be kept accurate for compliance and audit"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Documentation is 6+ months out of date",
+      "Developers hate writing docs, so they don't",
+      "API documentation is incomplete or missing",
+      "New engineers struggle with outdated onboarding docs"
+    ],
+    "estimatedEffort": "3-5 weeks for doc generation; 2 weeks for freshness monitoring"
+  },
+  {
+    "id": "BP-ENG-03",
+    "name": "Automated Test Generation",
+    "department": "Engineering",
+    "description": "Generating unit, integration, and end-to-end tests from code changes, specifications, and usage patterns.",
+    "typicalTriggers": [
+      "New function or method created",
+      "API endpoint modified",
+      "Bug fix merged"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Code Change Analysis",
+        "owner": "Developer",
+        "duration": "5 min",
+        "dependsOn": [],
+        "description": "Analyze code change to identify test requirements",
+        "aiOpportunity": "AI identifies test coverage gaps from code diff"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Test Scenario Generation",
+        "owner": "Developer",
+        "duration": "30 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Generate test scenarios: happy path, edge cases, error states",
+        "aiOpportunity": "AI generates comprehensive test scenarios from code analysis"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Test Code Writing",
+        "owner": "Developer",
+        "duration": "1-2 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Write test code for generated scenarios",
+        "aiOpportunity": "AI writes test code with assertions and fixtures"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Test Execution",
+        "owner": "CI",
+        "duration": "10 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Run generated tests and verify they pass",
+        "aiOpportunity": "AI fixes failing tests and regenerates as needed"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Coverage Reporting",
+        "owner": "CI",
+        "duration": "5 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "Update test coverage metrics and identify remaining gaps",
+        "aiOpportunity": "AI generates coverage report with gap analysis"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Test Coverage",
+        "description": "Percentage of code covered by automated tests",
+        "typicalBenchmark": "40-60% (manual), 70-90% (AI)"
+      },
+      {
+        "name": "Test Writing Time",
+        "description": "Time developer spends writing tests per PR",
+        "typicalBenchmark": "1-3 hours (manual), <30 min (AI)"
+      },
+      {
+        "name": "Test Reliability",
+        "description": "Percentage of tests that are stable (not flaky)",
+        "typicalBenchmark": "90-95%"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Jest",
+        "category": "Engineering",
+        "typicalUsage": "JavaScript testing framework"
+      },
+      {
+        "name": "PyTest",
+        "category": "Engineering",
+        "typicalUsage": "Python testing framework"
+      },
+      {
+        "name": "GitHub Actions",
+        "category": "Engineering",
+        "typicalUsage": "CI and test automation"
+      },
+      {
+        "name": "Diffblue",
+        "category": "AI",
+        "typicalUsage": "AI-powered test generation"
+      }
+    ],
+    "complianceNotes": [
+      "Tests for regulated features must be independently verified"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "High",
+    "typicalPainPoints": [
+      "Test coverage below 40% in most organizations",
+      "Developers skip writing tests to meet deadlines",
+      "Test maintenance is ignored, tests become flaky",
+      "Coverage metrics measure quantity, not quality"
+    ],
+    "estimatedEffort": "8-14 weeks for test generation pipeline; ongoing model refinement"
+  },
+  {
+    "id": "BP-ENG-04",
+    "name": "Incident Response Intelligence",
+    "department": "Engineering",
+    "description": "AI-assisted incident detection, root cause analysis, response coordination, and post-mortem generation for production incidents.",
+    "typicalTriggers": [
+      "Alert triggered from monitoring system",
+      "Error rate threshold exceeded",
+      "Customer-reported outage"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Incident Detection",
+        "owner": "Monitoring",
+        "duration": "Real-time",
+        "dependsOn": [],
+        "description": "Detect anomaly or incident from monitoring and alerting systems",
+        "aiOpportunity": "AI correlates alerts into incidents, reduces noise"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Initial Triage",
+        "owner": "On-Call Engineer",
+        "duration": "15 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Assess incident severity, impact, and initial response",
+        "aiOpportunity": "AI analyzes logs, metrics, and traces for root cause candidates"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Root Cause Analysis",
+        "owner": "Engineering Team",
+        "duration": "1-4 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Investigate and identify root cause of incident",
+        "aiOpportunity": "AI suggests probable root causes from telemetry data"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Resolution & Mitigation",
+        "owner": "Engineering Team",
+        "duration": "1-4 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Implement fix or mitigation, verify resolution",
+        "aiOpportunity": "AI suggests resolution steps from similar past incidents"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Post-Mortem Generation",
+        "owner": "Engineering Manager",
+        "duration": "4 hours",
+        "dependsOn": [
+          4
+        ],
+        "description": "Document incident timeline, root cause, action items",
+        "aiOpportunity": "AI generates post-mortem from incident timeline and communications"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Mean Time to Detection",
+        "description": "Time from incident start to detection",
+        "typicalBenchmark": "<5 min (AI), 15+ min (manual)"
+      },
+      {
+        "name": "Mean Time to Resolution",
+        "description": "Time from detection to resolution",
+        "typicalBenchmark": "<1 hour (critical), <4 hours (high)"
+      },
+      {
+        "name": "Incident Noise Ratio",
+        "description": "Percentage of alerts that are actionable incidents",
+        "typicalBenchmark": "5-10% (without AI), 30-50% (with AI correlation)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "PagerDuty",
+        "category": "Engineering",
+        "typicalUsage": "Incident management and on-call scheduling"
+      },
+      {
+        "name": "Datadog",
+        "category": "Engineering",
+        "typicalUsage": "Monitoring and observability"
+      },
+      {
+        "name": "Splunk",
+        "category": "Engineering",
+        "typicalUsage": "Log aggregation and analysis"
+      },
+      {
+        "name": "Opsgenie",
+        "category": "Engineering",
+        "typicalUsage": "Incident alerting and response"
+      }
+    ],
+    "complianceNotes": [
+      "Incident response may need audit trail for SOC2/compliance"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Root cause analysis takes 4+ hours of manual investigation",
+      "Alert fatigue from noisy monitoring systems",
+      "Incident context scattered across multiple tools",
+      "Post-mortems are inconsistent and often skipped"
+    ],
+    "estimatedEffort": "6-10 weeks for RCA assistance; 4-6 weeks for post-mortem generation"
+  },
+  {
+    "id": "BP-ENG-05",
+    "name": "Dependency Update Automation",
+    "department": "Engineering",
+    "description": "Automated monitoring, testing, and updating of software dependencies to maintain security, stability, and performance.",
+    "typicalTriggers": [
+      "New dependency version released",
+      "Security vulnerability disclosed (CVE)",
+      "Dependency reaches end of life"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Dependency Inventory",
+        "owner": "Platform Team",
+        "duration": "Monthly",
+        "dependsOn": [],
+        "description": "Maintain inventory of all dependencies and versions",
+        "aiOpportunity": "AI maintains real-time dependency graph with version tracking"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Vulnerability Scanning",
+        "owner": "Security/Platform",
+        "duration": "Daily",
+        "dependsOn": [],
+        "description": "Scan dependencies for known vulnerabilities",
+        "aiOpportunity": "AI continuously monitors CVEs and assesses impact"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Update Prioritization",
+        "owner": "Engineering Manager",
+        "duration": "2 hours/week",
+        "dependsOn": [
+          2
+        ],
+        "description": "Prioritize updates by severity, breaking changes, and urgency",
+        "aiOpportunity": "AI scores updates by risk, effort, and impact"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Automated Update & Test",
+        "owner": "CI",
+        "duration": "10 min per update",
+        "dependsOn": [
+          3
+        ],
+        "description": "Apply update, run test suite, verify no regressions",
+        "aiOpportunity": "AI applies updates, runs tests, and fixes breaking changes"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Deployment",
+        "owner": "Developer",
+        "duration": "30 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "Deploy updated dependencies to production",
+        "aiOpportunity": "AI generates changelog and deployment notes"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Dependency Freshness",
+        "description": "Average time since last dependency update",
+        "typicalBenchmark": "6-12 months behind (manual), <30 days (AI)"
+      },
+      {
+        "name": "Critical CVE Response Time",
+        "description": "Time from CVE disclosure to patched deployment",
+        "typicalBenchmark": "7-30 days (manual), <48 hours (AI)"
+      },
+      {
+        "name": "Update Breakage Rate",
+        "description": "Percentage of updates that break tests",
+        "typicalBenchmark": "10-20%"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Dependabot",
+        "category": "Engineering",
+        "typicalUsage": "Automated dependency updates"
+      },
+      {
+        "name": "Renovate",
+        "category": "Engineering",
+        "typicalUsage": "Dependency update automation"
+      },
+      {
+        "name": "Snyk",
+        "category": "Engineering",
+        "typicalUsage": "Vulnerability scanning and monitoring"
+      },
+      {
+        "name": "GitHub",
+        "category": "Engineering",
+        "typicalUsage": "PRs for dependency updates"
+      }
+    ],
+    "complianceNotes": [
+      "Dependency updates may require security review for compliance"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Dependencies are 12+ months behind, accumulating technical debt",
+      "Critical security patches delayed due to manual update process",
+      "Breaking changes require significant rework when batched",
+      "No visibility into dependency health across the organization"
+    ],
+    "estimatedEffort": "3-5 weeks for automation pipeline; 2-3 weeks for prioritization model"
+  },
+  {
+    "id": "BP-HR-01",
+    "name": "Automated Resume Screening",
+    "department": "People/HR",
+    "description": "AI-powered screening and ranking of candidate resumes against job requirements to identify top candidates efficiently.",
+    "typicalTriggers": [
+      "New job requisition approved",
+      "Resume batch received from job board",
+      "Application deadline passed"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Resume Collection",
+        "owner": "Recruiting",
+        "duration": "Ongoing",
+        "dependsOn": [],
+        "description": "Collect resumes from job boards, company site, referrals",
+        "aiOpportunity": "AI auto-collects and normalizes resumes from all sources"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Requirements Parsing",
+        "owner": "Recruiting",
+        "duration": "30 min",
+        "dependsOn": [],
+        "description": "Parse job requirements into structured criteria from job description",
+        "aiOpportunity": "AI extracts requirements from JD and previous successful hires"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Resume Screening",
+        "owner": "Recruiter",
+        "duration": "5-10 min per resume",
+        "dependsOn": [
+          1,
+          2
+        ],
+        "description": "Review each resume against requirements, screen for fit",
+        "aiOpportunity": "AI screens and ranks resumes against criteria in seconds"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Shortlist Generation",
+        "owner": "Recruiter",
+        "duration": "30 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Create shortlist of top candidates for recruiter review",
+        "aiOpportunity": "AI generates ranked shortlist with matching rationale"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Outreach Planning",
+        "owner": "Recruiter",
+        "duration": "45 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "Plan outreach sequence for shortlisted candidates",
+        "aiOpportunity": "AI suggests outreach priority and personalization notes"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Time to Screen",
+        "description": "Average time from resume receipt to screening decision",
+        "typicalBenchmark": "2-5 days (manual), <4 hours (AI)"
+      },
+      {
+        "name": "Screening Accuracy",
+        "description": "Percentage of screened-in candidates that advance to interview",
+        "typicalBenchmark": "30-50% (manual), 50-70% (AI)"
+      },
+      {
+        "name": "Diversity Impact",
+        "description": "Effect on candidate diversity through reduced bias",
+        "typicalBenchmark": "AI can reduce unconscious bias when properly designed"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Greenhouse",
+        "category": "HRIS",
+        "typicalUsage": "Applicant tracking and recruiting"
+      },
+      {
+        "name": "Lever",
+        "category": "HRIS",
+        "typicalUsage": "Applicant tracking system"
+      },
+      {
+        "name": "LinkedIn Recruiter",
+        "category": "HRIS",
+        "typicalUsage": "Candidate sourcing and search"
+      },
+      {
+        "name": "Ideal",
+        "category": "AI",
+        "typicalUsage": "AI resume screening"
+      }
+    ],
+    "complianceNotes": [
+      "Resume screening must comply with EEOC and local anti-discrimination laws",
+      "Screening criteria must be job-relevant and documented"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Recruiters spend 60% of time on initial resume screens",
+      "Screening criteria applied inconsistently across recruiters",
+      "High volume roles (1000+ applicants) overwhelm the team",
+      "Unconscious bias affects screening decisions"
+    ],
+    "estimatedEffort": "4-6 weeks for screening model; 2-3 weeks for integration with ATS"
+  },
+  {
+    "id": "BP-HR-02",
+    "name": "Intelligent Interview Scheduling",
+    "department": "People/HR",
+    "description": "Automated coordination of interview scheduling across candidates, interviewers, and calendars with intelligent optimization.",
+    "typicalTriggers": [
+      "Candidate passes screening",
+      "Interview feedback received",
+      "Reschedule request from candidate or interviewer"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Availability Collection",
+        "owner": "Recruiter",
+        "duration": "30 min",
+        "dependsOn": [],
+        "description": "Collect availability from candidate and interviewers via email",
+        "aiOpportunity": "AI syncs calendars and finds mutual availability instantly"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Interview Slot Proposal",
+        "owner": "Recruiter",
+        "duration": "20 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Propose interview time slots that work for all parties",
+        "aiOpportunity": "AI proposes optimal slots based on preferences and constraints"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Confirmation & Calendar",
+        "owner": "Recruiter",
+        "duration": "15 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Send calendar invites and confirm all participants",
+        "aiOpportunity": "AI auto-sends invites, confirmations, and reminders"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Interviewer Briefing",
+        "owner": "Recruiter",
+        "duration": "10 min per interviewer",
+        "dependsOn": [
+          3
+        ],
+        "description": "Brief interviewers on candidate background and interview focus",
+        "aiOpportunity": "AI generates interview briefing with candidate highlights"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Reschedule Handling",
+        "owner": "Recruiter",
+        "duration": "20 min per reschedule",
+        "dependsOn": [],
+        "description": "Handle reschedule requests, find new slots, update all parties",
+        "aiOpportunity": "AI auto-handles reschedules with minimal recruiter involvement"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Time to Schedule",
+        "description": "Time from screen complete to interview scheduled",
+        "typicalBenchmark": "2-5 days (manual), <24 hours (AI)"
+      },
+      {
+        "name": "Reschedule Rate",
+        "description": "Percentage of interviews requiring rescheduling",
+        "typicalBenchmark": "15-25%"
+      },
+      {
+        "name": "Recruiter Scheduling Time",
+        "description": "Hours per week spent on scheduling",
+        "typicalBenchmark": "10-15 hours (manual), <3 hours (AI)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Greenhouse",
+        "category": "HRIS",
+        "typicalUsage": "Interview scheduling and tracking"
+      },
+      {
+        "name": "Calendly",
+        "category": "HRIS",
+        "typicalUsage": "Automated scheduling and availability"
+      },
+      {
+        "name": "Google Calendar",
+        "category": "Communication",
+        "typicalUsage": "Calendar integration"
+      },
+      {
+        "name": "GoodTime",
+        "category": "AI",
+        "typicalUsage": "AI-powered interview scheduling"
+      }
+    ],
+    "complianceNotes": [
+      "Interview scheduling must ensure fair and consistent process"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Scheduling a single interview round requires 5+ email exchanges",
+      "Back-and-forth coordination consumes 40% of recruiter time",
+      "Reschedules cascade into multiple manual updates",
+      "No-shows due to poor confirmation and reminder process"
+    ],
+    "estimatedEffort": "3-5 weeks for scheduling automation; 2 weeks for reschedule handling"
+  },
+  {
+    "id": "BP-HR-03",
+    "name": "Employee Sentiment Analysis",
+    "department": "People/HR",
+    "description": "Continuous analysis of employee sentiment from surveys, communications, and engagement signals to detect satisfaction, burnout, and retention risk.",
+    "typicalTriggers": [
+      "Pulse survey completed",
+      "eNPS survey cycle",
+      "Employee review period",
+      "Retention risk signal detected"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Sentiment Data Collection",
+        "owner": "People Team",
+        "duration": "Ongoing",
+        "dependsOn": [],
+        "description": "Collect sentiment data from surveys, Slack, emails, performance reviews",
+        "aiOpportunity": "AI collects and normalizes sentiment data from all sources"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Signal Analysis",
+        "owner": "People Analytics",
+        "duration": "2 days per survey",
+        "dependsOn": [
+          1
+        ],
+        "description": "Analyze survey responses for themes, sentiments, and trends",
+        "aiOpportunity": "AI analyzes open-ended responses for themes and sentiment"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Risk Identification",
+        "owner": "HRBP",
+        "duration": "1 day",
+        "dependsOn": [
+          2
+        ],
+        "description": "Identify teams or individuals with declining sentiment or engagement",
+        "aiOpportunity": "AI flags at-risk segments with supporting evidence"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Intervention Planning",
+        "owner": "HRBP",
+        "duration": "2 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Plan interventions for at-risk teams and individuals",
+        "aiOpportunity": "AI suggests evidence-based intervention strategies"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Trend Tracking",
+        "owner": "People Analytics",
+        "duration": "Monthly",
+        "dependsOn": [],
+        "description": "Track sentiment trends over time and correlate with business events",
+        "aiOpportunity": "AI generates trend reports with correlation analysis"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Sentiment Detection Latency",
+        "description": "Time from sentiment shift to detection",
+        "typicalBenchmark": "1-3 months (pulse surveys), 1-2 weeks (continuous AI)"
+      },
+      {
+        "name": "Survey Response Analysis Time",
+        "description": "Time from survey close to insight delivery",
+        "typicalBenchmark": "2-5 days (manual), <2 hours (AI)"
+      },
+      {
+        "name": "Retention Intervention Success",
+        "description": "Percentage of at-risk employees retained after intervention",
+        "typicalBenchmark": "50-70%"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Culture Amp",
+        "category": "HRIS",
+        "typicalUsage": "Employee surveys and analytics"
+      },
+      {
+        "name": "Lattice",
+        "category": "HRIS",
+        "typicalUsage": "Performance reviews and engagement"
+      },
+      {
+        "name": "Slack",
+        "category": "Communication",
+        "typicalUsage": "Communication sentiment signals"
+      },
+      {
+        "name": "Peakon",
+        "category": "AI",
+        "typicalUsage": "Employee engagement and retention analytics"
+      }
+    ],
+    "complianceNotes": [
+      "Employee sentiment data is highly sensitive and must be anonymized",
+      "Analysis must comply with data privacy regulations"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Pulse surveys quarterly, issues detected months late",
+      "Open-ended survey responses manually analyzed, if at all",
+      "Sentiment data is not correlated with retention or performance",
+      "Interventions are reactive to departures, not proactive"
+    ],
+    "estimatedEffort": "5-7 weeks for analysis pipeline; 3-4 weeks for risk identification"
+  },
+  {
+    "id": "BP-HR-04",
+    "name": "Automated Onboarding Sequences",
+    "department": "People/HR",
+    "description": "Automated, personalized onboarding sequences that guide new hires through setup, training, introductions, and milestone completion.",
+    "typicalTriggers": [
+      "New hire accepted offer",
+      "New hire start date approaching",
+      "Onboarding milestone completed"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Pre-Onboarding Setup",
+        "owner": "IT/People Ops",
+        "duration": "4 hours",
+        "dependsOn": [],
+        "description": "Set up accounts, equipment, access, and workspace before start date",
+        "aiOpportunity": "AI auto-provisions accounts and triggers equipment orders"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Day 1 Orientation",
+        "owner": "People Team",
+        "duration": "4 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Welcome session, paperwork, company overview, team introductions",
+        "aiOpportunity": "AI generates personalized day-1 schedule and info pack"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Role-Specific Training",
+        "owner": "Manager/Team",
+        "duration": "1-2 weeks",
+        "dependsOn": [
+          2
+        ],
+        "description": "Role-specific onboarding: tools, processes, domain knowledge",
+        "aiOpportunity": "AI curates training content based on role and background"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Milestone Tracking",
+        "owner": "Manager",
+        "duration": "Ongoing",
+        "dependsOn": [
+          3
+        ],
+        "description": "Track onboarding milestones: first PR, first customer call, first deploy",
+        "aiOpportunity": "AI tracks milestones and suggests next learning steps"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Onboarding Feedback",
+        "owner": "People Team",
+        "duration": "30 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "Collect feedback at 30/60/90 days to improve onboarding",
+        "aiOpportunity": "AI collects and synthesizes onboarding feedback"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Time to Productivity",
+        "description": "Days from start to first meaningful contribution",
+        "typicalBenchmark": "30-90 days (varies by role)"
+      },
+      {
+        "name": "Onboarding Completion Rate",
+        "description": "Percentage of onboarding tasks completed on time",
+        "typicalBenchmark": "60-80% (manual), 90%+ (AI)"
+      },
+      {
+        "name": "New Hire Satisfaction",
+        "description": "New hire satisfaction with onboarding experience",
+        "typicalBenchmark": "3.5/5 (manual), 4.5/5 (automated)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Workday",
+        "category": "HRIS",
+        "typicalUsage": "HR platform and onboarding workflows"
+      },
+      {
+        "name": "BambooHR",
+        "category": "HRIS",
+        "typicalUsage": "Onboarding task tracking"
+      },
+      {
+        "name": "Slack",
+        "category": "Communication",
+        "typicalUsage": "Onboarding communications and introductions"
+      },
+      {
+        "name": "Notion",
+        "category": "Documentation",
+        "typicalUsage": "Onboarding documentation and guides"
+      }
+    ],
+    "complianceNotes": [
+      "Onboarding must include legally required trainings and acknowledgments"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Onboarding experience varies wildly across teams",
+      "IT setup is manual and often late (no laptop on day 1)",
+      "New hires don't know what to learn or in what order",
+      "Onboarding feedback is collected but never actioned"
+    ],
+    "estimatedEffort": "4-6 weeks for sequence automation; 2-3 weeks for personalization"
+  },
+  {
+    "id": "BP-HR-05",
+    "name": "Skills Gap Analysis",
+    "department": "People/HR",
+    "description": "Analyzing current team skills against future needs to identify gaps and create targeted development and hiring plans.",
+    "typicalTriggers": [
+      "Annual talent review cycle",
+      "Team restructuring planning",
+      "New strategic initiative requiring new skills"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Skills Inventory",
+        "owner": "People Team",
+        "duration": "2 weeks",
+        "dependsOn": [],
+        "description": "Catalog current skills across the organization from profiles, reviews, projects",
+        "aiOpportunity": "AI builds skills inventory from employee profiles, work output, and learning history"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Future Skills Needs",
+        "owner": "HRBP/Leadership",
+        "duration": "1 week",
+        "dependsOn": [],
+        "description": "Define skills needed for future strategy: AI, data, product, etc.",
+        "aiOpportunity": "AI predicts future skill needs from industry trends and company strategy"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Gap Identification",
+        "owner": "People Analytics",
+        "duration": "1 week",
+        "dependsOn": [
+          1,
+          2
+        ],
+        "description": "Identify gaps between current and future skills needs",
+        "aiOpportunity": "AI identifies gaps and quantifies impact on strategic initiatives"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Development Planning",
+        "owner": "HRBP",
+        "duration": "2 weeks",
+        "dependsOn": [
+          3
+        ],
+        "description": "Create development plans: training, projects, mentorship, hiring",
+        "aiOpportunity": "AI recommends targeted development interventions"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Progress Tracking",
+        "owner": "Manager/Employee",
+        "duration": "Ongoing",
+        "dependsOn": [
+          4
+        ],
+        "description": "Track skill development progress and reassess gaps quarterly",
+        "aiOpportunity": "AI tracks skill acquisition and updates gap analysis"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Gap Closure Rate",
+        "description": "Percentage of identified skill gaps addressed per quarter",
+        "typicalBenchmark": "20-30%"
+      },
+      {
+        "name": "Skills Coverage",
+        "description": "Percentage of required skills available internally",
+        "typicalBenchmark": "60-80%"
+      },
+      {
+        "name": "Development ROI",
+        "description": "Impact of development programs on performance",
+        "typicalBenchmark": "Varies, target 3:1 return"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Workday",
+        "category": "HRIS",
+        "typicalUsage": "Skills profiles and talent management"
+      },
+      {
+        "name": "LinkedIn Learning",
+        "category": "HRIS",
+        "typicalUsage": "Learning and development"
+      },
+      {
+        "name": "Lattice",
+        "category": "HRIS",
+        "typicalUsage": "Performance reviews and development plans"
+      },
+      {
+        "name": "Gloat",
+        "category": "AI",
+        "typicalUsage": "AI talent marketplace and skills gap analysis"
+      }
+    ],
+    "complianceNotes": [
+      "Skills data may have privacy implications in some jurisdictions"
+    ],
+    "aiReadiness": "Low",
+    "complexity": "High",
+    "typicalPainPoints": [
+      "Skills gaps identified during reviews only, too late",
+      "No systematic skills inventory exists",
+      "Development plans are generic, not targeted",
+      "Hiring decisions lack visibility into current capabilities"
+    ],
+    "estimatedEffort": "8-12 weeks for skills inventory and gap analysis; ongoing for tracking"
+  },
+  {
+    "id": "BP-LEGAL-01",
+    "name": "Automated Contract Review",
+    "department": "Legal",
+    "description": "AI-assisted review of contracts to identify key terms, risks, deviations from standard language, and obligations.",
+    "typicalTriggers": [
+      "New contract for review",
+      "Contract renewal or amendment",
+      "Standard clause library update"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Contract Ingestion",
+        "owner": "Legal/Paralegal",
+        "duration": "10 min",
+        "dependsOn": [],
+        "description": "Upload or forward contract document for review",
+        "aiOpportunity": "AI auto-ingests contract, extracts metadata, classifies type"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Clause Identification",
+        "owner": "Legal Counsel",
+        "duration": "30-60 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Read contract and identify all clauses: liability, IP, termination, etc.",
+        "aiOpportunity": "AI identifies all clauses and compares to standard library"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Risk Assessment",
+        "owner": "Legal Counsel",
+        "duration": "1-2 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Assess risk of deviations from standard terms and negotiate",
+        "aiOpportunity": "AI flags high-risk clauses and suggests fallback positions"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Redline Generation",
+        "owner": "Legal Counsel",
+        "duration": "1 hour",
+        "dependsOn": [
+          3
+        ],
+        "description": "Propose redlines and comments for negotiation",
+        "aiOpportunity": "AI generates redlines based on standard positions"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Obligation Tracking",
+        "owner": "Legal/Paralegal",
+        "duration": "30 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "Extract and track obligations: renewals, reporting, compliance deadlines",
+        "aiOpportunity": "AI auto-extracts obligations and creates tracking calendar"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Contract Review Time",
+        "description": "Average time from submission to completed review",
+        "typicalBenchmark": "2-5 days (manual), <4 hours (AI)"
+      },
+      {
+        "name": "Risk Clause Detection",
+        "description": "Percentage of high-risk clauses identified before signing",
+        "typicalBenchmark": "70-85% (manual), 95%+ (AI)"
+      },
+      {
+        "name": "Negotiation Cycle Time",
+        "description": "Average rounds of negotiation per contract",
+        "typicalBenchmark": "2-3 rounds"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Ironclad",
+        "category": "Compliance",
+        "typicalUsage": "Contract lifecycle management"
+      },
+      {
+        "name": "DocuSign",
+        "category": "Compliance",
+        "typicalUsage": "E-signature and contract workflow"
+      },
+      {
+        "name": "Icertis",
+        "category": "Compliance",
+        "typicalUsage": "Enterprise contract intelligence"
+      },
+      {
+        "name": "Lexion",
+        "category": "AI",
+        "typicalUsage": "AI contract review and management"
+      }
+    ],
+    "complianceNotes": [
+      "Contract review must maintain attorney-client privilege",
+      "AI-assisted review requires human oversight"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "High",
+    "typicalPainPoints": [
+      "Contract review takes 2-5 days per document",
+      "Risk clauses missed due to time pressure or fatigue",
+      "Standard clauses buried in email attachments, not library",
+      "Obligation tracking is manual, deadlines missed"
+    ],
+    "estimatedEffort": "8-12 weeks for contract analysis pipeline; 4-6 weeks for obligation tracking"
+  },
+  {
+    "id": "BP-LEGAL-02",
+    "name": "Clause Library Management",
+    "department": "Legal",
+    "description": "Maintaining a centralized library of approved legal clauses, with version control, usage tracking, and automated insertion.",
+    "typicalTriggers": [
+      "Clause revision approved",
+      "New regulation requiring clause updates",
+      "Frequently requested contract type identified"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Clause Authoring",
+        "owner": "Legal Counsel",
+        "duration": "2-4 hours",
+        "dependsOn": [],
+        "description": "Draft or revise standard clause language",
+        "aiOpportunity": "AI suggests clause language based on regulation and precedent"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Approval & Versioning",
+        "owner": "General Counsel",
+        "duration": "1-2 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Review and approve clause, update version history",
+        "aiOpportunity": "AI tracks versions, flags conflicts between clause versions"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Library Organization",
+        "owner": "Legal Operations",
+        "duration": "4 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Categorize and tag clauses for searchable retrieval",
+        "aiOpportunity": "AI auto-tags and categorizes clauses by type, use, jurisdiction"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Usage Guidance",
+        "owner": "Legal Operations",
+        "duration": "Ongoing",
+        "dependsOn": [
+          3
+        ],
+        "description": "Provide guidance on when to use each clause and fallback positions",
+        "aiOpportunity": "AI recommends clauses based on contract type and negotiation context"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Compliance Monitoring",
+        "owner": "Legal Counsel",
+        "duration": "Monthly",
+        "dependsOn": [],
+        "description": "Monitor regulatory changes that affect clause language",
+        "aiOpportunity": "AI monitors regulatory changes and flags affected clauses"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Clause Search Time",
+        "description": "Time to find and insert appropriate clause",
+        "typicalBenchmark": "15-30 min (manual), <2 min (AI)"
+      },
+      {
+        "name": "Clause Usage Rate",
+        "description": "Percentage of contracts using standard clauses",
+        "typicalBenchmark": "40-60% (without library), 80%+ (with AI)"
+      },
+      {
+        "name": "Library Freshness",
+        "description": "Time since last clause review or update",
+        "typicalBenchmark": "Target: <90 days"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Ironclad",
+        "category": "Compliance",
+        "typicalUsage": "Clause library and contract assembly"
+      },
+      {
+        "name": "Icertis",
+        "category": "Compliance",
+        "typicalUsage": "Enterprise clause management"
+      },
+      {
+        "name": "ContractWorks",
+        "category": "Compliance",
+        "typicalUsage": "Contract repository and clause library"
+      },
+      {
+        "name": "Lexion",
+        "category": "AI",
+        "typicalUsage": "AI clause extraction and management"
+      }
+    ],
+    "complianceNotes": [
+      "Clause library changes must be auditable for compliance"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Standard clauses buried in email attachments",
+      "No central library, each lawyer maintains personal versions",
+      "Clause usage not tracked, preferred language unknown",
+      "Regulatory changes require manual clause review"
+    ],
+    "estimatedEffort": "3-5 weeks for library setup and tagging; 2-3 weeks for search"
+  },
+  {
+    "id": "BP-LEGAL-03",
+    "name": "Compliance Monitoring Automation",
+    "department": "Legal",
+    "description": "Continuous monitoring of regulatory changes, internal policy compliance, and automated compliance reporting.",
+    "typicalTriggers": [
+      "Regulatory change announced",
+      "Quarterly compliance review",
+      "New product or feature launch requiring compliance assessment"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Regulatory Intelligence",
+        "owner": "Compliance Officer",
+        "duration": "10 hours/week",
+        "dependsOn": [],
+        "description": "Monitor regulatory bodies for changes affecting the business",
+        "aiOpportunity": "AI monitors regulatory sources and summarizes relevant changes"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Impact Assessment",
+        "owner": "Compliance Officer",
+        "duration": "1-2 days per change",
+        "dependsOn": [
+          1
+        ],
+        "description": "Assess impact of regulatory changes on company operations",
+        "aiOpportunity": "AI assesses impact against current policies and operations"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Policy Update",
+        "owner": "Legal Counsel",
+        "duration": "1 week",
+        "dependsOn": [
+          2
+        ],
+        "description": "Update internal policies to reflect regulatory changes",
+        "aiOpportunity": "AI drafts policy updates from regulatory text"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Compliance Reporting",
+        "owner": "Compliance Officer",
+        "duration": "1 week/quarter",
+        "dependsOn": [
+          3
+        ],
+        "description": "Prepare compliance reports for board, regulators, or auditors",
+        "aiOpportunity": "AI generates compliance reports from monitoring data"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Control Testing",
+        "owner": "Compliance Officer",
+        "duration": "2 weeks/quarter",
+        "dependsOn": [],
+        "description": "Test internal controls for effectiveness",
+        "aiOpportunity": "AI automates control testing and identifies gaps"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Regulatory Change Response Time",
+        "description": "Time from regulation change to policy update",
+        "typicalBenchmark": "30-90 days (manual), <14 days (AI)"
+      },
+      {
+        "name": "Compliance Report Accuracy",
+        "description": "Error rate in compliance reports",
+        "typicalBenchmark": "<1%"
+      },
+      {
+        "name": "Control Testing Coverage",
+        "description": "Percentage of controls tested per quarter",
+        "typicalBenchmark": "20-40% (manual), 80%+ (AI)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Compliance.ai",
+        "category": "Compliance",
+        "typicalUsage": "Regulatory change monitoring"
+      },
+      {
+        "name": "Ascent",
+        "category": "Compliance",
+        "typicalUsage": "Regulatory compliance intelligence"
+      },
+      {
+        "name": "Vanta",
+        "category": "Compliance",
+        "typicalUsage": "Automated compliance monitoring (SOC2)"
+      },
+      {
+        "name": "Drata",
+        "category": "Compliance",
+        "typicalUsage": "Continuous compliance monitoring"
+      }
+    ],
+    "complianceNotes": [
+      "Regulatory monitoring must be comprehensive and auditable"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Compliance checks performed quarterly, leaving long risk windows",
+      "Regulatory monitoring is manual and tedious",
+      "Compliance reports take weeks to compile",
+      "Control testing coverage is limited by manual effort"
+    ],
+    "estimatedEffort": "6-8 weeks for monitoring pipeline; 4-5 weeks for impact assessment"
+  },
+  {
+    "id": "BP-LEGAL-04",
+    "name": "Automated NDA Processing",
+    "department": "Legal",
+    "description": "Streamlined intake, review, and execution of standard non-disclosure agreements with minimal legal involvement.",
+    "typicalTriggers": [
+      "NDA request from prospect or partner",
+      "Mutual NDA required for deal",
+      "Template NDA revision needed"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "NDA Intake",
+        "owner": "Requestor",
+        "duration": "5 min",
+        "dependsOn": [],
+        "description": "Submit NDA request with counterparty details",
+        "aiOpportunity": "AI auto-routes NDA request, captures counterparty data"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Template Selection",
+        "owner": "Legal Operations",
+        "duration": "10 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Select appropriate NDA template (one-way/mutual, jurisdiction)",
+        "aiOpportunity": "AI selects correct template based on counterparty and scenario"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Counterparty Review",
+        "owner": "Legal Counsel",
+        "duration": "30 min",
+        "dependsOn": [
+          2
+        ],
+        "description": "Review counterparty-proposed changes to standard template",
+        "aiOpportunity": "AI reviews changes, flags deviations from standard, approves or escalates"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Execution",
+        "owner": "Legal Operations",
+        "duration": "15 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Coordinate signature via e-signature platform",
+        "aiOpportunity": "AI auto-sends for signature and tracks completion"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Storage & Tracking",
+        "owner": "Legal Operations",
+        "duration": "10 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "File executed NDA and track obligations",
+        "aiOpportunity": "AI auto-files and extracts obligations (expiration, scope)"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "NDA Cycle Time",
+        "description": "Time from request to executed NDA",
+        "typicalBenchmark": "2-5 days (manual), <4 hours (AI)"
+      },
+      {
+        "name": "Legal Involvement Rate",
+        "description": "Percentage of NDAs requiring legal review",
+        "typicalBenchmark": "100% (manual), <20% (AI)"
+      },
+      {
+        "name": "Counterparty Deviation Rate",
+        "description": "Percentage of counterparties proposing non-standard terms",
+        "typicalBenchmark": "30-50%"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Ironclad",
+        "category": "Compliance",
+        "typicalUsage": "NDA workflow and templates"
+      },
+      {
+        "name": "DocuSign",
+        "category": "Compliance",
+        "typicalUsage": "E-signature for NDA execution"
+      },
+      {
+        "name": "HelloSign",
+        "category": "Compliance",
+        "typicalUsage": "Alternative e-signature platform"
+      },
+      {
+        "name": "Lexion",
+        "category": "AI",
+        "typicalUsage": "AI NDA review and processing"
+      }
+    ],
+    "complianceNotes": [
+      "NDA execution must follow corporate authority and signature policies"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "NDA negotiations take 5+ email rounds for standard terms",
+      "Legal bottleneck for routine agreements",
+      "No standard template enforcement",
+      "Executed NDAs stored inconsistently, hard to find"
+    ],
+    "estimatedEffort": "3-5 weeks for NDA automation pipeline; 2 weeks for template management"
+  },
+  {
+    "id": "BP-LEGAL-05",
+    "name": "IP Disclosure Management",
+    "department": "Legal",
+    "description": "Tracking, evaluating, and protecting intellectual property disclosures from employees, contractors, and partners.",
+    "typicalTriggers": [
+      "Employee invention disclosure submitted",
+      "Patent filing deadline approaching",
+      "IP audit cycle"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Disclosure Intake",
+        "owner": "Employee/Inventor",
+        "duration": "1 hour",
+        "dependsOn": [],
+        "description": "Submit invention disclosure form with description and details",
+        "aiOpportunity": "AI auto-categorizes disclosure and assesses preliminary patentability"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Prior Art Search",
+        "owner": "Patent Counsel",
+        "duration": "4-8 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Search for prior art that may affect patentability",
+        "aiOpportunity": "AI conducts prior art search across patent databases"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Patentability Assessment",
+        "owner": "Patent Counsel",
+        "duration": "2-4 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Assess invention for novelty, non-obviousness, and commercial value",
+        "aiOpportunity": "AI scores patentability based on legal criteria and prior art analysis"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Filing Decision",
+        "owner": "Legal/Leadership",
+        "duration": "2 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Decide whether to file patent, maintain as trade secret, or publish",
+        "aiOpportunity": "AI provides decision support with cost-benefit analysis"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Portfolio Management",
+        "owner": "Patent Counsel",
+        "duration": "Monthly",
+        "dependsOn": [
+          4
+        ],
+        "description": "Manage patent portfolio: maintenance fees, renewals, enforcement",
+        "aiOpportunity": "AI tracks deadlines, maintenance fees, and competitor filings"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Disclosure-to-Decision Time",
+        "description": "Time from disclosure to filing decision",
+        "typicalBenchmark": "30-90 days (manual), <14 days (AI)"
+      },
+      {
+        "name": "Patent Grant Rate",
+        "description": "Percentage of filed patents that are granted",
+        "typicalBenchmark": "40-60%"
+      },
+      {
+        "name": "Portfolio Cost per Patent",
+        "description": "Average cost per active patent including maintenance",
+        "typicalBenchmark": "$10-50K/year"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Anaqua",
+        "category": "Compliance",
+        "typicalUsage": "IP management and docketing"
+      },
+      {
+        "name": "PatSnap",
+        "category": "AI",
+        "typicalUsage": "Patent analytics and prior art search"
+      },
+      {
+        "name": "Google Patents",
+        "category": "Other",
+        "typicalUsage": "Prior art search"
+      },
+      {
+        "name": "CPC",
+        "category": "Compliance",
+        "typicalUsage": "Patent cooperation treaty filing"
+      }
+    ],
+    "complianceNotes": [
+      "Patent disclosures may be subject to government secrecy orders in some jurisdictions",
+      "Employee invention assignment agreements required"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Employee inventions logged inconsistently or not at all",
+      "Prior art search is time-consuming and expensive",
+      "Patent filing decisions are slow, missing filing deadlines",
+      "Portfolio management is reactive, not strategic"
+    ],
+    "estimatedEffort": "6-8 weeks for disclosure pipeline; 4-6 weeks for prior art search"
+  },
+  {
+    "id": "BP-OPS-01",
+    "name": "Tool Provisioning Automation",
+    "department": "Operations",
+    "description": "Automated provisioning of tools, accounts, and access for new employees and role changes across the organization.",
+    "typicalTriggers": [
+      "New hire start date confirmed",
+      "Employee role change",
+      "Tool deprovisioning on employee exit"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Hire Event Trigger",
+        "owner": "HR/People Ops",
+        "duration": "15 min",
+        "dependsOn": [],
+        "description": "Receive new hire notification from HR system",
+        "aiOpportunity": "AI receives hire event and determines required tooling by role"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Tool Requirement Determination",
+        "owner": "IT/Operations",
+        "duration": "30 min",
+        "dependsOn": [
+          1
+        ],
+        "description": "Determine which tools and access levels needed based on role and department",
+        "aiOpportunity": "AI maps role to tool requirements from provisioning matrix"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Account Creation",
+        "owner": "IT/Operations",
+        "duration": "30 min per tool",
+        "dependsOn": [
+          2
+        ],
+        "description": "Create accounts in each tool and assign appropriate permissions",
+        "aiOpportunity": "AI auto-creates accounts via APIs and SCIM provisioning"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Access Granting",
+        "owner": "IT/Operations",
+        "duration": "15 min",
+        "dependsOn": [
+          3
+        ],
+        "description": "Grant access to shared resources: drives, groups, repositories",
+        "aiOpportunity": "AI auto-assigns to groups, teams, and permission sets"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Welcome & Instructions",
+        "owner": "IT/Operations",
+        "duration": "15 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "Send welcome email with account details and getting-started instructions",
+        "aiOpportunity": "AI generates personalized welcome with tool-specific guides"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Time to Tool Readiness",
+        "description": "Time from start date to all tools available",
+        "typicalBenchmark": "1-3 days (manual), <2 hours (AI)"
+      },
+      {
+        "name": "Provisioning Accuracy",
+        "description": "Percentage of accounts provisioned correctly on first attempt",
+        "typicalBenchmark": "70-85% (manual), 95%+ (AI)"
+      },
+      {
+        "name": "Deprovisioning Lag",
+        "description": "Time from employee exit to account deactivation",
+        "typicalBenchmark": "24-72 hours (manual), <1 hour (AI)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Okta",
+        "category": "Identity",
+        "typicalUsage": "Identity management and SSO provisioning"
+      },
+      {
+        "name": "Workday",
+        "category": "HRIS",
+        "typicalUsage": "HR system for hire events"
+      },
+      {
+        "name": "Google Workspace",
+        "category": "Communication",
+        "typicalUsage": "Email and collaboration tools"
+      },
+      {
+        "name": "Slack",
+        "category": "Communication",
+        "typicalUsage": "Team communication and auto-join channels"
+      }
+    ],
+    "complianceNotes": [
+      "Access provisioning must follow least-privilege principle",
+      "Deprovisioning is critical for security compliance"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "New hire tool setup takes 30 min per tool, manual",
+      "Deprovisioning is often forgotten, creating security risk",
+      "Tool access inconsistent across similar roles",
+      "Role changes require manual access updates across tools"
+    ],
+    "estimatedEffort": "3-5 weeks for provisioning automation; 2 weeks for deprovisioning"
+  },
+  {
+    "id": "BP-OPS-02",
+    "name": "Data Quality Monitoring",
+    "department": "Operations",
+    "description": "Continuous monitoring of data quality across systems: CRM, billing, analytics, and data warehouse.",
+    "typicalTriggers": [
+      "Scheduled data quality scan",
+      "Data quality incident reported",
+      "System integration failure"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Data Quality Rule Definition",
+        "owner": "Data Steward",
+        "duration": "2 hours per rule",
+        "dependsOn": [],
+        "description": "Define quality rules: completeness, accuracy, consistency, timeliness",
+        "aiOpportunity": "AI auto-discovers data quality rules from data patterns"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Automated Scanning",
+        "owner": "Data Platform",
+        "duration": "Daily",
+        "dependsOn": [
+          1
+        ],
+        "description": "Run quality scans across all data sources",
+        "aiOpportunity": "AI continuously scans and scores data quality across dimensions"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Issue Detection & Alerting",
+        "owner": "Data Steward",
+        "duration": "2 hours/week",
+        "dependsOn": [
+          2
+        ],
+        "description": "Review quality issues, prioritize, and alert data owners",
+        "aiOpportunity": "AI alerts data owners with prioritized issue list and root cause"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Issue Remediation",
+        "owner": "Data Owner",
+        "duration": "Varies",
+        "dependsOn": [
+          3
+        ],
+        "description": "Fix data quality issues: correct, deduplicate, enrich, or suppress",
+        "aiOpportunity": "AI suggests remediation actions and automates fixes where possible"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Quality Reporting",
+        "owner": "Data Governance",
+        "duration": "Quarterly",
+        "dependsOn": [],
+        "description": "Report data quality metrics to data governance committee",
+        "aiOpportunity": "AI generates data quality dashboard with trend analysis"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Data Quality Score",
+        "description": "Overall data quality score across key dimensions",
+        "typicalBenchmark": "70-85% (average), 95%+ (target)"
+      },
+      {
+        "name": "Issue Detection Latency",
+        "description": "Time from data quality degradation to detection",
+        "typicalBenchmark": "Days to weeks (manual), <4 hours (AI)"
+      },
+      {
+        "name": "Remediation Time",
+        "description": "Average time to resolve data quality issues",
+        "typicalBenchmark": "1-4 weeks (manual), <1 week (AI)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Snowflake",
+        "category": "Data",
+        "typicalUsage": "Data warehouse for quality scanning"
+      },
+      {
+        "name": "dbt",
+        "category": "Engineering",
+        "typicalUsage": "Data transformation and testing"
+      },
+      {
+        "name": "Great Expectations",
+        "category": "Engineering",
+        "typicalUsage": "Data quality testing framework"
+      },
+      {
+        "name": "Monte Carlo",
+        "category": "AI",
+        "typicalUsage": "Data observability and quality monitoring"
+      }
+    ],
+    "complianceNotes": [
+      "Data quality monitoring is required for regulated data (financial, personal)"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Data quality checked reactively after problems surface",
+      "No consistent data quality scoring across systems",
+      "Quality rules are defined but not enforced",
+      "Issue remediation is slow because ownership is unclear"
+    ],
+    "estimatedEffort": "5-7 weeks for quality monitoring pipeline; 3-4 weeks for remediation automation"
+  },
+  {
+    "id": "BP-OPS-03",
+    "name": "Automated Report Generation",
+    "department": "Operations",
+    "description": "Automating the compilation and generation of recurring operational reports for executives, departments, and stakeholders.",
+    "typicalTriggers": [
+      "Scheduled reporting cycle (daily/weekly/monthly)",
+      "Stakeholder requests custom report",
+      "Board or investor reporting deadline"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Data Source Identification",
+        "owner": "Ops Analyst",
+        "duration": "1 hour",
+        "dependsOn": [],
+        "description": "Identify which data sources are needed for the report",
+        "aiOpportunity": "AI auto-discovers relevant data sources from report requirements"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Data Extraction",
+        "owner": "Ops Analyst",
+        "duration": "2-4 hours",
+        "dependsOn": [
+          1
+        ],
+        "description": "Extract data from all identified sources and normalize",
+        "aiOpportunity": "AI auto-extracts and normalizes data from all sources"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Report Building",
+        "owner": "Ops Analyst",
+        "duration": "3-5 hours",
+        "dependsOn": [
+          2
+        ],
+        "description": "Build report with charts, tables, and narrative in reporting tool",
+        "aiOpportunity": "AI generates report with visualizations and narrative from data"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Review & Approval",
+        "owner": "Operations Manager",
+        "duration": "1 hour",
+        "dependsOn": [
+          3
+        ],
+        "description": "Review report for accuracy, completeness, and presentation",
+        "aiOpportunity": "AI checks report for data anomalies and presentation consistency"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Distribution",
+        "owner": "Ops Analyst",
+        "duration": "30 min",
+        "dependsOn": [
+          4
+        ],
+        "description": "Distribute report to stakeholders via email, Slack, or dashboard",
+        "aiOpportunity": "AI auto-distributes with personalized summaries per audience"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Report Generation Time",
+        "description": "Time from data request to report delivery",
+        "typicalBenchmark": "1-3 days (manual), <1 hour (AI)"
+      },
+      {
+        "name": "Report Accuracy",
+        "description": "Error rate in generated reports",
+        "typicalBenchmark": "2-5% (manual), <0.5% (AI)"
+      },
+      {
+        "name": "Stakeholder Satisfaction",
+        "description": "Satisfaction with report timeliness and quality",
+        "typicalBenchmark": "3/5 (manual), 4.5/5 (AI)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Tableau",
+        "category": "Analytics",
+        "typicalUsage": "Dashboards and visualizations"
+      },
+      {
+        "name": "Looker",
+        "category": "Analytics",
+        "typicalUsage": "Business intelligence and reporting"
+      },
+      {
+        "name": "Google Sheets",
+        "category": "Documentation",
+        "typicalUsage": "Manual report compilation"
+      },
+      {
+        "name": "Metabase",
+        "category": "Analytics",
+        "typicalUsage": "Open-source BI and reporting"
+      }
+    ],
+    "complianceNotes": [
+      "Reports containing financial data must comply with accuracy standards"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Executive reports compiled manually, taking 2+ days",
+      "Report accuracy depends on analyst diligence",
+      "Same reports built from scratch each period",
+      "Report format and content inconsistent between periods"
+    ],
+    "estimatedEffort": "4-6 weeks for report automation; 2-3 weeks for distribution"
+  },
+  {
+    "id": "BP-OPS-04",
+    "name": "Vendor Performance Intelligence",
+    "department": "Operations",
+    "description": "Tracking and analyzing vendor performance against SLAs, contracts, and benchmarks to optimize vendor relationships and costs.",
+    "typicalTriggers": [
+      "Quarterly vendor review",
+      "SLA breach notification",
+      "Contract renewal approaching"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Vendor Data Collection",
+        "owner": "Procurement/Ops",
+        "duration": "4 hours/quarter",
+        "dependsOn": [],
+        "description": "Collect vendor performance data: uptime, response times, support quality",
+        "aiOpportunity": "AI continuously collects vendor performance data from monitoring tools"
+      },
+      {
+        "stepOrder": 2,
+        "name": "SLA Compliance Analysis",
+        "owner": "Procurement/Ops",
+        "duration": "3 hours/quarter",
+        "dependsOn": [
+          1
+        ],
+        "description": "Compare actual performance against contractual SLAs",
+        "aiOpportunity": "AI auto-calculates SLA compliance and generates compliance report"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Benchmark Comparison",
+        "owner": "Procurement/Ops",
+        "duration": "3 hours/quarter",
+        "dependsOn": [
+          2
+        ],
+        "description": "Compare vendor performance against industry benchmarks and peers",
+        "aiOpportunity": "AI benchmarks vendor performance against anonymized peer data"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Renewal Recommendation",
+        "owner": "Procurement Manager",
+        "duration": "2 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Generate recommendation: renew, renegotiate, or replace vendor",
+        "aiOpportunity": "AI generates vendor scorecard with renewal recommendation"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Spend Optimization",
+        "owner": "Procurement/Ops",
+        "duration": "Monthly",
+        "dependsOn": [],
+        "description": "Analyze vendor spend for optimization opportunities: consolidation, downgrade, negotiate",
+        "aiOpportunity": "AI identifies spend optimization opportunities from usage and contract data"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Vendor Review Cadence",
+        "description": "How often vendor performance is formally reviewed",
+        "typicalBenchmark": "Quarterly (target)"
+      },
+      {
+        "name": "SLA Compliance Rate",
+        "description": "Percentage of vendors meeting SLAs consistently",
+        "typicalBenchmark": "85-95%"
+      },
+      {
+        "name": "Cost Optimization Identified",
+        "description": "Annual savings identified through vendor analysis",
+        "typicalBenchmark": "5-15% of vendor spend"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Coupa",
+        "category": "Finance",
+        "typicalUsage": "Procurement and vendor management"
+      },
+      {
+        "name": "Vendr",
+        "category": "Other",
+        "typicalUsage": "SaaS vendor management and benchmarking"
+      },
+      {
+        "name": "ServiceNow",
+        "category": "Other",
+        "typicalUsage": "IT vendor management"
+      },
+      {
+        "name": "Excel/Sheets",
+        "category": "Documentation",
+        "typicalUsage": "Vendor tracking spreadsheets"
+      }
+    ],
+    "complianceNotes": [
+      "Vendor performance data may be confidential under NDA"
+    ],
+    "aiReadiness": "Medium",
+    "complexity": "Medium",
+    "typicalPainPoints": [
+      "Vendor performance tracked via spreadsheets, not systematically",
+      "SLA compliance calculated manually, often inaccurate",
+      "Benchmark data is anecdotal, not systematic",
+      "Renewal decisions made without complete performance picture"
+    ],
+    "estimatedEffort": "5-7 weeks for performance monitoring; 3-4 weeks for benchmarking"
+  },
+  {
+    "id": "BP-OPS-05",
+    "name": "Process Documentation Automation",
+    "department": "Operations",
+    "description": "Automatically capturing, documenting, and maintaining operational processes from system logs, actions, and user input.",
+    "typicalTriggers": [
+      "New process implemented",
+      "Process change made",
+      "New hire needs process documentation"
+    ],
+    "steps": [
+      {
+        "stepOrder": 1,
+        "name": "Process Discovery",
+        "owner": "Operations",
+        "duration": "2-4 hours per process",
+        "dependsOn": [],
+        "description": "Document current process: steps, systems, people, decisions",
+        "aiOpportunity": "AI discovers processes from system logs and user actions"
+      },
+      {
+        "stepOrder": 2,
+        "name": "Process Mapping",
+        "owner": "Operations",
+        "duration": "4-8 hours per process",
+        "dependsOn": [
+          1
+        ],
+        "description": "Create process map: sequence, decision points, handoffs, SLAs",
+        "aiOpportunity": "AI generates process map from discovered steps"
+      },
+      {
+        "stepOrder": 3,
+        "name": "Documentation Writing",
+        "owner": "Operations",
+        "duration": "4-6 hours per process",
+        "dependsOn": [
+          2
+        ],
+        "description": "Write step-by-step documentation with screenshots and examples",
+        "aiOpportunity": "AI generates documentation from process map with screenshots"
+      },
+      {
+        "stepOrder": 4,
+        "name": "Review & Approval",
+        "owner": "Process Owner",
+        "duration": "1-2 hours",
+        "dependsOn": [
+          3
+        ],
+        "description": "Review documentation for accuracy and completeness",
+        "aiOpportunity": "AI checks documentation against actual system behavior"
+      },
+      {
+        "stepOrder": 5,
+        "name": "Publication & Maintenance",
+        "owner": "Operations",
+        "duration": "Monthly",
+        "dependsOn": [
+          4
+        ],
+        "description": "Publish documentation and maintain currency as processes evolve",
+        "aiOpportunity": "AI monitors processes for changes and suggests docs updates"
+      }
+    ],
+    "kpis": [
+      {
+        "name": "Doc Creation Time",
+        "description": "Time to document a new process",
+        "typicalBenchmark": "2-5 days (manual), <4 hours (AI)"
+      },
+      {
+        "name": "Documentation Coverage",
+        "description": "Percentage of processes with current documentation",
+        "typicalBenchmark": "30-50% (manual), 80%+ (AI)"
+      },
+      {
+        "name": "Documentation Freshness",
+        "description": "Time between process change and doc update",
+        "typicalBenchmark": "3-6 months (manual), <1 week (AI)"
+      }
+    ],
+    "systems": [
+      {
+        "name": "Confluence",
+        "category": "Documentation",
+        "typicalUsage": "Process documentation repository"
+      },
+      {
+        "name": "Notion",
+        "category": "Documentation",
+        "typicalUsage": "Internal documentation and wikis"
+      },
+      {
+        "name": "Scribe",
+        "category": "AI",
+        "typicalUsage": "Process documentation automation"
+      },
+      {
+        "name": "Process.st",
+        "category": "Other",
+        "typicalUsage": "Process documentation and SOPs"
+      }
+    ],
+    "complianceNotes": [
+      "Process documentation may be required for compliance audits"
+    ],
+    "aiReadiness": "High",
+    "complexity": "Low",
+    "typicalPainPoints": [
+      "Process docs are out of date or nonexistent",
+      "Tribal knowledge lost when employees leave",
+      "Documentation effort competes with operational work",
+      "Process changes not reflected in documentation"
+    ],
+    "estimatedEffort": "3-5 weeks for discovery and mapping; 2-3 weeks for automation"
+  }
+]

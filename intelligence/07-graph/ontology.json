@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/knowledge-graph-ontology.schema.json",
+  "title": "Knowledge Graph Ontology",
+  "description": "Draft 2020-12 schema defining nodes and edges for the organizational knowledge graph.",
+  "type": "object",
+  "properties": {
+    "ontologyVersion": { "type": "string", "example": "1.0.0" },
+    "nodeTypes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "description": { "type": "string" },
+          "properties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string", "enum": ["string", "integer", "boolean", "array", "object"] },
+                "description": { "type": "string" },
+                "required": { "type": "boolean" }
+              }
+            }
+          }
+        },
+        "required": ["type", "description"]
+      }
+    },
+    "edgeTypes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "relationship": { "type": "string" },
+          "description": { "type": "string" },
+          "sourceTypes": { "type": "array", "items": { "type": "string" } },
+          "targetTypes": { "type": "array", "items": { "type": "string" } },
+          "properties": { "type": "object" }
+        },
+        "required": ["relationship", "description", "sourceTypes", "targetTypes"]
+      }
+    }
+  },
+  "required": ["nodeTypes", "edgeTypes"],
+  "example": {
+    "ontologyVersion": "1.0.0",
+    "nodeTypes": [
+      { "type": "Department", "description": "Organizational department or function", "properties": { "name": { "type": "string", "required": true }, "estimatedSize": { "type": "integer" }, "confidence": { "type": "string" } } },
+      { "type": "System", "description": "Technology tool or platform used by the organization", "properties": { "name": { "type": "string", "required": true }, "category": { "type": "string" }, "users": { "type": "integer" } } },
+      { "type": "Workflow", "description": "Identifiable business process", "properties": { "name": { "type": "string", "required": true }, "frequency": { "type": "string" }, "duration": { "type": "string" } } },
+      { "type": "Approval", "description": "Decision point or approval gate", "properties": { "name": { "type": "string" }, "type": { "type": "string" }, "depth": { "type": "integer" } } },
+      { "type": "Meeting", "description": "Recurring meeting or meeting type", "properties": { "name": { "type": "string" }, "frequency": { "type": "string" }, "attendees": { "type": "integer" } } },
+      { "type": "Document", "description": "Document type or artifact", "properties": { "name": { "type": "string" }, "type": { "type": "string" }, "owner": { "type": "string" } } },
+      { "type": "Person", "description": "Role or persona (not specific individual)", "properties": { "role": { "type": "string" }, "department": { "type": "string" }, "seniority": { "type": "string" } } },
+      { "type": "Knowledge", "description": "Knowledge domain or expertise area", "properties": { "domain": { "type": "string" }, "documented": { "type": "boolean" } } },
+      { "type": "Decision", "description": "Recorded decision with context", "properties": { "topic": { "type": "string" }, "status": { "type": "string" } } },
+      { "type": "KPI", "description": "Key performance indicator", "properties": { "name": { "type": "string" }, "value": { "type": "string" }, "frequency": { "type": "string" } } }
+    ],
+    "edgeTypes": [
+      { "relationship": "uses", "description": "Source uses target system or tool", "sourceTypes": ["Department", "Person"], "targetTypes": ["System"] },
+      { "relationship": "depends_on", "description": "Source depends on target", "sourceTypes": ["Workflow", "Decision", "Opportunity"], "targetTypes": ["Workflow", "System", "Approval"] },
+      { "relationship": "reports_to", "description": "Reporting relationship", "sourceTypes": ["Person"], "targetTypes": ["Person"] },
+      { "relationship": "owns", "description": "Source is responsible for target", "sourceTypes": ["Person", "Department"], "targetTypes": ["Workflow", "Document", "KPI", "System"] },
+      { "relationship": "handoff_to", "description": "Work transferred between entities", "sourceTypes": ["Workflow", "Department"], "targetTypes": ["Workflow", "Department"] },
+      { "relationship": "approves", "description": "Source has approval authority", "sourceTypes": ["Person", "Department"], "targetTypes": ["Decision", "Document", "Workflow"] },
+      { "relationship": "enables", "description": "Source enables target to function", "sourceTypes": ["System", "Opportunity"], "targetTypes": ["Opportunity", "Workflow"] },
+      { "relationship": "blocks", "description": "Source prevents target from proceeding", "sourceTypes": ["Constraint", "Approval"], "targetTypes": ["Opportunity", "Workflow"] },
+      { "relationship": "informs", "description": "Source provides info used by target", "sourceTypes": ["KPI", "Document", "Report"], "targetTypes": ["Decision", "Person"] }
+    ]
+  }
+}

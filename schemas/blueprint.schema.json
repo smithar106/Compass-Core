@@ -1,0 +1,644 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/blueprint.schema.json",
+  "title": "Blueprint",
+  "description": "Implementation blueprint mapping current workflow to AI-augmented future state with rollout, KPIs, and security.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "blueprintId",
+    "name",
+    "department",
+    "description",
+    "futureWorkflow",
+    "rollout",
+    "kpis"
+  ],
+  "properties": {
+    "blueprintId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this blueprint"
+    },
+    "opportunityId": {
+      "type": "string",
+      "description": "Reference to the opportunity this blueprint implements"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable blueprint name"
+    },
+    "department": {
+      "type": "string",
+      "enum": [
+        "Sales",
+        "Marketing",
+        "Customer Success",
+        "Support",
+        "Finance",
+        "Product",
+        "Engineering",
+        "People/HR",
+        "Legal",
+        "Operations"
+      ],
+      "description": "Primary department that this blueprint applies to"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of what this blueprint accomplishes"
+    },
+    "currentWorkflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "High-level summary of the current workflow"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "stepOrder": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Position in the current workflow sequence"
+              },
+              "name": {
+                "type": "string",
+                "description": "Step name in the current workflow"
+              },
+              "owner": {
+                "type": "string",
+                "description": "Role currently responsible for this step"
+              },
+              "duration": {
+                "type": "string",
+                "description": "Current time to complete this step"
+              },
+              "description": {
+                "type": "string",
+                "description": "What currently happens in this step"
+              }
+            },
+            "description": "A step in the current workflow"
+          },
+          "description": "Steps in the current workflow"
+        },
+        "painPoints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Pain points in the current workflow"
+        },
+        "estimatedCurrentCost": {
+          "type": "string",
+          "description": "Estimated current cost of running this workflow"
+        }
+      },
+      "description": "Snapshot of the current workflow before AI augmentation"
+    },
+    "futureWorkflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "High-level summary of the AI-augmented future workflow"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "stepOrder": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Position in the future workflow sequence"
+              },
+              "name": {
+                "type": "string",
+                "description": "Step name in the future workflow"
+              },
+              "owner": {
+                "type": "string",
+                "description": "Role responsible in the future workflow"
+              },
+              "duration": {
+                "type": "string",
+                "description": "Expected time for this step in the future workflow"
+              },
+              "aiComponent": {
+                "type": "string",
+                "description": "What AI handles in this step"
+              },
+              "deterministicComponent": {
+                "type": "string",
+                "description": "What deterministic logic or rules handle in this step"
+              },
+              "humanComponent": {
+                "type": "string",
+                "description": "What human judgement or action is still required"
+              },
+              "apisUsed": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "APIs consumed by this step in the future workflow"
+              }
+            },
+            "description": "A step in the future AI-augmented workflow"
+          },
+          "description": "Steps in the AI-augmented future workflow"
+        }
+      },
+      "description": "Target state of the workflow after AI augmentation"
+    },
+    "aiComponents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "component": {
+            "type": "string",
+            "description": "Name of the AI component"
+          },
+          "aiType": {
+            "type": "string",
+            "enum": [
+              "Classification",
+              "Generation",
+              "Extraction",
+              "Prediction",
+              "Matching",
+              "Summarization",
+              "Routing",
+              "Monitoring"
+            ],
+            "description": "Type of AI capability used"
+          },
+          "model": {
+            "type": "string",
+            "description": "Specific model or service powering this component"
+          },
+          "deployment": {
+            "type": "string",
+            "enum": [
+              "cloud",
+              "on-prem",
+              "hybrid"
+            ],
+            "description": "Deployment model for this AI component"
+          },
+          "dataRequired": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Data sources or inputs required by this AI component"
+          }
+        },
+        "description": "An AI component used in the future workflow"
+      },
+      "description": "AI components that comprise the intelligent augmentation layer"
+    },
+    "automationBreakdown": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fullyAutomated": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Steps that are fully automated with no human involvement"
+        },
+        "humanInLoop": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Steps where AI acts but a human reviews or approves"
+        },
+        "humanOnly": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Steps that remain entirely human-performed"
+        },
+        "aiAssisted": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Steps where AI assists a human performing the work"
+        }
+      },
+      "description": "Breakdown of automation types across workflow steps"
+    },
+    "rollout": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "phases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "phaseNumber": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Phase number in the rollout sequence"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of this rollout phase"
+              },
+              "steps": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Actions or milestones in this phase"
+              },
+              "duration": {
+                "type": "string",
+                "description": "Expected duration of this phase"
+              },
+              "dependencies": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Dependencies that must be met before this phase"
+              },
+              "gates": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "gateName": {
+                      "type": "string",
+                      "description": "Name of the approval gate"
+                    },
+                    "criteria": {
+                      "type": "string",
+                      "description": "Criteria that must be met to pass this gate"
+                    },
+                    "approver": {
+                      "type": "string",
+                      "description": "Role that must sign off on this gate"
+                    }
+                  },
+                  "description": "An approval gate within a rollout phase"
+                },
+                "description": "Approval gates that must be passed to complete this phase"
+              }
+            },
+            "description": "A single phase in the rollout plan"
+          },
+          "description": "Phased rollout plan for implementing the blueprint"
+        },
+        "recommendedStrategy": {
+          "type": "string",
+          "enum": [
+            "Quick Win",
+            "Foundational",
+            "Package Deal",
+            "Phased Rollout",
+            "Conditional"
+          ],
+          "description": "Recommended implementation strategy for this blueprint"
+        }
+      },
+      "description": "Rollout plan describing how the blueprint should be implemented"
+    },
+    "kpis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kpiName": {
+            "type": "string",
+            "description": "Name of the KPI"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category this KPI belongs to"
+          },
+          "currentValue": {
+            "type": "string",
+            "description": "Current baseline value for this KPI"
+          },
+          "projectedValue": {
+            "type": "string",
+            "description": "Projected value after AI implementation"
+          },
+          "timeframe": {
+            "type": "string",
+            "description": "Expected timeframe to achieve the projected value"
+          },
+          "measurementMethod": {
+            "type": "string",
+            "description": "How this KPI will be measured"
+          }
+        },
+        "description": "A key performance indicator tracked for this blueprint"
+      },
+      "description": "KPIs to measure the success of the implementation"
+    },
+    "implementationDifficulty": {
+      "type": "string",
+      "enum": [
+        "Low",
+        "Medium",
+        "High",
+        "Very High"
+      ],
+      "description": "Overall difficulty rating for implementing this blueprint"
+    },
+    "estimatedTimeline": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "minimum": {
+          "type": "string",
+          "description": "Minimum estimated timeline for implementation"
+        },
+        "maximum": {
+          "type": "string",
+          "description": "Maximum estimated timeline for implementation"
+        },
+        "breakdown": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "planning": {
+              "type": "string",
+              "description": "Time allocated for planning"
+            },
+            "development": {
+              "type": "string",
+              "description": "Time allocated for development"
+            },
+            "testing": {
+              "type": "string",
+              "description": "Time allocated for testing"
+            },
+            "deployment": {
+              "type": "string",
+              "description": "Time allocated for deployment"
+            },
+            "optimization": {
+              "type": "string",
+              "description": "Time allocated for optimization"
+            }
+          },
+          "description": "Detailed breakdown of timeline by implementation phase"
+        }
+      },
+      "description": "Estimated timeline for implementing the blueprint"
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "risk": {
+            "type": "string",
+            "description": "Description of the risk"
+          },
+          "likelihood": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "description": "Likelihood of this risk occurring"
+          },
+          "impact": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ],
+            "description": "Impact severity if this risk materializes"
+          },
+          "mitigation": {
+            "type": "string",
+            "description": "Strategy to mitigate this risk"
+          },
+          "owner": {
+            "type": "string",
+            "description": "Role responsible for managing this risk"
+          }
+        },
+        "description": "A risk identified for the implementation"
+      },
+      "description": "Risks associated with implementing this blueprint"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "dependency": {
+            "type": "string",
+            "description": "Description of the dependency"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "system",
+              "data",
+              "people",
+              "process"
+            ],
+            "description": "Type of dependency"
+          },
+          "criticality": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low"
+            ],
+            "description": "Criticality of this dependency"
+          }
+        },
+        "description": "A dependency required for implementation"
+      },
+      "description": "Dependencies that must be in place for successful implementation"
+    },
+    "securityConsiderations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "concern": {
+            "type": "string",
+            "description": "Security concern or vulnerability"
+          },
+          "severity": {
+            "type": "string",
+            "description": "Severity level of this security concern"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Recommended action to address this concern"
+          },
+          "complianceImpact": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Compliance frameworks affected by this security concern"
+          }
+        },
+        "description": "A security consideration for the implementation"
+      },
+      "description": "Security considerations and recommendations for the implementation"
+    },
+    "complianceNotes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Regulatory or compliance notes for the implementation"
+    },
+    "evaluationCriteria": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "successMetrics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Metrics used to evaluate implementation success"
+        },
+        "evaluationFrequency": {
+          "type": "string",
+          "description": "How often evaluation should occur"
+        },
+        "minimumPassThreshold": {
+          "type": "string",
+          "description": "Minimum threshold for considering the implementation successful"
+        },
+        "reviewCadence": {
+          "type": "string",
+          "description": "Cadence for review meetings"
+        }
+      },
+      "description": "Criteria for evaluating the success of the implementation"
+    },
+    "implementationNotes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional notes or guidance for implementors"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+      },
+      "description": "Evidence supporting the blueprint analysis"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Blueprint schema version"
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "User or system that created this blueprint"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the blueprint was created"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the blueprint was last updated"
+        }
+      },
+      "description": "Metadata about the blueprint instance"
+    }
+  },
+  "$defs": {
+    "confidenceLevel": {
+      "type": "string",
+      "enum": [
+        "Confirmed",
+        "High",
+        "Medium",
+        "Low",
+        "Unknown"
+      ],
+      "description": "Confidence level indicating reliability of a piece of evidence"
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "User",
+            "Research",
+            "Inference"
+          ],
+          "description": "Classification of how this evidence was obtained"
+        },
+        "source": {
+          "type": "string",
+          "description": "The origin or source of this evidence"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Detailed description of the evidence content"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL reference to the source of this evidence"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this evidence was recorded"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence level in this evidence item"
+        }
+      },
+      "description": "A single evidence item used across the Compass platform"
+    }
+  }
+}

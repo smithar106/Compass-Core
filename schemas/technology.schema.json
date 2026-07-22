@@ -1,0 +1,713 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/technology.schema.json",
+  "title": "Technology",
+  "description": "Inferred or known technology stack of a company, used for integration recommendations.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "technologyId",
+    "companyProfileId",
+    "inferredAt",
+    "stack"
+  ],
+  "properties": {
+    "technologyId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this technology stack record"
+    },
+    "companyProfileId": {
+      "type": "string",
+      "description": "Reference to the company profile this stack belongs to"
+    },
+    "inferredAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the technology stack was last inferred or updated"
+    },
+    "stack": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "crm": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the CRM platform"
+              },
+              "version": {
+                "type": "string",
+                "description": "Version of the CRM platform in use"
+              },
+              "estimatedUsers": {
+                "type": "integer",
+                "description": "Estimated number of users on the platform"
+              },
+              "confidence": {
+                "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+                "description": "Confidence in this tool detection"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+                },
+                "description": "Evidence supporting this tool detection"
+              }
+            },
+            "description": "A CRM tool detected in the company's stack"
+          },
+          "description": "Customer relationship management platforms"
+        },
+        "support": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the support platform"
+              },
+              "version": {
+                "type": "string",
+                "description": "Version of the support platform in use"
+              },
+              "estimatedUsers": {
+                "type": "integer",
+                "description": "Estimated number of users on the platform"
+              },
+              "confidence": {
+                "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+                "description": "Confidence in this tool detection"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+                },
+                "description": "Evidence supporting this tool detection"
+              }
+            },
+            "description": "A customer support tool detected in the company's stack"
+          },
+          "description": "Customer support and helpdesk platforms"
+        },
+        "erp": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the ERP platform"
+              },
+              "version": {
+                "type": "string",
+                "description": "Version of the ERP platform in use"
+              },
+              "estimatedUsers": {
+                "type": "integer",
+                "description": "Estimated number of users on the platform"
+              },
+              "confidence": {
+                "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+                "description": "Confidence in this tool detection"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+                },
+                "description": "Evidence supporting this tool detection"
+              }
+            },
+            "description": "An ERP tool detected in the company's stack"
+          },
+          "description": "Enterprise resource planning platforms"
+        },
+        "hris": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the HRIS platform"
+              },
+              "version": {
+                "type": "string",
+                "description": "Version of the HRIS platform in use"
+              },
+              "estimatedUsers": {
+                "type": "integer",
+                "description": "Estimated number of users on the platform"
+              },
+              "confidence": {
+                "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+                "description": "Confidence in this tool detection"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+                },
+                "description": "Evidence supporting this tool detection"
+              }
+            },
+            "description": "An HRIS tool detected in the company's stack"
+          },
+          "description": "Human resource information systems"
+        },
+        "dataWarehouse": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the data warehouse platform"
+              },
+              "version": {
+                "type": "string",
+                "description": "Version of the data warehouse platform in use"
+              },
+              "estimatedUsers": {
+                "type": "integer",
+                "description": "Estimated number of users on the platform"
+              },
+              "confidence": {
+                "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+                "description": "Confidence in this tool detection"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+                },
+                "description": "Evidence supporting this tool detection"
+              }
+            },
+            "description": "A data warehouse tool detected in the company's stack"
+          },
+          "description": "Data warehouse and analytics storage platforms"
+        },
+        "cloud": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "provider": {
+                "type": "string",
+                "description": "Cloud provider name (e.g., AWS, Azure, GCP)"
+              },
+              "services": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Specific cloud services in use"
+              },
+              "estimatedMonthlySpend": {
+                "type": "string",
+                "description": "Estimated monthly cloud infrastructure spend"
+              },
+              "confidence": {
+                "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+                "description": "Confidence in this cloud provider detection"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+                },
+                "description": "Evidence supporting this cloud provider detection"
+              }
+            },
+            "description": "A cloud infrastructure provider used by the company"
+          },
+          "description": "Cloud infrastructure providers and services"
+        },
+        "documentation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "platform": {
+                "type": "string",
+                "description": "Documentation platform name"
+              },
+              "tools": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Specific tools within this documentation platform"
+              },
+              "adoptionLevel": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "low",
+                  "medium",
+                  "high"
+                ],
+                "description": "Level of adoption for this documentation platform"
+              }
+            },
+            "description": "A documentation platform detected in the company's stack"
+          },
+          "description": "Documentation and knowledge management platforms"
+        },
+        "communication": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "platform": {
+                "type": "string",
+                "description": "Communication platform name"
+              },
+              "tools": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Specific communication tools in use"
+              },
+              "users": {
+                "type": "integer",
+                "description": "Estimated number of users on the platform"
+              }
+            },
+            "description": "A communication platform detected in the company's stack"
+          },
+          "description": "Internal communication and collaboration platforms"
+        },
+        "aiVendors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "vendor": {
+                "type": "string",
+                "description": "AI vendor name"
+              },
+              "product": {
+                "type": "string",
+                "description": "Specific AI product or model in use"
+              },
+              "useCase": {
+                "type": "string",
+                "description": "Description of the AI use case"
+              },
+              "confidence": {
+                "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+                "description": "Confidence in this AI vendor detection"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+                },
+                "description": "Evidence supporting this AI vendor detection"
+              }
+            },
+            "description": "An AI vendor or product detected in the company's stack"
+          },
+          "description": "AI vendors and products used by the company"
+        },
+        "engineering": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "category": {
+                "type": "string",
+                "enum": [
+                  "Source Control",
+                  "CI/CD",
+                  "Monitoring",
+                  "Feature Flags",
+                  "Testing",
+                  "Observability",
+                  "Security Scanning"
+                ],
+                "description": "Category of engineering tool"
+              },
+              "tools": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Specific tools in this engineering category"
+              }
+            },
+            "description": "A category of engineering tools in use"
+          },
+          "description": "Engineering and developer toolchain"
+        },
+        "identity": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "provider": {
+                "type": "string",
+                "description": "Identity provider name"
+              },
+              "features": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Identity features enabled (e.g., SSO, MFA, SCIM)"
+              },
+              "estimatedUsers": {
+                "type": "integer",
+                "description": "Estimated number of users managed through this provider"
+              }
+            },
+            "description": "An identity and access management provider"
+          },
+          "description": "Identity and access management providers"
+        },
+        "analytics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "tool": {
+                "type": "string",
+                "description": "Name of the analytics tool"
+              },
+              "purpose": {
+                "type": "string",
+                "description": "Primary purpose or use case for this analytics tool"
+              },
+              "confidence": {
+                "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+                "description": "Confidence in this analytics tool detection"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+                },
+                "description": "Evidence supporting this analytics tool detection"
+              }
+            },
+            "description": "An analytics tool detected in the company's stack"
+          },
+          "description": "Analytics and business intelligence tools"
+        },
+        "marketing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "tool": {
+                "type": "string",
+                "description": "Name of the marketing tool"
+              },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "Email",
+                  "Analytics",
+                  "SEO",
+                  "Ads",
+                  "Social",
+                  "ABM",
+                  "Events"
+                ],
+                "description": "Marketing category of the tool"
+              },
+              "confidence": {
+                "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+                "description": "Confidence in this marketing tool detection"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+                },
+                "description": "Evidence supporting this marketing tool detection"
+              }
+            },
+            "description": "A marketing tool detected in the company's stack"
+          },
+          "description": "Marketing technology tools"
+        },
+        "sales": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "tool": {
+                "type": "string",
+                "description": "Name of the sales tool"
+              },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "Prospecting",
+                  "Sequencing",
+                  "Contracting",
+                  "Revenue Intelligence",
+                  "CPQ"
+                ],
+                "description": "Sales category of the tool"
+              },
+              "confidence": {
+                "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+                "description": "Confidence in this sales tool detection"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+                },
+                "description": "Evidence supporting this sales tool detection"
+              }
+            },
+            "description": "A sales tool detected in the company's stack"
+          },
+          "description": "Sales technology tools"
+        }
+      },
+      "description": "Complete technology stack organized by functional category"
+    },
+    "integrationReadiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "overallScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Overall integration readiness score from 0 to 1"
+        },
+        "hasApis": {
+          "type": "boolean",
+          "description": "Whether the company's systems expose APIs"
+        },
+        "apiQuality": {
+          "type": "string",
+          "enum": [
+            "Unknown",
+            "Poor",
+            "Adequate",
+            "Good",
+            "Excellent"
+          ],
+          "description": "Quality assessment of available APIs"
+        },
+        "commonFormats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Common data formats supported (e.g., JSON, XML, CSV)"
+        },
+        "authenticationMethods": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported authentication methods (e.g., OAuth, API Key, SAML)"
+        }
+      },
+      "description": "Assessment of the company's readiness for technical integration"
+    },
+    "recommendedIntegrations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "system": {
+            "type": "string",
+            "description": "Name of the system recommended for integration"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low"
+            ],
+            "description": "Priority level for this integration"
+          },
+          "reasoning": {
+            "type": "string",
+            "description": "Rationale for recommending this integration"
+          },
+          "estimatedEffort": {
+            "type": "string",
+            "description": "Estimated effort required for integration"
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Systems or prerequisites required before this integration"
+          }
+        },
+        "description": "A recommended system integration target"
+      },
+      "description": "Recommended integration targets ranked by priority"
+    },
+    "discouragedIntegrations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "system": {
+            "type": "string",
+            "description": "Name of the system not recommended for integration"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason this integration is discouraged"
+          },
+          "alternative": {
+            "type": "string",
+            "description": "Recommended alternative system"
+          }
+        },
+        "description": "A system that is discouraged as an integration target"
+      },
+      "description": "Systems that are discouraged as integration targets"
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "area": {
+            "type": "string",
+            "description": "Functional area where a gap exists"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the gap"
+          },
+          "impact": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ],
+            "description": "Impact level of the gap"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Recommended action to address the gap"
+          }
+        },
+        "description": "A technology gap or missing capability"
+      },
+      "description": "Identified technology gaps or missing capabilities"
+    }
+  },
+  "$defs": {
+    "confidenceLevel": {
+      "type": "string",
+      "enum": [
+        "Confirmed",
+        "High",
+        "Medium",
+        "Low",
+        "Unknown"
+      ],
+      "description": "Confidence level indicating reliability of a piece of evidence"
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "User",
+            "Research",
+            "Inference"
+          ],
+          "description": "Classification of how this evidence was obtained"
+        },
+        "source": {
+          "type": "string",
+          "description": "The origin or source of this evidence"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Detailed description of the evidence content"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL reference to the source of this evidence"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this evidence was recorded"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence level in this evidence item"
+        }
+      },
+      "description": "A single evidence item used across the Compass platform"
+    },
+    "sourceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sourceType": {
+          "type": "string",
+          "description": "Classification of the source"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of the source"
+        },
+        "accessedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the source was accessed"
+        },
+        "relevance": {
+          "type": "string",
+          "description": "Description of why this source is relevant"
+        }
+      },
+      "description": "Reference to an external source of information"
+    }
+  }
+}

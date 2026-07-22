@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/technology-profile.schema.json",
+  "title": "Technology Profile",
+  "description": "Schema and example for the technology stack profile produced by the Technology Intelligence Agent.",
+  "type": "object",
+  "properties": {
+    "companyName": { "type": "string" },
+    "profileGeneratedAt": { "type": "string", "format": "date-time" },
+    "techStack": {
+      "type": "object",
+      "description": "Detected technology stack by category",
+      "properties": {
+        "crm": {
+          "type": "object",
+          "properties": {
+            "primary": { "type": "object", "properties": { "name": { "type": "string" }, "confidence": { "type": "string" }, "evidence": { "type": "array" } } },
+            "secondary": { "type": "array", "items": { "type": "object" } }
+          }
+        },
+        "support": {
+          "type": "object",
+          "properties": {
+            "primary": { "type": "object", "properties": { "name": { "type": "string" }, "confidence": { "type": "string" }, "evidence": { "type": "array" } } }
+          }
+        },
+        "hris": { "type": "object", "properties": { "primary": { "type": "object" } } },
+        "erp": { "type": "object", "properties": { "primary": { "type": "object" } } },
+        "engineering": { "type": "object", "properties": { "tools": { "type": "array" }, "cloud": { "type": "string" } } },
+        "documentation": { "type": "object", "properties": { "primary": { "type": "object" } } },
+        "aiTools": { "type": "array", "items": { "type": "object" } },
+        "identity": { "type": "object", "properties": { "primary": { "type": "object" } } },
+        "dataWarehouse": { "type": "object", "properties": { "primary": { "type": "object" } } },
+        "communication": { "type": "object", "properties": { "primary": { "type": "object" } } },
+        "analytics": { "type": "object", "properties": { "primary": { "type": "object" } } },
+        "marketing": { "type": "object", "properties": { "primary": { "type": "object" } } }
+      }
+    },
+    "integrationRecommendations": {
+      "type": "array",
+      "description": "Recommended integrations ranked by priority",
+      "items": {
+        "type": "object",
+        "properties": {
+          "integration": { "type": "string", "description": "Integration name (e.g., Salesforce->HubSpot)" },
+          "priority": { "type": "string", "enum": ["High", "Medium", "Low", "Skip"] },
+          "valueScore": { "type": "integer", "minimum": 1, "maximum": 10 },
+          "effortScore": { "type": "integer", "minimum": 1, "maximum": 10 },
+          "rationale": { "type": "string" }
+        },
+        "required": ["integration", "priority", "valueScore", "effortScore"]
+      }
+    },
+    "implementationDifficulty": {
+      "type": "object",
+      "properties": {
+        "overall": { "type": "string", "enum": ["Low", "Medium", "High", "Very High"] },
+        "perSystem": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "system": { "type": "string" },
+              "difficulty": { "type": "string", "enum": ["Low", "Medium", "High", "Very High"] },
+              "notes": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": ["companyName", "profileGeneratedAt", "techStack", "implementationDifficulty"],
+  "example": {
+    "companyName": "NovaPay Inc.",
+    "profileGeneratedAt": "2026-07-21T10:05:00Z",
+    "techStack": {
+      "crm": {
+        "primary": { "name": "Salesforce", "confidence": "Confirmed", "evidence": [{ "type": "Research", "source": "Job Postings", "detail": "15 job postings require Salesforce experience" }] },
+        "secondary": []
+      },
+      "support": { "primary": { "name": "Zendesk", "confidence": "High", "evidence": [{ "type": "Research", "source": "Integration Page", "detail": "Zendesk listed on integrations page" }] } },
+      "engineering": { "tools": [{ "name": "GitHub", "confidence": "Confirmed" }, { "name": "Jira", "confidence": "High" }], "cloud": "AWS" },
+      "communication": { "primary": { "name": "Slack", "confidence": "Confirmed" } },
+      "identity": { "primary": { "name": "Okta", "confidence": "Medium" } }
+    },
+    "integrationRecommendations": [
+      { "integration": "Salesforce ↔ Zendesk", "priority": "High", "valueScore": 8, "effortScore": 2, "rationale": "Enables unified customer view, reduces context switching" },
+      { "integration": "Salesforce ↔ Slack", "priority": "Medium", "valueScore": 5, "effortScore": 1, "rationale": "Sales notifications in Slack, useful but not critical" }
+    ],
+    "implementationDifficulty": {
+      "overall": "Medium",
+      "perSystem": [
+        { "system": "Salesforce", "difficulty": "Low", "notes": "Standard API, well-documented" },
+        { "system": "Zendesk", "difficulty": "Low", "notes": "REST API with standard auth" }
+      ]
+    }
+  }
+}

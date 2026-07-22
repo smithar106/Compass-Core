@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/company-intelligence-profile.schema.json",
+  "title": "Company Intelligence Profile",
+  "description": "Example company profile produced by the Company Intelligence Agent with evidence structure.",
+  "type": "object",
+  "properties": {
+    "companyName": { "type": "string", "example": "NovaPay Inc." },
+    "websiteUrl": { "type": "string", "format": "uri", "example": "https://novapay.com" },
+    "profileGeneratedAt": { "type": "string", "format": "date-time", "example": "2026-07-21T10:00:00Z" },
+    "researchSources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "accessedAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["type", "url"]
+      }
+    },
+    "identity": {
+      "type": "object",
+      "properties": {
+        "industry": { "type": "string", "example": "Financial Technology" },
+        "subIndustry": { "type": "string", "example": "Payments Infrastructure" },
+        "businessModel": { "type": "string", "enum": ["SaaS", "Usage-based", "Hybrid", "Marketplace", "Other"] },
+        "customerSegments": { "type": "array", "items": { "type": "string" } },
+        "yearFounded": { "type": "integer" },
+        "geography": {
+          "type": "object",
+          "properties": {
+            "headquarters": { "type": "string" },
+            "remote": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "size": {
+      "type": "object",
+      "properties": {
+        "headcountEstimate": { "type": "integer", "example": 400 },
+        "headcountConfidence": { "type": "string", "enum": ["Confirmed", "High", "Medium", "Low"] },
+        "headcountRange": { "type": "object", "properties": { "min": { "type": "integer" }, "max": { "type": "integer" } } },
+        "revenueStage": { "type": "string", "enum": ["Seed", "Series A", "Series B", "Series C", "Growth", "Mature", "Unknown"] },
+        "revenueStageEvidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string", "enum": ["User", "Research", "Inference"] },
+              "source": { "type": "string" },
+              "detail": { "type": "string" }
+            }
+          }
+        },
+        "growthStage": { "type": "string", "enum": ["Early", "Scaling", "Established", "Mature", "Unknown"] }
+      }
+    },
+    "organizationalStructure": {
+      "type": "object",
+      "properties": {
+        "departments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "estimatedSize": { "type": "integer" },
+              "confidence": { "type": "string", "enum": ["Confirmed", "High", "Medium", "Low"] },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": { "type": "string", "enum": ["User", "Research", "Inference"] },
+                    "source": { "type": "string" },
+                    "detail": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "orgComplexity": { "type": "string", "enum": ["Flat", "Hierarchical", "Matrix"] }
+      }
+    },
+    "executivePriorities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "priority": { "type": "string" },
+          "source": { "type": "string" },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string", "enum": ["User", "Research", "Inference"] },
+                "source": { "type": "string" },
+                "detail": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "example": [
+        {
+          "priority": "Operational excellence at scale",
+          "source": "CEO Q3 earnings blog post",
+          "evidence": [
+            { "type": "Research", "source": "CEO blog", "detail": "Our next phase is operational excellence" }
+          ]
+        }
+      ]
+    },
+    "knownBottlenecks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "area": { "type": "string" },
+          "description": { "type": "string" },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string", "enum": ["User", "Research", "Inference"] },
+                "source": { "type": "string" },
+                "detail": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "aiMaturity": {
+      "type": "object",
+      "properties": {
+        "level": { "type": "string", "enum": ["None", "Experimental", "Adopting", "Embedded", "Leading"] },
+        "confidence": { "type": "string", "enum": ["Confirmed", "High", "Medium", "Low"] },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string", "enum": ["User", "Research", "Inference"] },
+              "source": { "type": "string" },
+              "detail": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["Technical", "Regulatory", "Organizational", "Cultural", "Resource"] },
+          "severity": { "type": "string", "enum": ["Critical", "Major", "Minor"] },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "complianceProfile": {
+      "type": "object",
+      "properties": {
+        "frameworks": { "type": "array", "items": { "type": "string" } },
+        "confidence": { "type": "string", "enum": ["Confirmed", "High", "Medium", "Low"] },
+        "evidence": { "type": "array", "items": { "type": "object" } }
+      }
+    }
+  },
+  "required": ["companyName", "websiteUrl", "profileGeneratedAt", "identity", "size", "organizationalStructure"]
+}

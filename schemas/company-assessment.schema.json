@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/company-assessment.schema.json",
+  "title": "Company Assessment",
+  "description": "Schema for a completed company assessment in the Compass platform.",
+  "type": "object",
+  "properties": {
+    "assessmentId": {
+      "type": "string",
+      "description": "Unique identifier for this assessment session"
+    },
+    "companyId": {
+      "type": "string",
+      "description": "Reference to the company profile"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["in_progress", "completed", "expired"],
+      "description": "Current status of the assessment"
+    },
+    "version": {
+      "type": "string",
+      "description": "Assessment framework version",
+      "example": "1.0.0"
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when assessment was started"
+    },
+    "completedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when assessment was completed"
+    },
+    "userProfile": {
+      "type": "object",
+      "description": "Information about the user completing the assessment",
+      "properties": {
+        "role": {
+          "type": "string",
+          "description": "User's role in the company"
+        },
+        "department": {
+          "type": "string",
+          "description": "User's primary department"
+        },
+        "tenure": {
+          "type": "integer",
+          "description": "Years at the company",
+          "minimum": 0
+        }
+      },
+      "required": ["role", "department"]
+    },
+    "responses": {
+      "type": "array",
+      "description": "All question responses in the assessment",
+      "items": {
+        "$ref": "#/$defs/questionResponse"
+      },
+      "minItems": 1
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the assessment session",
+      "properties": {
+        "adaptiveVersion": {
+          "type": "string",
+          "description": "Which adaptive path was used"
+        },
+        "totalQuestionsPresented": {
+          "type": "integer",
+          "description": "Total questions shown (varies due to branching)"
+        },
+        "questionsSkipped": {
+          "type": "integer",
+          "description": "Questions skipped due to profile matching"
+        },
+        "completionTimeMinutes": {
+          "type": "integer",
+          "description": "Time to complete assessment"
+        },
+        "userAgent": {
+          "type": "string",
+          "description": "Browser or client identifier"
+        },
+        "researchSnapshotId": {
+          "type": "string",
+          "description": "Reference to research data used at assessment time"
+        }
+      }
+    }
+  },
+  "required": [
+    "assessmentId",
+    "companyId",
+    "status",
+    "startedAt",
+    "userProfile",
+    "responses"
+  ],
+  "$defs": {
+    "questionResponse": {
+      "type": "object",
+      "description": "A single question response within the assessment",
+      "properties": {
+        "questionId": {
+          "type": "string",
+          "description": "Reference to the question definition"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["boolean", "scale", "multi_choice", "open"],
+          "description": "Question type"
+        },
+        "answer": {
+          "description": "The answer provided. Type depends on question type: boolean -> boolean, scale -> integer (1-5), multi_choice -> string (selected option value), open -> string"
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "User's self-reported confidence in their answer"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional user notes or elaboration"
+        },
+        "answeredAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this question was answered"
+        },
+        "timeSpentSeconds": {
+          "type": "integer",
+          "description": "Seconds spent on this question",
+          "minimum": 0
+        },
+        "branchSource": {
+          "type": "string",
+          "description": "If this question was reached via branching, the questionId that triggered it"
+        },
+        "wasSkipped": {
+          "type": "boolean",
+          "description": "Whether this question was automatically skipped",
+          "default": false
+        },
+        "skipReason": {
+          "type": "string",
+          "description": "Why the question was skipped (if applicable)"
+        }
+      },
+      "required": ["questionId", "type", "answer"]
+    }
+  }
+}

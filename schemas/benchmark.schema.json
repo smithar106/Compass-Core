@@ -1,0 +1,436 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/benchmark.schema.json",
+  "title": "Benchmark",
+  "description": "Cross-company benchmark data enabling Compass to learn patterns and provide comparative insights.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "benchmarkId",
+    "industry",
+    "sampleSize",
+    "lastUpdated"
+  ],
+  "properties": {
+    "benchmarkId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this benchmark record"
+    },
+    "industry": {
+      "type": "string",
+      "description": "Primary industry grouping for this benchmark cohort"
+    },
+    "subIndustry": {
+      "type": "string",
+      "description": "More specific sub-industry or vertical within the primary industry"
+    },
+    "companySegment": {
+      "type": "string",
+      "enum": [
+        "SMB",
+        "Mid-Market",
+        "Enterprise"
+      ],
+      "description": "Company size segment targeted by this benchmark"
+    },
+    "revenueStage": {
+      "type": "string",
+      "enum": [
+        "Seed",
+        "Series A",
+        "Series B",
+        "Series C",
+        "Growth",
+        "Mature"
+      ],
+      "description": "Funding or revenue maturity stage of companies in this cohort"
+    },
+    "sampleSize": {
+      "type": "integer",
+      "description": "Number of companies included in this benchmark cohort"
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when this benchmark data was last refreshed"
+    },
+    "commonDeployments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "opportunityType": {
+            "type": "string",
+            "description": "Type or category of opportunity commonly deployed in this cohort"
+          },
+          "department": {
+            "type": "string",
+            "enum": [
+              "Sales",
+              "Marketing",
+              "Customer Success",
+              "Engineering",
+              "Product",
+              "Finance",
+              "HR",
+              "Legal",
+              "Operations",
+              "IT"
+            ],
+            "description": "Department where this deployment type is typically implemented"
+          },
+          "adoptionRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Proportion of companies in the cohort that have adopted this deployment type"
+          },
+          "averageDifficulty": {
+            "type": "string",
+            "enum": [
+              "Low",
+              "Medium",
+              "High",
+              "Very High"
+            ],
+            "description": "Average implementation difficulty rating for this deployment type"
+          },
+          "averageTimeToValue": {
+            "type": "string",
+            "description": "Average time until value is realized from this deployment type"
+          },
+          "averageRoi": {
+            "type": "string",
+            "description": "Average return on investment reported for this deployment type"
+          },
+          "successRate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Proportion of deployments of this type that met their success criteria"
+          },
+          "sampleCount": {
+            "type": "integer",
+            "description": "Number of deployments included in this benchmark calculation"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/benchmark.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting this common deployment benchmark data"
+          }
+        },
+        "description": "Benchmark data for a commonly deployed opportunity type"
+      },
+      "description": "Deployment patterns most frequently observed across the cohort"
+    },
+    "typicalPatterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "Name or short description of this typical deployment pattern"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed explanation of this pattern and when it applies"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "Very Common",
+              "Common",
+              "Occasional",
+              "Rare"
+            ],
+            "description": "How frequently this pattern is observed in the cohort"
+          },
+          "typicalPrerequisites": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Typical prerequisites that should be in place before implementing this pattern"
+          },
+          "typicalDependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Typical dependencies that must be satisfied for this pattern to succeed"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/benchmark.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting this typical pattern observation"
+          }
+        },
+        "description": "A typical deployment pattern commonly observed in the cohort"
+      },
+      "description": "Typical deployment and adoption patterns observed across the cohort"
+    },
+    "kpiBenchmarks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kpiName": {
+            "type": "string",
+            "description": "Name of the key performance indicator being benchmarked"
+          },
+          "department": {
+            "type": "string",
+            "description": "Department associated with this KPI benchmark"
+          },
+          "p10": {
+            "type": "string",
+            "description": "Value at the top 10th percentile representing top performers"
+          },
+          "p25": {
+            "type": "string",
+            "description": "Value at the 25th percentile representing the top quartile"
+          },
+          "p50": {
+            "type": "string",
+            "description": "Median value at the 50th percentile"
+          },
+          "p75": {
+            "type": "string",
+            "description": "Value at the 75th percentile representing the bottom quartile"
+          },
+          "p90": {
+            "type": "string",
+            "description": "Value at the 90th percentile representing the bottom 10th percentile"
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit of measurement for this KPI"
+          },
+          "source": {
+            "type": "string",
+            "description": "Origin or data source for this benchmark value"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/benchmark.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting this KPI benchmark data"
+          }
+        },
+        "description": "A single KPI benchmark with percentile distributions"
+      },
+      "description": "Benchmark distributions for key performance indicators across the cohort"
+    },
+    "aiMaturityDistribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "none": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of companies with no AI adoption"
+        },
+        "experimental": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of companies in experimental AI adoption phase"
+        },
+        "adopting": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of companies actively adopting AI solutions"
+        },
+        "embedded": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of companies with AI embedded across operations"
+        },
+        "leading": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of companies at the leading edge of AI maturity"
+        },
+        "sampleSize": {
+          "type": "integer",
+          "description": "Number of companies included in this maturity distribution calculation"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "https://compass.ai/schemas/benchmark.schema.json#/$defs/evidenceItem"
+          },
+          "description": "Evidence supporting the AI maturity distribution data"
+        }
+      },
+      "description": "Distribution of AI maturity levels across the cohort"
+    },
+    "commonFailures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "failure": {
+            "type": "string",
+            "description": "Description of the common failure or pitfall"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "Very Common",
+              "Common",
+              "Occasional",
+              "Rare"
+            ],
+            "description": "How frequently this failure occurs in the cohort"
+          },
+          "rootCauses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Common root causes identified for this failure"
+          },
+          "mitigationStrategies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Strategies to mitigate or prevent this failure"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/benchmark.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting this common failure observation"
+          }
+        },
+        "description": "A common failure pattern observed across the cohort"
+      },
+      "description": "Common failure patterns and their mitigations observed across the cohort"
+    },
+    "recommendationPriorities": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "byDepartment": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "recommendation": {
+                  "type": "string",
+                  "description": "Recommended action or opportunity for this department"
+                },
+                "priorityScore": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "description": "Priority score from 0 to 100 indicating how strongly this is recommended"
+                },
+                "sampleCount": {
+                  "type": "integer",
+                  "description": "Number of companies in the cohort that support this recommendation"
+                }
+              },
+              "description": "A single prioritized recommendation for a department"
+            },
+            "description": "Prioritized recommendations for this department"
+          },
+          "description": "Department-specific recommendations with priority scores and sample counts"
+        }
+      },
+      "description": "Prioritized recommendations grouped by department"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Schema or data version of this benchmark record"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/benchmark.schema.json#/$defs/confidenceLevel",
+          "description": "Overall confidence level in the benchmark data quality"
+        },
+        "nextRefreshAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Scheduled timestamp for the next refresh of this benchmark data"
+        }
+      },
+      "description": "Metadata about the benchmark record itself"
+    }
+  },
+  "$defs": {
+    "confidenceLevel": {
+      "type": "string",
+      "enum": [
+        "Confirmed",
+        "High",
+        "Medium",
+        "Low",
+        "Unknown"
+      ],
+      "description": "Confidence level indicating reliability of a piece of evidence"
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "User",
+            "Research",
+            "Inference"
+          ],
+          "description": "Classification of how this evidence was obtained"
+        },
+        "source": {
+          "type": "string",
+          "description": "The origin or source of this evidence"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Detailed description of the evidence content"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL reference to the source of this evidence"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this evidence was recorded"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/benchmark.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence level in this evidence item"
+        }
+      },
+      "description": "A single evidence item used across the Compass platform"
+    }
+  }
+}

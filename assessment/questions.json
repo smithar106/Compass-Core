@@ -1,0 +1,123 @@
+[
+  {
+    "id": "Q-SALES-01", "section": "Sales", "question": "How do sales reps currently research and qualify inbound leads?",
+    "type": "multi_choice", "options": ["Manual research using multiple tools", "Basic enrichment from CRM", "Automated enrichment and scoring", "I don't know"],
+    "weight": 8, "priority": "high", "branching": { "trigger": "Manual research", "followUp": "Q-SALES-02" }, "evidenceTags": ["lead_qualification", "sales_efficiency"]
+  },
+  {
+    "id": "Q-SALES-02", "section": "Sales", "question": "How many hours per week does your average SDR spend on lead research versus actual selling?",
+    "type": "scale", "weight": 7, "priority": "high", "evidenceTags": ["lead_qualification", "time_allocation"]
+  },
+  {
+    "id": "Q-SALES-03", "section": "Sales", "question": "How accurate is your sales forecast typically at month-end?",
+    "type": "multi_choice", "options": ["Within 5%", "Within 10%", "Within 20%", "Don't know / not tracked"],
+    "weight": 6, "priority": "medium", "branching": { "trigger": "Within 20%", "followUp": "Q-SALES-04" }, "evidenceTags": ["forecasting", "pipeline_management"]
+  },
+  {
+    "id": "Q-SALES-04", "section": "Sales", "question": "What is your biggest forecasting challenge?",
+    "type": "multi_choice", "options": ["Data accuracy in CRM", "Rep forecast bias", "Late-stage deal visibility", "No systematic process"],
+    "weight": 5, "priority": "medium", "evidenceTags": ["forecasting", "data_quality"]
+  },
+  {
+    "id": "Q-MKTG-01", "section": "Marketing", "question": "How do you currently measure marketing attribution across channels?",
+    "type": "multi_choice", "options": ["First-touch attribution", "Last-touch attribution", "Multi-touch attribution", "No formal attribution model"],
+    "weight": 8, "priority": "high", "branching": { "trigger": "No formal attribution", "followUp": "Q-MKTG-02" }, "evidenceTags": ["attribution", "marketing_analytics"]
+  },
+  {
+    "id": "Q-MKTG-02", "section": "Marketing", "question": "How long does it take to compile a campaign performance report after campaign end?",
+    "type": "multi_choice", "options": ["Less than 2 hours", "2-8 hours", "1-2 days", "More than 2 days"],
+    "weight": 6, "priority": "medium", "evidenceTags": ["reporting", "marketing_operations"]
+  },
+  {
+    "id": "Q-MKTG-03", "section": "Marketing", "question": "How are content briefs currently created for new marketing content?",
+    "type": "multi_choice", "options": ["Writer researches and creates independently", "Content strategist provides detailed briefs", "AI-assisted brief generation", "No formal brief process"],
+    "weight": 5, "priority": "medium", "evidenceTags": ["content_production", "marketing_operations"]
+  },
+  {
+    "id": "Q-CS-01", "section": "Customer Success", "question": "How is customer health currently calculated and tracked?",
+    "type": "multi_choice", "options": ["CSM manually assesses each account", "Spreadsheet with manual data entry", "Automated health score in CS platform", "Not formally tracked"],
+    "weight": 9, "priority": "high", "branching": { "trigger": "CSM manually assesses", "followUp": "Q-CS-02" }, "evidenceTags": ["health_scoring", "customer_retention"]
+  },
+  {
+    "id": "Q-CS-02", "section": "Customer Success", "question": "How far in advance can you typically detect that a customer is at risk of churning?",
+    "type": "multi_choice", "options": ["30+ days before churn", "14-30 days", "Less than 14 days", "We detect churn after it happens"],
+    "weight": 8, "priority": "high", "evidenceTags": ["churn_prediction", "customer_retention"]
+  },
+  {
+    "id": "Q-SUPP-01", "section": "Support", "question": "How are support tickets currently categorized and routed to the right agent?",
+    "type": "multi_choice", "options": ["Manual triage by support manager", "Rule-based auto-routing in platform", "AI-powered intelligent routing", "No formal routing process"],
+    "weight": 7, "priority": "high", "branching": { "trigger": "Manual triage", "followUp": "Q-SUPP-02" }, "evidenceTags": ["ticket_routing", "support_efficiency"]
+  },
+  {
+    "id": "Q-SUPP-02", "section": "Support", "question": "What percentage of support tickets are resolved using knowledge base content vs. requiring custom response?",
+    "type": "scale", "weight": 6, "priority": "medium", "evidenceTags": ["knowledge_base", "support_efficiency"]
+  },
+  {
+    "id": "Q-SUPP-03", "section": "Support", "question": "How long is your average time to first response for support tickets?",
+    "type": "multi_choice", "options": ["< 1 hour", "1-4 hours", "4-24 hours", "> 24 hours", "Don't track"],
+    "weight": 5, "priority": "medium", "evidenceTags": ["response_time", "support_quality"]
+  },
+  {
+    "id": "Q-FIN-01", "section": "Finance", "question": "How are incoming invoices currently processed?",
+    "type": "multi_choice", "options": ["Manual data entry for all invoices", "Some automation via OCR/AP tool", "Fully automated AP processing", "I don't know"],
+    "weight": 7, "priority": "high", "branching": { "trigger": "Manual data entry", "followUp": "Q-FIN-02" }, "evidenceTags": ["invoice_processing", "ap_automation"]
+  },
+  {
+    "id": "Q-FIN-02", "section": "Finance", "question": "How long does your monthly revenue reconciliation typically take?",
+    "type": "multi_choice", "options": ["Less than 1 day", "1-3 days", "3-5 days", "More than 5 days"],
+    "weight": 6, "priority": "medium", "evidenceTags": ["reconciliation", "financial_operations"]
+  },
+  {
+    "id": "Q-PROD-01", "section": "Product", "question": "How is user feedback currently collected, organized, and prioritized for the product roadmap?",
+    "type": "open", "weight": 7, "priority": "high", "evidenceTags": ["feedback_management", "product_prioritization"]
+  },
+  {
+    "id": "Q-PROD-02", "section": "Product", "question": "How long does it typically take from feature approval to having a completed product spec ready for engineering?",
+    "type": "multi_choice", "options": ["< 2 days", "2-5 days", "1-2 weeks", "> 2 weeks"],
+    "weight": 5, "priority": "medium", "evidenceTags": ["spec_writing", "product_development"]
+  },
+  {
+    "id": "Q-ENG-01", "section": "Engineering", "question": "What is the current state of engineering documentation (API docs, architecture, onboarding)?",
+    "type": "multi_choice", "options": ["Comprehensive and up to date", "Exists but outdated", "Minimal or ad-hoc", "No formal documentation"],
+    "weight": 7, "priority": "high", "branching": { "trigger": "Exists but outdated", "followUp": "Q-ENG-02" }, "evidenceTags": ["documentation", "engineering_operations"]
+  },
+  {
+    "id": "Q-ENG-02", "section": "Engineering", "question": "How long does root cause analysis typically take for production incidents?",
+    "type": "multi_choice", "options": ["< 30 minutes", "30-60 minutes", "1-4 hours", "> 4 hours"],
+    "weight": 5, "priority": "medium", "evidenceTags": ["incident_response", "engineering_operations"]
+  },
+  {
+    "id": "Q-ENG-03", "section": "Engineering", "question": "What is your average pull request review cycle time from creation to merge?",
+    "type": "multi_choice", "options": ["< 4 hours", "4-24 hours", "1-3 days", "> 3 days", "Don't track"],
+    "weight": 6, "priority": "medium", "evidenceTags": ["code_review", "engineering_velocity"]
+  },
+  {
+    "id": "Q-HR-01", "section": "People/HR", "question": "How are incoming resumes currently screened and shortlisted?",
+    "type": "multi_choice", "options": ["Recruiter reviews every resume manually", "Basic keyword filtering in ATS", "AI-powered resume screening", "Outsourced to agency"],
+    "weight": 7, "priority": "high", "branching": { "trigger": "Recruiter reviews every resume", "followUp": "Q-HR-02" }, "evidenceTags": ["recruiting", "resume_screening"]
+  },
+  {
+    "id": "Q-HR-02", "section": "People/HR", "question": "How many emails does it typically take to schedule a single interview round?",
+    "type": "scale", "weight": 4, "priority": "low", "evidenceTags": ["interview_scheduling", "recruiting_efficiency"]
+  },
+  {
+    "id": "Q-LEGAL-01", "section": "Legal", "question": "How are standard contracts (NDAs, MSAs) currently reviewed and processed?",
+    "type": "multi_choice", "options": ["Legal reviews every contract manually", "Template-based with legal review of changes", "AI-assisted contract review", "Self-serve via CLM platform"],
+    "weight": 7, "priority": "high", "branching": { "trigger": "Legal reviews every contract", "followUp": "Q-LEGAL-02" }, "evidenceTags": ["contract_review", "legal_operations"]
+  },
+  {
+    "id": "Q-LEGAL-02", "section": "Legal", "question": "How does your organization track compliance obligations and regulatory changes?",
+    "type": "multi_choice", "options": ["Manual monitoring by legal team", "Periodic external audit", "Automated compliance monitoring", "No formal compliance tracking"],
+    "weight": 6, "priority": "medium", "evidenceTags": ["compliance_monitoring", "regulatory"]
+  },
+  {
+    "id": "Q-OPS-01", "section": "Operations", "question": "How are new employee tools and accounts provisioned?",
+    "type": "multi_choice", "options": ["Manual setup by IT for each tool", "Some automated via SSO/SCIM", "Fully automated provisioning", "N/A - I don't know"],
+    "weight": 6, "priority": "medium", "branching": { "trigger": "Manual setup", "followUp": "Q-OPS-02" }, "evidenceTags": ["tool_provisioning", "it_operations"]
+  },
+  {
+    "id": "Q-OPS-02", "section": "Operations", "question": "How are recurring operational reports (board decks, exec dashboards) currently produced?",
+    "type": "multi_choice", "options": ["Manually compiled each period", "Semi-automated with templates", "Fully automated reporting pipeline", "Not applicable"],
+    "weight": 5, "priority": "medium", "evidenceTags": ["reporting", "operations_efficiency"]
+  }
+]

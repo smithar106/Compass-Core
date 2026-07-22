@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/research-company-profile.schema.json",
+  "title": "Research Company Profile",
+  "description": "Schema for the company profile produced by research agents from public sources.",
+  "type": "object",
+  "properties": {
+    "companyName": { "type": "string" },
+    "websiteUrl": { "type": "string", "format": "uri" },
+    "researchDate": { "type": "string", "format": "date-time" },
+    "researchLevel": { "type": "string", "enum": ["Basic", "Standard", "Deep", "Full"] },
+    "sourcesUsed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sourceType": { "type": "string", "enum": ["Website", "Crunchbase", "LinkedIn", "JobBoard", "Github", "ReviewSite", "Press", "Blog", "Podcast", "Social", "Financial", "Technical"] },
+          "url": { "type": "string" },
+          "accessedAt": { "type": "string", "format": "date-time" },
+          "dataExtracted": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["sourceType", "url", "accessedAt"]
+      }
+    },
+    "identity": {
+      "type": "object",
+      "properties": {
+        "legalName": { "type": "string" },
+        "operatingName": { "type": "string" },
+        "tagline": { "type": "string" },
+        "description": { "type": "string" },
+        "industry": { "type": "string" },
+        "subIndustry": { "type": "string" },
+        "businessModel": { "type": "string", "enum": ["SaaS", "Usage-based", "Hybrid", "Marketplace", "Other"] },
+        "customerSegments": { "type": "array", "items": { "type": "string" } },
+        "yearFounded": { "type": "integer" },
+        "headquarters": { "type": "string" },
+        "remoteFirst": { "type": "boolean" }
+      },
+      "required": ["industry", "businessModel"]
+    },
+    "size": {
+      "type": "object",
+      "properties": {
+        "headcountEstimate": { "type": "integer" },
+        "headcountConfidence": { "type": "string", "enum": ["Confirmed", "High", "Medium", "Low"] },
+        "headcountRange": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "integer" },
+            "max": { "type": "integer" }
+          }
+        },
+        "revenueStage": { "type": "string", "enum": ["Seed", "Series A", "Series B", "Series C", "Growth", "Mature", "Unknown"] },
+        "revenueStageConfidence": { "type": "string", "enum": ["Confirmed", "High", "Medium", "Low"] },
+        "growthStage": { "type": "string", "enum": ["Early", "Scaling", "Established", "Mature", "Unknown"] }
+      }
+    },
+    "funding": {
+      "type": "object",
+      "properties": {
+        "totalRaised": { "type": "string" },
+        "lastRound": { "type": "string" },
+        "lastRoundDate": { "type": "string" },
+        "lastRoundAmount": { "type": "string" },
+        "investors": { "type": "array", "items": { "type": "string" } },
+        "confidence": { "type": "string", "enum": ["Confirmed", "High", "Medium", "Low"] }
+      }
+    },
+    "executiveTeam": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "title": { "type": "string" },
+          "source": { "type": "string" }
+        }
+      }
+    },
+    "strategicPriorities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "priority": { "type": "string" },
+          "source": { "type": "string" },
+          "quote": { "type": "string" },
+          "confidence": { "type": "string", "enum": ["High", "Medium", "Low"] }
+        }
+      }
+    },
+    "techStack": {
+      "type": "object",
+      "properties": {
+        "detectedTools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "category": { "type": "string" },
+              "detectionSource": { "type": "string" },
+              "confidence": { "type": "string", "enum": ["High", "Medium", "Low"] }
+            }
+          }
+        },
+        "cloudProvider": { "type": "string" },
+        "dataWarehouse": { "type": "string" }
+      }
+    },
+    "departmentSignals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "department": { "type": "string" },
+          "estimatedSize": { "type": "integer" },
+          "confidence": { "type": "string", "enum": ["High", "Medium", "Low"] },
+          "openRoles": { "type": "integer" },
+          "keyHires": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "customerSignals": {
+      "type": "object",
+      "properties": {
+        "averageRating": { "type": "number" },
+        "commonPraises": { "type": "array", "items": { "type": "string" } },
+        "commonComplaints": { "type": "array", "items": { "type": "string" } },
+        "sources": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "aiSignals": {
+      "type": "object",
+      "properties": {
+        "aiMaturity": { "type": "string", "enum": ["None", "Experimental", "Adopting", "Embedded", "Leading"] },
+        "confidence": { "type": "string", "enum": ["High", "Medium", "Low"] },
+        "knownAiInvestments": { "type": "array", "items": { "type": "string" } },
+        "aiMentions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "complianceSignals": {
+      "type": "object",
+      "properties": {
+        "certifications": { "type": "array", "items": { "type": "string" } },
+        "regulatedIndustry": { "type": "boolean" },
+        "dataPrivacyRequirements": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "researchLimitations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Known gaps or limitations in this research profile"
+    }
+  },
+  "required": ["companyName", "websiteUrl", "researchDate", "researchLevel", "identity", "size"]
+}

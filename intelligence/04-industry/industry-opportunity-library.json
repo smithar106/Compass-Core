@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/industry-opportunity-library.schema.json",
+  "title": "Industry Opportunity Library",
+  "description": "Recurring AI opportunity patterns for the B2B SaaS industry.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "patternId": { "type": "string" },
+      "patternName": { "type": "string" },
+      "description": { "type": "string" },
+      "typicalTriggers": { "type": "array", "items": { "type": "string" } },
+      "affectedDepartments": { "type": "array", "items": { "type": "string" } },
+      "recommendedBlueprints": { "type": "array", "items": { "type": "string" } },
+      "implementationComplexity": { "type": "string", "enum": ["Low", "Medium", "High"] },
+      "typicalEffort": { "type": "string" },
+      "industryPrevalence": { "type": "string", "enum": ["Common", "Growing", "Emerging"] },
+      "successEvidence": { "type": "array", "items": { "type": "object", "properties": { "source": { "type": "string" }, "finding": { "type": "string" } } } }
+    },
+    "required": ["patternId", "patternName", "description", "affectedDepartments", "recommendedBlueprints"]
+  },
+  "example": [
+    {
+      "patternId": "IND-001",
+      "patternName": "Growth-Stage Sales Automation",
+      "description": "SaaS companies between 100-500 employees experience significant sales process friction as they transition from founder-led to team-led sales.",
+      "typicalTriggers": ["SDR team exceeding 5 reps", "Manual lead qualification", "Forecast accuracy below 80%"],
+      "affectedDepartments": ["Sales", "Marketing"],
+      "recommendedBlueprints": ["BP-SALES-01", "BP-SALES-03", "BP-SALES-04"],
+      "implementationComplexity": "Low",
+      "typicalEffort": "6-10 weeks total",
+      "industryPrevalence": "Common",
+      "successEvidence": [
+        { "source": "Industry benchmark: Clari State of Revenue", "finding": "Companies with AI-assisted forecasting see 15-20% improvement in accuracy" }
+      ]
+    },
+    {
+      "patternId": "IND-002",
+      "patternName": "Support Scaling at Series A-C",
+      "description": "As customer count grows, support teams struggle to maintain response times and quality without proportional headcount growth.",
+      "typicalTriggers": ["Ticket volume exceeding 500/month", "Response time over 4 hours", "CSAT below 90%"],
+      "affectedDepartments": ["Support", "Customer Success"],
+      "recommendedBlueprints": ["BP-SUPP-01", "BP-SUPP-02", "BP-SUPP-03"],
+      "implementationComplexity": "Low-Medium",
+      "typicalEffort": "5-12 weeks total",
+      "industryPrevalence": "Common",
+      "successEvidence": [
+        { "source": "Zendesk benchmark report", "finding": "AI-assisted support sees 30% reduction in handle time" }
+      ]
+    },
+    {
+      "patternId": "IND-003",
+      "patternName": "Customer Retention at Scale",
+      "description": "Companies with 500+ customers face increasing churn as account management becomes reactive rather than proactive.",
+      "typicalTriggers": ["Monthly churn above 3%", "No health scoring system", "CS team < 10% of total headcount"],
+      "affectedDepartments": ["Customer Success", "Sales"],
+      "recommendedBlueprints": ["BP-CS-01", "BP-CS-02", "BP-CS-05"],
+      "implementationComplexity": "Medium-High",
+      "typicalEffort": "10-20 weeks total",
+      "industryPrevalence": "Growing",
+      "successEvidence": [
+        { "source": "Gainsight customer benchmarks", "finding": "AI-driven health scoring reduces churn by 15-25%" }
+      ]
+    },
+    {
+      "patternId": "IND-004",
+      "patternName": "Enterprise Legal Bottleneck",
+      "description": "As companies pursue enterprise deals, legal becomes a bottleneck for contract review, NDA processing, and compliance.",
+      "typicalTriggers": ["Contract review averaging >3 days", "Legal team overwhelmed", "Enterprise deal growth"],
+      "affectedDepartments": ["Legal", "Sales"],
+      "recommendedBlueprints": ["BP-LEGAL-01", "BP-LEGAL-02", "BP-LEGAL-04"],
+      "implementationComplexity": "Medium",
+      "typicalEffort": "8-16 weeks total",
+      "industryPrevalence": "Growing",
+      "successEvidence": [
+        { "source": "Ironclad customer data", "finding": "Contract AI reduces legal review time by 50-80%" }
+      ]
+    },
+    {
+      "patternId": "IND-005",
+      "patternName": "Product-Led Growth Feedback Management",
+      "description": "PLG companies generate massive feedback volume but lack systematic ways to synthesize it into product decisions.",
+      "typicalTriggers": ["Feedback in multiple channels", "No product ops function", "PM:engineer ratio > 1:10"],
+      "affectedDepartments": ["Product", "Engineering"],
+      "recommendedBlueprints": ["BP-PROD-01", "BP-PROD-05"],
+      "implementationComplexity": "Low",
+      "typicalEffort": "4-8 weeks total",
+      "industryPrevalence": "Growing",
+      "successEvidence": [
+        { "source": "Productboard industry analysis", "finding": "Companies with systematic feedback processing ship 2x faster" }
+      ]
+    }
+  ]
+}

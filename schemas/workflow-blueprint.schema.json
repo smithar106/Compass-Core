@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/workflow-blueprint.schema.json",
+  "title": "Workflow Blueprint",
+  "description": "Schema for a workflow blueprint in the Compass Blueprint Library.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique blueprint identifier",
+      "pattern": "^BP-[A-Z]+-\\d{2}$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable blueprint name"
+    },
+    "department": {
+      "type": "string",
+      "description": "Primary department owning this workflow",
+      "enum": [
+        "Sales",
+        "Marketing",
+        "Customer Success",
+        "Support",
+        "Finance",
+        "Product",
+        "Engineering",
+        "People/HR",
+        "Legal",
+        "Operations"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "description": "What the workflow accomplishes and when it is used"
+    },
+    "typicalTriggers": {
+      "type": "array",
+      "description": "Events or conditions that initiate this workflow",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "steps": {
+      "type": "array",
+      "description": "Ordered sequence of workflow steps",
+      "items": {
+        "$ref": "#/$defs/workflowStep"
+      },
+      "minItems": 1
+    },
+    "kpis": {
+      "type": "array",
+      "description": "Key performance indicators affected by this workflow",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "KPI name"
+          },
+          "description": {
+            "type": "string",
+            "description": "What the KPI measures"
+          },
+          "typicalBenchmark": {
+            "type": "string",
+            "description": "Industry typical value or range"
+          }
+        },
+        "required": ["name", "description"]
+      },
+      "minItems": 1
+    },
+    "systems": {
+      "type": "array",
+      "description": "Systems typically involved in this workflow",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "System name"
+          },
+          "category": {
+            "type": "string",
+            "description": "System category",
+            "enum": [
+              "CRM", "Support", "Marketing", "HRIS", "Finance",
+              "Engineering", "Product", "Analytics", "Communication",
+              "Documentation", "Compliance", "Identity", "Data",
+              "AI", "Other"
+            ]
+          },
+          "typicalUsage": {
+            "type": "string",
+            "description": "How the system is used in this workflow"
+          }
+        },
+        "required": ["name", "category"]
+      }
+    },
+    "complianceNotes": {
+      "type": "array",
+      "description": "Regulatory or compliance considerations",
+      "items": {
+        "type": "string"
+      }
+    },
+    "aiReadiness": {
+      "type": "string",
+      "enum": ["High", "Medium", "Low"],
+      "description": "Assessment of how ready this workflow is for AI augmentation. High = clear AI application exists, Medium = possible but needs adaptation, Low = requires significant innovation."
+    },
+    "complexity": {
+      "type": "string",
+      "enum": ["Low", "Medium", "High"],
+      "description": "Implementation complexity for AI augmentation"
+    },
+    "typicalPainPoints": {
+      "type": "array",
+      "description": "Common friction points reported by organizations with this workflow",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "estimatedEffort": {
+      "type": "string",
+      "description": "Rough engineering effort estimate for AI implementation"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "department",
+    "description",
+    "typicalTriggers",
+    "steps",
+    "kpis",
+    "systems",
+    "aiReadiness",
+    "complexity",
+    "typicalPainPoints",
+    "estimatedEffort"
+  ],
+  "$defs": {
+    "workflowStep": {
+      "type": "object",
+      "properties": {
+        "stepOrder": {
+          "type": "integer",
+          "description": "Position in the workflow sequence (1-indexed)",
+          "minimum": 1
+        },
+        "name": {
+          "type": "string",
+          "description": "Step name"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Role or department responsible for this step"
+        },
+        "duration": {
+          "type": "string",
+          "description": "Typical time this step takes"
+        },
+        "dependsOn": {
+          "type": "array",
+          "description": "Step numbers that must complete before this step",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "description": {
+          "type": "string",
+          "description": "What happens in this step"
+        },
+        "aiOpportunity": {
+          "type": "string",
+          "description": "How AI could augment or automate this step"
+        }
+      },
+      "required": ["stepOrder", "name", "owner", "duration"]
+    }
+  }
+}

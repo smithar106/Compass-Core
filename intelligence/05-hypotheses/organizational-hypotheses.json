@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/organizational-hypotheses.schema.json",
+  "title": "Organizational Hypotheses",
+  "description": "Schema and example for pre-assessment hypotheses about likely organizational friction points.",
+  "type": "object",
+  "properties": {
+    "companyName": { "type": "string" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "area": { "type": "string", "enum": ["Sales", "Marketing", "Customer Success", "Support", "Finance", "Product", "Engineering", "People/HR", "Legal", "Operations", "Cross-Department"] },
+          "type": { "type": "string", "enum": ["Friction", "Gap", "Constraint", "Readiness", "Contradiction"] },
+          "hypothesis": { "type": "string", "description": "The hypothesized friction point or organizational condition" },
+          "confidence": { "type": "string", "enum": ["Confirmed", "High", "Medium", "Low"] },
+          "basedOn": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "factor": { "type": "string" },
+                "value": { "type": "string" },
+                "confidence": { "type": "string", "enum": ["High", "Medium", "Low"] }
+              },
+              "required": ["factor", "value"]
+            }
+          },
+          "validationQuestions": { "type": "array", "items": { "type": "string" } },
+          "crossValidation": { "type": "array", "items": { "type": "object" } }
+        },
+        "required": ["id", "area", "type", "hypothesis", "confidence", "basedOn", "validationQuestions"]
+      }
+    }
+  },
+  "required": ["companyName", "generatedAt", "hypotheses"],
+  "example": {
+    "companyName": "Example SaaS Corp",
+    "generatedAt": "2026-07-21T10:00:00Z",
+    "hypotheses": [
+      {
+        "id": "HYP-SALES-001", "area": "Sales", "type": "Friction",
+        "hypothesis": "Lead qualification process is largely manual, consuming >40% of SDR time. CRM likely has no automated enrichment.",
+        "confidence": "High",
+        "basedOn": [
+          { "factor": "Revenue Stage", "value": "Series B (200 employees)", "confidence": "High" },
+          { "factor": "Tech Stack", "value": "Salesforce detected, no enrichment tools", "confidence": "Medium" },
+          { "factor": "Industry Pattern", "value": "B2B SaaS growth-stage manual qualification common", "confidence": "High" }
+        ],
+        "validationQuestions": ["Q-SALES-01", "Q-SALES-02"],
+        "crossValidation": [{ "ifConfirmed": "Strengthens BP-SALES-01 recommendation", "ifRejected": "Indicates higher AI maturity than typical" }]
+      },
+      {
+        "id": "HYP-SUPP-001", "area": "Support", "type": "Friction",
+        "hypothesis": "Support ticket routing is manual or rule-based, causing 30%+ misrouting rate. No AI-powered triage exists.",
+        "confidence": "High",
+        "basedOn": [
+          { "factor": "Tech Stack", "value": "Zendesk detected, no AI add-on", "confidence": "Medium" },
+          { "factor": "Stage-Size", "value": "200 employees growing to 400", "confidence": "High" }
+        ],
+        "validationQuestions": ["Q-SUPP-01", "Q-SUPP-03"],
+        "crossValidation": [{ "ifConfirmed": "Strengthens BP-SUPP-01", "ifRejected": "May have invested in support AI already" }]
+      },
+      {
+        "id": "HYP-CS-001", "area": "Customer Success", "type": "Gap",
+        "hypothesis": "No systematic customer health scoring exists. CS team relies on manual assessment or spreadsheets.",
+        "confidence": "Medium",
+        "basedOn": [
+          { "factor": "Company Stage", "value": "Series B — CS typically under-invested", "confidence": "Medium" },
+          { "factor": "Tech Stack", "value": "No CS platform detected (Gainsight, Totango)", "confidence": "Medium" }
+        ],
+        "validationQuestions": ["Q-CS-01", "Q-CS-02"],
+        "crossValidation": [{ "ifConfirmed": "Strengthens BP-CS-01", "ifRejected": "CS is ahead of typical for this stage" }]
+      },
+      {
+        "id": "HYP-LEGAL-001", "area": "Legal", "type": "Friction",
+        "hypothesis": "Contract review is a bottleneck for sales velocity. NDA processing lacks automation.",
+        "confidence": "Medium",
+        "basedOn": [
+          { "factor": "Company Stage", "value": "Growing enterprise deal volume", "confidence": "Medium" },
+          { "factor": "Industry Pattern", "value": "B2B SaaS legal bottleneck at growth stage", "confidence": "High" }
+        ],
+        "validationQuestions": ["Q-LEGAL-01"],
+        "crossValidation": [{ "ifConfirmed": "Strengthens BP-LEGAL-01, BP-LEGAL-04" }]
+      },
+      {
+        "id": "HYP-FIN-001", "area": "Finance", "type": "Gap",
+        "hypothesis": "Monthly revenue reconciliation takes 3+ days due to manual matching across billing, payments, and accounting systems.",
+        "confidence": "Low",
+        "basedOn": [
+          { "factor": "Tech Stack", "value": "NetSuite detected", "confidence": "Medium" },
+          { "factor": "Company Stage", "value": "Series B — billing complexity growing", "confidence": "Low" }
+        ],
+        "validationQuestions": ["Q-FIN-02"],
+        "crossValidation": [{ "ifConfirmed": "Strengthens BP-FIN-03" }]
+      }
+    ]
+  }
+}

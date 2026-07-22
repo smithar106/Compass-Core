@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/reasoning-trace.schema.json",
+  "title": "Reasoning Trace",
+  "description": "Complete reasoning trace for every recommendation, enabling audit, debugging, and explanation synthesis.",
+  "type": "object",
+  "properties": {
+    "traceId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this reasoning trace"
+    },
+    "opportunityMapId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Reference to the opportunity map this trace belongs to"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this trace was generated"
+    },
+    "pipeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stage": {
+            "type": "string",
+            "enum": [
+              "Company Intelligence", "Technology Intelligence", "Workflow Analysis",
+              "Industry Intelligence", "Hypothesis Generation", "Adaptive Assessment",
+              "Signal Extraction", "Pattern Matching", "Constraint Evaluation",
+              "Opportunity Generation", "Ranking", "Confidence Scoring", "Explanation Synthesis"
+            ],
+            "description": "Pipeline stage name"
+          },
+          "stageOrder": { "type": "integer", "minimum": 1, "description": "Stage execution order" },
+          "status": {
+            "type": "string",
+            "enum": ["Pending", "Running", "Completed", "Failed", "Skipped"],
+            "description": "Stage execution status"
+          },
+          "startedAt": { "type": "string", "format": "date-time", "description": "When the stage started" },
+          "completedAt": { "type": "string", "format": "date-time", "description": "When the stage completed" },
+          "durationMs": { "type": "integer", "description": "Stage duration in milliseconds" },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string", "description": "Input name" },
+                "type": { "type": "string", "description": "Input type" },
+                "size": { "type": "string", "description": "Input size estimate" },
+                "ref": { "type": "string", "description": "Reference to the input source" }
+              },
+              "required": ["name"],
+              "additionalProperties": false
+            },
+            "description": "Stage inputs"
+          },
+          "outputs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string", "description": "Output name" },
+                "type": { "type": "string", "description": "Output type" },
+                "size": { "type": "string", "description": "Output size estimate" },
+                "ref": { "type": "string", "description": "Reference to the output destination" }
+              },
+              "required": ["name"],
+              "additionalProperties": false
+            },
+            "description": "Stage outputs"
+          },
+          "reasoning": { "type": "string", "description": "Free-text reasoning for this stage's decisions" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1, "description": "Stage confidence score" },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": { "type": "string", "description": "Error code" },
+                "message": { "type": "string", "description": "Error message" },
+                "severity": {
+                  "type": "string",
+                  "enum": ["warning", "error", "critical"],
+                  "description": "Error severity"
+                },
+                "recovered": { "type": "boolean", "description": "Whether the error was automatically recovered" }
+              },
+              "required": ["code", "message", "severity", "recovered"],
+              "additionalProperties": false
+            },
+            "description": "Errors encountered during this stage"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional stage-specific metadata"
+          }
+        },
+        "required": ["stage", "stageOrder", "status"],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "description": "Pipeline execution trace"
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "decisionId": { "type": "string", "description": "Unique decision identifier" },
+          "type": {
+            "type": "string",
+            "enum": ["Inclusion", "Exclusion", "Ranking", "Confidence", "Priority", "Branch", "Skip", "Override"],
+            "description": "Type of decision made"
+          },
+          "description": { "type": "string", "description": "What was decided" },
+          "rationale": { "type": "string", "description": "Why this decision was made" },
+          "alternatives": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "option": { "type": "string", "description": "Alternative considered" },
+                "reasonNotChosen": { "type": "string", "description": "Why this alternative was not selected" }
+              },
+              "required": ["option", "reasonNotChosen"],
+              "additionalProperties": false
+            },
+            "description": "Alternatives considered and why they were rejected"
+          },
+          "evidence": {
+            "type": "array",
+            "items": { "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem" },
+            "description": "Evidence informing this decision"
+          },
+          "confidence": { "$ref": "#/$defs/confidenceLevel", "description": "Confidence in this decision" },
+          "madeBy": {
+            "type": "string",
+            "enum": ["Agent", "Model", "Rule", "Human"],
+            "description": "What made this decision"
+          },
+          "madeAt": { "type": "string", "format": "date-time", "description": "When the decision was made" }
+        },
+        "required": ["decisionId", "type", "description", "rationale", "madeBy", "madeAt"],
+        "additionalProperties": false
+      },
+      "description": "All decisions made during the reasoning process"
+    },
+    "confidenceBreakdown": {
+      "type": "object",
+      "properties": {
+        "overall": { "$ref": "#/$defs/confidenceLevel", "description": "Overall confidence" },
+        "sourceAuthority": { "$ref": "#/$defs/confidenceLevel", "description": "Confidence based on source authority" },
+        "dataFreshness": { "$ref": "#/$defs/confidenceLevel", "description": "Confidence based on data freshness" },
+        "directness": { "$ref": "#/$defs/confidenceLevel", "description": "Confidence based on directness of evidence" },
+        "consistency": { "$ref": "#/$defs/confidenceLevel", "description": "Confidence based on consistency across sources" },
+        "specificity": { "$ref": "#/$defs/confidenceLevel", "description": "Confidence based on specificity of evidence" }
+      },
+      "required": ["overall"],
+      "additionalProperties": false,
+      "description": "Multi-dimensional confidence breakdown"
+    },
+    "opportunityTraces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "opportunityId": { "type": "string", "description": "Reference to the opportunity" },
+          "rank": { "type": "integer", "description": "Opportunity rank" },
+          "title": { "type": "string", "description": "Opportunity title" },
+          "reasoningChain": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "step": { "type": "string", "description": "Reasoning step label" },
+                "detail": { "type": "string", "description": "Step detail" },
+                "confidence": { "type": "number", "minimum": 0, "maximum": 1, "description": "Step confidence" }
+              },
+              "required": ["step", "detail"],
+              "additionalProperties": false
+            },
+            "description": "Chain of reasoning for this opportunity"
+          },
+          "keyEvidence": {
+            "type": "array",
+            "items": { "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem" },
+            "description": "Key evidence items for this opportunity"
+          },
+          "decisions": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Decision IDs that affected this opportunity"
+          },
+          "alternativeConsidered": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Alternative approaches considered"
+          },
+          "whyNotOtherOptions": {
+            "type": "string",
+            "description": "Explanation of why alternatives were not chosen"
+          }
+        },
+        "required": ["opportunityId", "rank", "title", "reasoningChain"],
+        "additionalProperties": false
+      },
+      "description": "Per-opportunity reasoning traces"
+    },
+    "performance": {
+      "type": "object",
+      "properties": {
+        "totalDurationMs": { "type": "integer", "description": "Total pipeline duration" },
+        "modelCalls": { "type": "integer", "description": "Total model calls made" },
+        "totalTokens": { "type": "integer", "description": "Total tokens consumed" },
+        "estimatedCost": { "type": "string", "description": "Estimated cost of generation" },
+        "cacheHitRate": { "type": "number", "minimum": 0, "maximum": 1, "description": "Cache hit rate" }
+      },
+      "additionalProperties": false,
+      "description": "Performance metrics for the generation"
+    },
+    "auditLog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time", "description": "Event timestamp" },
+          "event": { "type": "string", "description": "Event description" },
+          "actor": { "type": "string", "description": "Actor that triggered the event" },
+          "detail": { "type": "string", "description": "Event details" }
+        },
+        "required": ["timestamp", "event", "actor"],
+        "additionalProperties": false
+      },
+      "description": "Full audit trail of the reasoning process"
+    }
+  },
+  "required": ["traceId", "opportunityMapId", "generatedAt", "pipeline", "decisions"],
+  "additionalProperties": false,
+  "$defs": {
+    "confidenceLevel": {
+      "type": "string",
+      "enum": ["Confirmed", "High", "Medium", "Low", "Unknown"],
+      "description": "Confidence in the inference or recommendation"
+    },
+    "evidenceItem": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["User", "Research", "Inference"], "description": "Evidence class" },
+        "source": { "type": "string", "description": "Specific source of evidence" },
+        "detail": { "type": "string", "description": "Details of the evidence" },
+        "url": { "type": "string", "format": "uri", "description": "Source URL" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "When the evidence was collected" },
+        "confidence": { "$ref": "#/$defs/confidenceLevel", "description": "Confidence in this evidence item" }
+      },
+      "required": ["type", "source", "detail"],
+      "additionalProperties": false,
+      "description": "A single evidence item with source and confidence"
+    }
+  }
+}

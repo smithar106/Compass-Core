@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/research.schema.json",
+  "title": "Research",
+  "description": "Schema for pre-assessment research data gathered from public sources.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "researchRunId",
+    "status",
+    "startedAt",
+    "findings"
+  ],
+  "properties": {
+    "researchRunId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this research run"
+    },
+    "companyProfileId": {
+      "type": "string",
+      "description": "Reference to the company profile being researched"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "completed",
+        "failed",
+        "partial"
+      ],
+      "description": "Current status of the research run"
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the research run started"
+    },
+    "completedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the research run completed"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/sourceReference"
+      },
+      "description": "List of external sources consulted during research"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+      },
+      "description": "Evidence items discovered during research"
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "signalType": {
+            "type": "string",
+            "description": "Type of signal detected"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the signal"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "description": "Severity level of the signal"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Supporting evidence for this signal"
+          }
+        },
+        "description": "A notable signal detected during research about the company"
+      },
+      "description": "Notable signals or patterns detected during research"
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "totalSources": {
+          "type": "integer",
+          "description": "Total number of sources attempted"
+        },
+        "successfulSources": {
+          "type": "integer",
+          "description": "Number of sources successfully scraped or accessed"
+        },
+        "failedSources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of sources that could not be accessed"
+        },
+        "coverageScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Proportion of successful sources against total attempted"
+        }
+      },
+      "description": "Metrics on the breadth and depth of source coverage"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "agentVersion": {
+          "type": "string",
+          "description": "Version of the research agent used"
+        },
+        "modelUsed": {
+          "type": "string",
+          "description": "AI model used during the research run"
+        },
+        "tokensUsed": {
+          "type": "integer",
+          "description": "Number of tokens consumed during research"
+        },
+        "costEstimate": {
+          "type": "string",
+          "description": "Estimated cost of the research run"
+        }
+      },
+      "description": "Operational metadata about the research run"
+    }
+  },
+  "$defs": {
+    "confidenceLevel": {
+      "type": "string",
+      "enum": [
+        "Confirmed",
+        "High",
+        "Medium",
+        "Low",
+        "Unknown"
+      ],
+      "description": "Confidence level indicating reliability of a piece of evidence"
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "User",
+            "Research",
+            "Inference"
+          ],
+          "description": "Classification of how this evidence was obtained"
+        },
+        "source": {
+          "type": "string",
+          "description": "The origin or source of this evidence"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Detailed description of the evidence content"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL reference to the source of this evidence"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this evidence was recorded"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence level in this evidence item"
+        }
+      },
+      "description": "A single evidence item used across the Compass platform"
+    },
+    "sourceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sourceType": {
+          "type": "string",
+          "description": "Classification of the source"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of the source"
+        },
+        "accessedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the source was accessed"
+        },
+        "relevance": {
+          "type": "string",
+          "description": "Description of why this source is relevant"
+        }
+      },
+      "description": "Reference to an external source of information"
+    }
+  }
+}

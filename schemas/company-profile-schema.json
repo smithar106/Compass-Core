@@ -1,0 +1,379 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/company-profile.schema.json",
+  "title": "Company Profile",
+  "description": "Schema for the inferred company profile produced by the Company Intelligence Agent.",
+  "type": "object",
+  "properties": {
+    "companyName": {
+      "type": "string",
+      "description": "Legal or operating name of the company"
+    },
+    "websiteUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Primary company website"
+    },
+    "profileVersion": {
+      "type": "string",
+      "description": "Profile schema version"
+    },
+    "profileGeneratedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this profile was generated"
+    },
+    "researchSources": {
+      "type": "array",
+      "description": "Sources used to build this profile",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Source category"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Source location"
+          },
+          "accessedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When source was accessed"
+          }
+        }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "description": "Basic company identity and classification",
+      "properties": {
+        "industry": {
+          "type": "string",
+          "description": "Primary industry"
+        },
+        "subIndustry": {
+          "type": "string",
+          "description": "More specific industry classification"
+        },
+        "businessModel": {
+          "type": "string",
+          "enum": ["SaaS", "Usage-based", "Hybrid", "Marketplace", "Other"],
+          "description": "Revenue business model"
+        },
+        "customerSegments": {
+          "type": "array",
+          "description": "Target customer segments",
+          "items": {
+            "type": "string",
+            "enum": ["SMB", "Mid-Market", "Enterprise"]
+          }
+        },
+        "yearFounded": {
+          "type": "integer",
+          "description": "Year the company was founded"
+        },
+        "geography": {
+          "type": "object",
+          "properties": {
+            "headquarters": {
+              "type": "string",
+              "description": "HQ location"
+            },
+            "remote": {
+              "type": "boolean",
+              "description": "Whether the company is remote-first"
+            }
+          }
+        }
+      },
+      "required": ["industry", "businessModel"]
+    },
+    "size": {
+      "type": "object",
+      "description": "Company size and growth stage estimates",
+      "properties": {
+        "headcountEstimate": {
+          "type": "integer",
+          "description": "Estimated total headcount"
+        },
+        "headcountConfidence": {
+          "$ref": "#/$defs/confidenceLevel"
+        },
+        "headcountRange": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "integer" },
+            "max": { "type": "integer" }
+          },
+          "description": "Confidence range for headcount"
+        },
+        "revenueStage": {
+          "type": "string",
+          "enum": ["Seed", "Series A", "Series B", "Series C", "Growth", "Mature", "Unknown"],
+          "description": "Estimated revenue/funding stage"
+        },
+        "revenueStageEvidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidenceItem" }
+        },
+        "growthStage": {
+          "type": "string",
+          "enum": ["Early", "Scaling", "Established", "Mature", "Unknown"],
+          "description": "Organizational growth stage"
+        }
+      },
+      "required": ["headcountEstimate", "revenueStage"]
+    },
+    "funding": {
+      "type": "object",
+      "description": "Funding information",
+      "properties": {
+        "totalRaised": {
+          "type": "string",
+          "description": "Total funding raised (human-readable)"
+        },
+        "lastRound": {
+          "type": "string",
+          "description": "Last funding round type"
+        },
+        "lastRoundDate": {
+          "type": "string",
+          "description": "Date of last funding round"
+        },
+        "notableInvestors": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidenceLevel"
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidenceItem" }
+        }
+      }
+    },
+    "organizationalStructure": {
+      "type": "object",
+      "description": "Inferred org structure",
+      "properties": {
+        "departments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "enum": [
+                  "Sales", "Marketing", "Customer Success", "Support",
+                  "Finance", "Product", "Engineering", "People/HR",
+                  "Legal", "Operations", "Other"
+                ]
+              },
+              "estimatedSize": {
+                "type": "integer",
+                "description": "Estimated headcount in this department"
+              },
+              "confidence": {
+                "$ref": "#/$defs/confidenceLevel"
+              },
+              "evidence": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/evidenceItem" }
+              }
+            },
+            "required": ["name"]
+          }
+        },
+        "orgComplexity": {
+          "type": "string",
+          "enum": ["Flat", "Hierarchical", "Matrix"],
+          "description": "Inferred organizational complexity"
+        }
+      },
+      "required": ["departments"]
+    },
+    "executivePriorities": {
+      "type": "array",
+      "description": "Inferred strategic priorities from leadership signals",
+      "items": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "type": "string",
+            "description": "Stated or inferred priority"
+          },
+          "source": {
+            "type": "string",
+            "description": "Where this priority was identified"
+          },
+          "evidence": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/evidenceItem" }
+          }
+        },
+        "required": ["priority", "source"]
+      }
+    },
+    "knownBottlenecks": {
+      "type": "array",
+      "description": "Operational bottlenecks identified from public signals",
+      "items": {
+        "type": "object",
+        "properties": {
+          "area": {
+            "type": "string",
+            "description": "Where the bottleneck exists"
+          },
+          "description": {
+            "type": "string",
+            "description": "Nature of the bottleneck"
+          },
+          "evidence": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/evidenceItem" }
+          }
+        },
+        "required": ["area", "description"]
+      }
+    },
+    "aiMaturity": {
+      "type": "object",
+      "description": "Assessment of AI maturity",
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["None", "Experimental", "Adopting", "Embedded", "Leading"],
+          "description": "AI maturity level"
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidenceLevel"
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidenceItem" }
+        },
+        "knownAiTools": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "AI tools the company publicly uses or builds"
+        }
+      },
+      "required": ["level"]
+    },
+    "techMaturity": {
+      "type": "object",
+      "description": "Assessment of overall technology maturity",
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["Legacy", "Transitioning", "Modern", "Advanced"],
+          "description": "Technology maturity level"
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidenceLevel"
+        }
+      },
+      "required": ["level"]
+    },
+    "constraints": {
+      "type": "array",
+      "description": "Known organizational or technical constraints",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["Technical", "Regulatory", "Organizational", "Cultural", "Resource"]
+          },
+          "description": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["Critical", "Major", "Minor"]
+          }
+        },
+        "required": ["type", "description", "severity"]
+      }
+    },
+    "approvalStructure": {
+      "type": "object",
+      "description": "Inferred decision-making structure",
+      "properties": {
+        "style": {
+          "type": "string",
+          "enum": ["Centralized", "Decentralized", "Consensus-driven", "Unknown"],
+          "description": "Decision-making style"
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidenceLevel"
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidenceItem" }
+        }
+      }
+    },
+    "complianceProfile": {
+      "type": "object",
+      "description": "Compliance and regulatory profile",
+      "properties": {
+        "frameworks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Known compliance frameworks (SOC2, HIPAA, GDPR, etc.)"
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidenceLevel"
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidenceItem" }
+        }
+      }
+    }
+  },
+  "required": [
+    "companyName",
+    "websiteUrl",
+    "profileGeneratedAt",
+    "identity",
+    "size",
+    "organizationalStructure"
+  ],
+  "$defs": {
+    "confidenceLevel": {
+      "type": "string",
+      "enum": ["Confirmed", "High", "Medium", "Low"],
+      "description": "Confidence in the inference"
+    },
+    "evidenceItem": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["User", "Research", "Inference"],
+          "description": "Evidence class"
+        },
+        "source": {
+          "type": "string",
+          "description": "Specific source of evidence"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Details of the evidence"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the evidence was collected"
+        }
+      },
+      "required": ["type", "source", "detail"]
+    }
+  }
+}

@@ -1,0 +1,601 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/deployment.schema.json",
+  "title": "Deployment",
+  "description": "Tracks deployed AI implementations, success metrics, adoption, issues, and realized ROI.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "deploymentId",
+    "blueprintId",
+    "status",
+    "deployedAt",
+    "components"
+  ],
+  "properties": {
+    "deploymentId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this deployment record"
+    },
+    "companyProfileId": {
+      "type": "string",
+      "description": "Reference to the company profile that owns this deployment"
+    },
+    "blueprintId": {
+      "type": "string",
+      "description": "Identifier of the workflow blueprint that was deployed"
+    },
+    "opportunityId": {
+      "type": "string",
+      "description": "Identifier of the opportunity record that this deployment fulfills"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planned",
+        "in_progress",
+        "deployed",
+        "paused",
+        "rolled_back",
+        "completed",
+        "failed"
+      ],
+      "description": "Current lifecycle status of this deployment"
+    },
+    "deployedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the deployment was first initiated"
+    },
+    "deployedBy": {
+      "type": "string",
+      "enum": [
+        "Compass",
+        "Internal Team",
+        "Partner",
+        "Other"
+      ],
+      "description": "Entity that performed or led the deployment"
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "component": {
+            "type": "string",
+            "description": "Name or identifier of the deployed component"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "AI Model",
+              "Integration",
+              "Workflow Automation",
+              "Agent",
+              "API",
+              "Dashboard",
+              "Other"
+            ],
+            "description": "Classification of the component type"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "Pending",
+              "Active",
+              "Degraded",
+              "Failed",
+              "Removed"
+            ],
+            "description": "Operational status of this component"
+          },
+          "version": {
+            "type": "string",
+            "description": "Version identifier of the deployed component"
+          },
+          "lastHealthCheck": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of the most recent health check performed on this component"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/deployment.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting the component status and configuration"
+          }
+        },
+        "description": "A single component deployed as part of this deployment"
+      },
+      "description": "List of all components included in this deployment"
+    },
+    "adoption": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "userCount": {
+          "type": "integer",
+          "description": "Total number of users who have adopted the deployed solution"
+        },
+        "targetUserCount": {
+          "type": "integer",
+          "description": "Target number of users for full adoption"
+        },
+        "adoptionRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Ratio of current users to target users, expressed as a decimal between 0 and 1"
+        },
+        "departmentsUsing": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of departments actively using the deployed solution"
+        },
+        "weeklyActiveUsers": {
+          "type": "integer",
+          "description": "Number of distinct users active in the past week"
+        },
+        "powerUsers": {
+          "type": "integer",
+          "description": "Number of users with above-average engagement or usage frequency"
+        },
+        "trainingCompleted": {
+          "type": "boolean",
+          "description": "Whether formal training has been completed for this deployment"
+        },
+        "trainingScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Average training assessment score on a scale of 0 to 100"
+        },
+        "feedback": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "averageRating": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 5,
+              "description": "Average user satisfaction rating on a scale of 1 to 5"
+            },
+            "recentComments": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Recent user comments and qualitative feedback"
+            },
+            "npsScore": {
+              "type": "integer",
+              "minimum": -100,
+              "maximum": 100,
+              "description": "Net Promoter Score ranging from -100 to 100"
+            }
+          },
+          "description": "Aggregated user feedback metrics for this deployment"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "https://compass.ai/schemas/deployment.schema.json#/$defs/evidenceItem"
+          },
+          "description": "Evidence supporting adoption metrics and user feedback"
+        }
+      },
+      "description": "Adoption metrics tracking how users are engaging with the deployed solution"
+    },
+    "roi": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "timeSaved": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "hoursPerWeek": {
+              "type": "number",
+              "description": "Estimated hours saved per week as a result of this deployment"
+            },
+            "fullTimeEquivalents": {
+              "type": "number",
+              "description": "Full-time employee equivalents freed up by the time savings"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "$ref": "https://compass.ai/schemas/deployment.schema.json#/$defs/evidenceItem"
+              },
+              "description": "Evidence supporting the time savings calculation"
+            }
+          },
+          "description": "Time savings realized from the deployment"
+        },
+        "costReduced": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "amount": {
+              "type": "string",
+              "description": "Monetary amount of cost reduction achieved"
+            },
+            "currency": {
+              "type": "string",
+              "description": "ISO currency code for the reported cost reduction amount"
+            },
+            "period": {
+              "type": "string",
+              "description": "Time period over which the cost reduction was measured"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "$ref": "https://compass.ai/schemas/deployment.schema.json#/$defs/evidenceItem"
+              },
+              "description": "Evidence supporting the cost reduction claim"
+            }
+          },
+          "description": "Cost reductions attributed to this deployment"
+        },
+        "revenueImpact": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "amount": {
+              "type": "string",
+              "description": "Monetary amount of revenue impact attributed to this deployment"
+            },
+            "attribution": {
+              "type": "string",
+              "description": "Explanation of how the revenue impact was attributed to this deployment"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "$ref": "https://compass.ai/schemas/deployment.schema.json#/$defs/evidenceItem"
+              },
+              "description": "Evidence supporting the revenue impact claim"
+            }
+          },
+          "description": "Revenue impact generated by this deployment"
+        },
+        "qualityImprovement": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "metric": {
+              "type": "string",
+              "description": "Name of the quality metric being measured"
+            },
+            "before": {
+              "type": "string",
+              "description": "Value of the quality metric before deployment"
+            },
+            "after": {
+              "type": "string",
+              "description": "Value of the quality metric after deployment"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "$ref": "https://compass.ai/schemas/deployment.schema.json#/$defs/evidenceItem"
+              },
+              "description": "Evidence supporting the quality improvement claim"
+            }
+          },
+          "description": "Quality improvements measured as a result of this deployment"
+        },
+        "roiCalculated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the overall ROI calculation was last performed"
+        },
+        "paybackPeriod": {
+          "type": "string",
+          "description": "Estimated time period until the deployment investment is fully recovered"
+        },
+        "threeYearProjected": {
+          "type": "string",
+          "description": "Projected total ROI over a three-year horizon"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "https://compass.ai/schemas/deployment.schema.json#/$defs/evidenceItem"
+          },
+          "description": "Aggregate evidence supporting the overall ROI assessment"
+        }
+      },
+      "description": "Return on investment metrics calculated for this deployment"
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "type": "string",
+            "description": "Unique identifier for this issue"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "Critical",
+              "Major",
+              "Minor",
+              "Cosmetic"
+            ],
+            "description": "Severity level of the issue"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Technical",
+              "Adoption",
+              "Performance",
+              "Compliance",
+              "Integration"
+            ],
+            "description": "Category of the issue"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the issue"
+          },
+          "rootCause": {
+            "type": "string",
+            "description": "Identified root cause of the issue"
+          },
+          "resolution": {
+            "type": "string",
+            "description": "Steps taken or planned to resolve the issue"
+          },
+          "resolvedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the issue was resolved"
+          },
+          "downtimeMinutes": {
+            "type": "integer",
+            "description": "Total downtime in minutes caused by this issue"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/deployment.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting the issue record"
+          }
+        },
+        "description": "A single issue logged against this deployment"
+      },
+      "description": "Issues and incidents encountered during or after deployment"
+    },
+    "kpis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the key performance indicator"
+          },
+          "targetValue": {
+            "type": "string",
+            "description": "Target or goal value for this KPI"
+          },
+          "currentValue": {
+            "type": "string",
+            "description": "Current measured value for this KPI"
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when this KPI was last updated"
+          },
+          "trend": {
+            "type": "string",
+            "enum": [
+              "Improving",
+              "Stable",
+              "Declining",
+              "Unknown"
+            ],
+            "description": "Directional trend of this KPI over recent measurements"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/deployment.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting this KPI measurement"
+          }
+        },
+        "description": "A key performance indicator tracked for this deployment"
+      },
+      "description": "Key performance indicators measuring deployment success"
+    },
+    "health": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "overall": {
+          "type": "string",
+          "enum": [
+            "Healthy",
+            "Degraded",
+            "Unhealthy",
+            "Unknown"
+          ],
+          "description": "Overall health status of the deployment"
+        },
+        "uptime": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Uptime percentage over the measured period"
+        },
+        "lastIncident": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the most recent incident affecting this deployment"
+        },
+        "incidentCount": {
+          "type": "integer",
+          "description": "Total number of incidents recorded for this deployment"
+        },
+        "checkHistory": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "checkedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp when this health check was performed"
+              },
+              "status": {
+                "type": "string",
+                "description": "Health status reported by this check"
+              },
+              "detail": {
+                "type": "string",
+                "description": "Additional details from this health check"
+              }
+            },
+            "description": "A single health check record in the history"
+          },
+          "description": "Historical health check results ordered by timestamp"
+        }
+      },
+      "description": "Health monitoring data for the deployment"
+    },
+    "continuation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "recommended": {
+          "type": "string",
+          "enum": [
+            "Scale",
+            "Optimize",
+            "Maintain",
+            "Replace",
+            "Sunset"
+          ],
+          "description": "Recommended next action for this deployment"
+        },
+        "nextSteps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Concrete next steps to execute the recommended action"
+        },
+        "nextReviewDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Scheduled date for the next review of this deployment"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "https://compass.ai/schemas/deployment.schema.json#/$defs/evidenceItem"
+          },
+          "description": "Evidence supporting the continuation recommendation"
+        }
+      },
+      "description": "Continuation planning and recommendations for the deployment lifecycle"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Schema or data version of this deployment record"
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "Entity or user that created this deployment record"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when this deployment record was created"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when this deployment record was last modified"
+        },
+        "sourceSystem": {
+          "type": "string",
+          "description": "System or origin from which this deployment data was sourced"
+        }
+      },
+      "description": "Metadata about the deployment record itself"
+    }
+  },
+  "$defs": {
+    "confidenceLevel": {
+      "type": "string",
+      "enum": [
+        "Confirmed",
+        "High",
+        "Medium",
+        "Low",
+        "Unknown"
+      ],
+      "description": "Confidence level indicating reliability of a piece of evidence"
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "User",
+            "Research",
+            "Inference"
+          ],
+          "description": "Classification of how this evidence was obtained"
+        },
+        "source": {
+          "type": "string",
+          "description": "The origin or source of this evidence"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Detailed description of the evidence content"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL reference to the source of this evidence"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this evidence was recorded"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/deployment.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence level in this evidence item"
+        }
+      },
+      "description": "A single evidence item used across the Compass platform"
+    }
+  }
+}

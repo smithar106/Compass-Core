@@ -1,0 +1,247 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/opportunity-map.schema.json",
+  "title": "Opportunity Map",
+  "description": "Complete AI Opportunity Map with rankings, executive summary, sequencing, and cross-opportunity dependencies.",
+  "type": "object",
+  "properties": {
+    "mapId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this opportunity map"
+    },
+    "companyProfileId": {
+      "type": "string",
+      "description": "Reference to the company profile"
+    },
+    "assessmentId": {
+      "type": "string",
+      "description": "Reference to the assessment session"
+    },
+    "companyName": {
+      "type": "string",
+      "description": "Company name for display purposes"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this map was generated"
+    },
+    "version": {
+      "type": "string",
+      "description": "Schema version used for generation"
+    },
+    "executiveSummary": {
+      "type": "object",
+      "properties": {
+        "headline": { "type": "string", "description": "One-sentence takeaway for leadership" },
+        "finding": { "type": "string", "description": "Key finding about this company's AI opportunity landscape" },
+        "recommendedFocus": { "type": "string", "description": "Where the company should start" },
+        "quickWins": { "type": "integer", "minimum": 0, "description": "Count of high-confidence, low-difficulty opportunities" },
+        "strategicValue": { "type": "string", "description": "Long-term value narrative" },
+        "riskFlag": { "type": "boolean", "description": "Whether any critical risks exist across recommendations" },
+        "riskSummary": { "type": "string", "description": "Summary of critical risks if any" }
+      },
+      "required": ["headline", "finding", "recommendedFocus", "quickWins"],
+      "additionalProperties": false,
+      "description": "Executive summary of the opportunity map"
+    },
+    "rankings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rank": { "type": "integer", "minimum": 1, "description": "Rank position" },
+          "title": { "type": "string", "description": "Opportunity title" },
+          "department": { "type": "string", "description": "Primary department" },
+          "confidence": { "$ref": "#/$defs/confidenceLevel", "description": "Confidence level" },
+          "implementationDifficulty": {
+            "type": "string",
+            "enum": ["Low", "Medium", "High", "Very High"],
+            "description": "Implementation difficulty"
+          },
+          "timeToValue": { "type": "string", "description": "Estimated time to value" },
+          "businessImpact": {
+            "type": "object",
+            "properties": {
+              "description": { "type": "string", "description": "Impact description" },
+              "type": { "type": "string", "description": "Impact category" },
+              "estimatedImpact": { "type": "string", "description": "Estimated impact" }
+            },
+            "required": ["description", "type"],
+            "additionalProperties": false,
+            "description": "Business impact summary"
+          },
+          "keyRisks": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Key risks to highlight"
+          },
+          "blueprintAvailable": {
+            "type": "boolean",
+            "description": "Whether an implementation blueprint has been generated"
+          },
+          "reasoningSummary": {
+            "type": "string",
+            "description": "Concise reasoning summary"
+          }
+        },
+        "required": ["rank", "title", "department", "confidence", "implementationDifficulty"],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "description": "Ranked list of opportunities"
+    },
+    "implementationSequencing": {
+      "type": "object",
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": ["Quick Wins First", "Foundational", "Package Deals", "Phased Rollout", "Conditional"],
+          "description": "Recommended implementation strategy"
+        },
+        "strategyRationale": {
+          "type": "string",
+          "description": "Why this strategy was chosen"
+        },
+        "phases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "phase": { "type": "integer", "minimum": 1, "description": "Phase number" },
+              "name": { "type": "string", "description": "Phase name" },
+              "description": { "type": "string", "description": "What happens in this phase" },
+              "opportunities": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "rank": { "type": "integer", "description": "Opportunity rank" },
+                    "title": { "type": "string", "description": "Opportunity title" }
+                  },
+                  "required": ["rank", "title"],
+                  "additionalProperties": false
+                },
+                "description": "Opportunities addressed in this phase"
+              },
+              "estimatedDuration": { "type": "string", "description": "Phase duration estimate" },
+              "dependencies": { "type": "array", "items": { "type": "string" }, "description": "Phase dependencies" },
+              "gates": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "gate": { "type": "string", "description": "Gate name" },
+                    "criteria": { "type": "string", "description": "Success criteria to pass the gate" }
+                  },
+                  "required": ["gate", "criteria"],
+                  "additionalProperties": false
+                },
+                "description": "Approval gates before proceeding"
+              },
+              "resourcesNeeded": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Resources required for this phase"
+              }
+            },
+            "required": ["phase", "name", "description", "opportunities"],
+            "additionalProperties": false
+          },
+          "description": "Implementation phases in sequence"
+        }
+      },
+      "required": ["strategy", "strategyRationale", "phases"],
+      "additionalProperties": false,
+      "description": "Recommended implementation sequencing"
+    },
+    "crossOpportunityDependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fromRank": { "type": "integer", "description": "Source opportunity rank" },
+          "toRank": { "type": "integer", "description": "Target opportunity rank" },
+          "relationship": {
+            "type": "string",
+            "enum": ["Prerequisite", "Enhances", "Conflicts", "SharesResource", "Independent"],
+            "description": "Relationship between the two opportunities"
+          },
+          "description": { "type": "string", "description": "Description of the relationship" },
+          "critical": { "type": "boolean", "description": "Whether this dependency is critical" }
+        },
+        "required": ["fromRank", "toRank", "relationship", "description"],
+        "additionalProperties": false
+      },
+      "description": "Cross-opportunity dependency map"
+    },
+    "evidenceSummary": {
+      "type": "object",
+      "properties": {
+        "verifiedCount": { "type": "integer", "description": "Count of verified facts" },
+        "researchCount": { "type": "integer", "description": "Count of research-discovered facts" },
+        "inferenceCount": { "type": "integer", "description": "Count of inferred facts" },
+        "totalEvidenceItems": { "type": "integer", "description": "Total evidence items across all opportunities" },
+        "overallConfidence": { "$ref": "#/$defs/confidenceLevel", "description": "Overall confidence across the map" }
+      },
+      "required": ["totalEvidenceItems"],
+      "additionalProperties": false,
+      "description": "Evidence summary across all opportunities"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "modelUsed": { "type": "string", "description": "AI model used for generation" },
+        "reasoningVersion": { "type": "string", "description": "Reasoning engine version" },
+        "stagesCompleted": { "type": "array", "items": { "type": "string" }, "description": "Pipeline stages completed" },
+        "totalTokensUsed": { "type": "integer", "description": "Total tokens consumed" },
+        "generationDurationMs": { "type": "integer", "description": "Generation duration in milliseconds" },
+        "stages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string", "description": "Stage name" },
+              "durationMs": { "type": "integer", "description": "Stage duration" },
+              "success": { "type": "boolean", "description": "Whether the stage succeeded" }
+            },
+            "required": ["name", "success"],
+            "additionalProperties": false
+          },
+          "description": "Individual stage results"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Generation metadata"
+    },
+    "opportunities": {
+      "type": "array",
+      "items": { "$ref": "https://compass.ai/schemas/opportunity.schema.json" },
+      "description": "Full opportunity objects for complete map export"
+    }
+  },
+  "required": ["mapId", "companyProfileId", "companyName", "generatedAt", "executiveSummary", "rankings", "implementationSequencing"],
+  "additionalProperties": false,
+  "$defs": {
+    "confidenceLevel": {
+      "type": "string",
+      "enum": ["Confirmed", "High", "Medium", "Low", "Unknown"],
+      "description": "Confidence in the inference or recommendation"
+    },
+    "evidenceItem": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["User", "Research", "Inference"], "description": "Evidence class" },
+        "source": { "type": "string", "description": "Specific source of evidence" },
+        "detail": { "type": "string", "description": "Details of the evidence" },
+        "url": { "type": "string", "format": "uri", "description": "Source URL" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "When the evidence was collected" },
+        "confidence": { "$ref": "#/$defs/confidenceLevel", "description": "Confidence in this evidence item" }
+      },
+      "required": ["type", "source", "detail"],
+      "additionalProperties": false,
+      "description": "A single evidence item with source and confidence"
+    }
+  }
+}

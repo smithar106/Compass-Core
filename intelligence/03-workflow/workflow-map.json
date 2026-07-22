@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/workflow-map.schema.json",
+  "title": "Organizational Workflow Map",
+  "description": "Schema and example for the organizational workflow map produced by the Workflow Intelligence Agent.",
+  "type": "object",
+  "properties": {
+    "companyName": { "type": "string" },
+    "profileGeneratedAt": { "type": "string", "format": "date-time" },
+    "workflows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "primaryDepartment": { "type": "string" },
+          "involvedDepartments": { "type": "array", "items": { "type": "string" } },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "stepOrder": { "type": "integer" },
+                "name": { "type": "string" },
+                "owner": { "type": "string" },
+                "systems": { "type": "array", "items": { "type": "string" } },
+                "duration": { "type": "string" },
+                "handoffFrom": { "type": "integer" },
+                "friction": { "type": "string", "enum": ["Low", "Medium", "High"] },
+                "frictionReason": { "type": "string" },
+                "aiOpportunity": { "type": "string" }
+              },
+              "required": ["stepOrder", "name", "owner", "duration"]
+            }
+          },
+          "estimatedTotalDuration": { "type": "string" },
+          "overallFriction": { "type": "string", "enum": ["Low", "Medium", "High"] }
+        },
+        "required": ["id", "name", "primaryDepartment", "steps"]
+      }
+    },
+    "handoffs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fromDepartment": { "type": "string" },
+          "toDepartment": { "type": "string" },
+          "trigger": { "type": "string" },
+          "artifacts": { "type": "array", "items": { "type": "string" } },
+          "frictionLevel": { "type": "string", "enum": ["Low", "Medium", "High"] },
+          "frictionDescription": { "type": "string" },
+          "aiOpportunity": { "type": "string" }
+        },
+        "required": ["fromDepartment", "toDepartment"]
+      }
+    },
+    "bottlenecks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["Handoff", "Approval", "Resource", "System"] },
+          "workflowId": { "type": "string" },
+          "description": { "type": "string" },
+          "severity": { "type": "string", "enum": ["Critical", "Major", "Minor"] },
+          "affectedDepartments": { "type": "array", "items": { "type": "string" } },
+          "evidence": { "type": "array", "items": { "type": "object", "properties": { "type": { "type": "string" }, "source": { "type": "string" }, "detail": { "type": "string" } } } }
+        },
+        "required": ["type", "description", "severity"]
+      }
+    }
+  },
+  "required": ["companyName", "profileGeneratedAt", "workflows", "handoffs", "bottlenecks"],
+  "example": {
+    "companyName": "Example SaaS Corp",
+    "profileGeneratedAt": "2026-07-21T10:00:00Z",
+    "workflows": [
+      {
+        "id": "WF-SALES-01", "name": "Lead-to-Cash", "primaryDepartment": "Sales",
+        "involvedDepartments": ["Marketing", "Sales", "Customer Success", "Finance"],
+        "steps": [
+          { "stepOrder": 1, "name": "Lead Generation", "owner": "Marketing", "systems": ["HubSpot"], "duration": "Ongoing" },
+          { "stepOrder": 2, "name": "Lead Qualification", "owner": "Sales", "systems": ["Salesforce"], "duration": "0-24h", "handoffFrom": 1, "friction": "Medium", "frictionReason": "50% of leads not sales-ready" },
+          { "stepOrder": 3, "name": "Deal Management", "owner": "Sales", "systems": ["Salesforce"], "duration": "30-90d", "handoffFrom": 2, "friction": "Low" },
+          { "stepOrder": 4, "name": "Contract Approval", "owner": "Legal", "systems": ["Ironclad"], "duration": "2-5d", "handoffFrom": 3, "friction": "High", "frictionReason": "Legal relies on email for changes, 5+ days average" }
+        ],
+        "estimatedTotalDuration": "30-95 days",
+        "overallFriction": "High"
+      }
+    ],
+    "handoffs": [
+      {
+        "fromDepartment": "Sales", "toDepartment": "Legal",
+        "trigger": "Deal won, contract needed",
+        "artifacts": ["Signed proposal", "Contract terms", "Pricing", "SLA"],
+        "frictionLevel": "High",
+        "frictionDescription": "Legal bottlenecks contract review, 2-5 day average, no template enforcement"
+      }
+    ],
+    "bottlenecks": [
+      {
+        "type": "Approval", "workflowId": "WF-SALES-01",
+        "description": "Contract approval by Legal takes 2-5 days, longest step in workflow",
+        "severity": "Critical",
+        "affectedDepartments": ["Sales", "Legal"],
+        "evidence": [{ "type": "Inference", "source": "Flow analysis", "detail": "Legal review is the longest single step by 5x" }]
+      }
+    ]
+  }
+}

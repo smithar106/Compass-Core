@@ -1,0 +1,610 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/workflow.schema.json",
+  "title": "Workflow",
+  "description": "Organizational workflow model representing how work flows through departments, steps, approvals, and systems.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "workflowId",
+    "name",
+    "department",
+    "description",
+    "steps"
+  ],
+  "properties": {
+    "workflowId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this workflow"
+    },
+    "companyProfileId": {
+      "type": "string",
+      "description": "Reference to the parent company profile"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable workflow name"
+    },
+    "department": {
+      "type": "string",
+      "enum": [
+        "Sales",
+        "Marketing",
+        "Customer Success",
+        "Support",
+        "Finance",
+        "Product",
+        "Engineering",
+        "People/HR",
+        "Legal",
+        "Operations",
+        "Cross-functional"
+      ],
+      "description": "Primary department owning this workflow"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the workflow purpose and scope"
+    },
+    "trigger": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event": {
+          "type": "string",
+          "description": "The event that initiates this workflow"
+        },
+        "frequency": {
+          "type": "string",
+          "enum": [
+            "Continuous",
+            "Daily",
+            "Weekly",
+            "Monthly",
+            "Quarterly",
+            "Event-driven",
+            "Ad-hoc"
+          ],
+          "description": "How often this workflow is triggered"
+        },
+        "source": {
+          "type": "string",
+          "description": "System, person, or condition that triggers this workflow"
+        }
+      },
+      "description": "The trigger that initiates this workflow"
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "stepOrder": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Position of this step in the workflow sequence (1-indexed)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Step name"
+          },
+          "owner": {
+            "type": "string",
+            "description": "Role or department responsible for executing this step"
+          },
+          "duration": {
+            "type": "string",
+            "description": "Estimated time to complete this step"
+          },
+          "dependsOn": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Step orders that must complete before this step begins"
+          },
+          "description": {
+            "type": "string",
+            "description": "What happens during this step"
+          },
+          "inputRequired": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Documents, data, or decisions required as input to this step"
+          },
+          "outputProduced": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Documents, data, or decisions produced by this step"
+          },
+          "systemsUsed": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Systems or tools used during this step"
+          },
+          "aiOpportunity": {
+            "type": "string",
+            "description": "How AI could augment or automate this step"
+          },
+          "aiReadiness": {
+            "type": "string",
+            "enum": [
+              "High",
+              "Medium",
+              "Low"
+            ],
+            "description": "How ready this step is for AI augmentation"
+          },
+          "complexity": {
+            "type": "string",
+            "enum": [
+              "Low",
+              "Medium",
+              "High"
+            ],
+            "description": "Complexity of executing this step"
+          },
+          "isAutomated": {
+            "type": "boolean",
+            "description": "Whether this step is already fully automated"
+          },
+          "hasApprovalGate": {
+            "type": "boolean",
+            "description": "Whether this step requires explicit approval before proceeding"
+          },
+          "approvalRequired": {
+            "type": "string",
+            "description": "Role that must provide approval for this step"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting the analysis of this step"
+          }
+        },
+        "description": "A single step within the workflow"
+      },
+      "description": "Ordered sequence of steps in the workflow"
+    },
+    "approvals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the approval gate"
+          },
+          "stepRef": {
+            "type": "integer",
+            "description": "Step order that requires this approval"
+          },
+          "approver": {
+            "type": "string",
+            "description": "Role responsible for approving"
+          },
+          "approvalType": {
+            "type": "string",
+            "enum": [
+              "Manual",
+              "Automated",
+              "Semi-automated"
+            ],
+            "description": "How this approval is processed"
+          },
+          "typicalDuration": {
+            "type": "string",
+            "description": "Typical time to obtain this approval"
+          },
+          "escalationPath": {
+            "type": "string",
+            "description": "Escalation path if approval is delayed or denied"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting the analysis of this approval"
+          }
+        },
+        "description": "An approval gate within the workflow"
+      },
+      "description": "Approval gates required during the workflow"
+    },
+    "bottlenecks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "stepRef": {
+            "type": "integer",
+            "description": "Step order where the bottleneck occurs"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the bottleneck"
+          },
+          "impact": {
+            "type": "string",
+            "enum": [
+              "Critical",
+              "Major",
+              "Moderate",
+              "Minor"
+            ],
+            "description": "Impact severity of the bottleneck"
+          },
+          "rootCause": {
+            "type": "string",
+            "description": "Underlying cause of the bottleneck"
+          },
+          "symptom": {
+            "type": "string",
+            "description": "Observable sign or indicator of this bottleneck"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting the identification of this bottleneck"
+          }
+        },
+        "description": "A bottleneck identified within the workflow"
+      },
+      "description": "Identified bottlenecks in the workflow"
+    },
+    "handoffs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "fromStep": {
+            "type": "integer",
+            "description": "Source step order for the handoff"
+          },
+          "toStep": {
+            "type": "integer",
+            "description": "Destination step order for the handoff"
+          },
+          "fromRole": {
+            "type": "string",
+            "description": "Role handing off the work"
+          },
+          "toRole": {
+            "type": "string",
+            "description": "Role receiving the work"
+          },
+          "handoffType": {
+            "type": "string",
+            "enum": [
+              "Digital",
+              "Verbal",
+              "Document-based",
+              "System-triggered"
+            ],
+            "description": "How the handoff occurs"
+          },
+          "friction": {
+            "type": "string",
+            "enum": [
+              "None",
+              "Low",
+              "Medium",
+              "High"
+            ],
+            "description": "Level of friction in this handoff"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting the analysis of this handoff"
+          }
+        },
+        "description": "A handoff between workflow steps"
+      },
+      "description": "Handoffs between workflow steps indicating how work moves between roles"
+    },
+    "kpis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "KPI name"
+          },
+          "description": {
+            "type": "string",
+            "description": "What this KPI measures"
+          },
+          "currentValue": {
+            "type": "string",
+            "description": "Current measured value of this KPI"
+          },
+          "targetValue": {
+            "type": "string",
+            "description": "Target value for this KPI"
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit of measurement for this KPI"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting the KPI measurement"
+          }
+        },
+        "description": "A key performance indicator for this workflow"
+      },
+      "description": "Key performance indicators tracked for this workflow"
+    },
+    "systems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "System name"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "CRM",
+              "Support",
+              "Marketing",
+              "HRIS",
+              "Finance",
+              "Engineering",
+              "Product",
+              "Analytics",
+              "Communication",
+              "Documentation",
+              "Compliance",
+              "Identity",
+              "Data",
+              "AI",
+              "Other"
+            ],
+            "description": "System category"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "What the system is used for in this workflow"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting the system analysis"
+          }
+        },
+        "description": "A system used in the workflow"
+      },
+      "description": "Systems involved in executing this workflow"
+    },
+    "painPoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "area": {
+            "type": "string",
+            "description": "Area of the workflow where the pain occurs"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the pain point"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "Low",
+              "Medium",
+              "High",
+              "Critical"
+            ],
+            "description": "Severity level of this pain point"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "Rare",
+              "Occasional",
+              "Frequent",
+              "Constant"
+            ],
+            "description": "How often this pain point occurs"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting this pain point"
+          }
+        },
+        "description": "A pain point or friction area in the workflow"
+      },
+      "description": "Pain points and friction areas within the workflow"
+    },
+    "meetings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Meeting name"
+          },
+          "frequency": {
+            "type": "string",
+            "description": "How often this meeting occurs"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Roles or participants in the meeting"
+          },
+          "duration": {
+            "type": "string",
+            "description": "Typical meeting duration"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "Purpose of the meeting"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting this meeting entry"
+          }
+        },
+        "description": "A recurring or ad-hoc meeting related to the workflow"
+      },
+      "description": "Meetings associated with this workflow"
+    },
+    "documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Document name"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Policy",
+              "Process",
+              "Report",
+              "Template",
+              "Contract",
+              "Playbook"
+            ],
+            "description": "Document type"
+          },
+          "owner": {
+            "type": "string",
+            "description": "Role or person who owns this document"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting this document entry"
+          }
+        },
+        "description": "A document produced or used by the workflow"
+      },
+      "description": "Documents associated with this workflow"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Schema version of this workflow instance"
+        },
+        "totalSteps": {
+          "type": "integer",
+          "description": "Total number of steps in the workflow"
+        },
+        "totalApprovals": {
+          "type": "integer",
+          "description": "Total number of approval gates"
+        },
+        "estimatedTotalDuration": {
+          "type": "string",
+          "description": "Estimated total duration to complete the full workflow end-to-end"
+        }
+      },
+      "description": "Metadata about the workflow schema instance"
+    }
+  },
+  "$defs": {
+    "confidenceLevel": {
+      "type": "string",
+      "enum": [
+        "Confirmed",
+        "High",
+        "Medium",
+        "Low",
+        "Unknown"
+      ],
+      "description": "Confidence level indicating reliability of a piece of evidence"
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "User",
+            "Research",
+            "Inference"
+          ],
+          "description": "Classification of how this evidence was obtained"
+        },
+        "source": {
+          "type": "string",
+          "description": "The origin or source of this evidence"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Detailed description of the evidence content"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL reference to the source of this evidence"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this evidence was recorded"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence level in this evidence item"
+        }
+      },
+      "description": "A single evidence item used across the Compass platform"
+    }
+  }
+}

@@ -1,0 +1,485 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/assessment.schema.json",
+  "title": "Assessment",
+  "description": "Complete adaptive assessment session schema with branching, signals, confidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "assessmentId",
+    "status",
+    "startedAt",
+    "userProfile",
+    "responses"
+  ],
+  "properties": {
+    "assessmentId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this assessment session"
+    },
+    "companyProfileId": {
+      "type": "string",
+      "description": "Reference to the company profile associated with this assessment"
+    },
+    "companyId": {
+      "type": "string",
+      "description": "External reference to the company being assessed"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "not_started",
+        "in_progress",
+        "completed",
+        "expired",
+        "archived"
+      ],
+      "description": "Current status of the assessment"
+    },
+    "version": {
+      "type": "string",
+      "enum": [
+        "1.0.0",
+        "adaptive"
+      ],
+      "description": "Assessment framework version identifier"
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the assessment was started"
+    },
+    "completedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the assessment was completed"
+    },
+    "userProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "type": "string",
+          "description": "User's role title within the company"
+        },
+        "department": {
+          "type": "string",
+          "description": "User's primary department"
+        },
+        "tenure": {
+          "type": "integer",
+          "description": "Years the user has been at the company"
+        },
+        "seniority": {
+          "type": "string",
+          "enum": [
+            "IC",
+            "Manager",
+            "Director",
+            "VP",
+            "C-Level"
+          ],
+          "description": "Seniority level of the user"
+        }
+      },
+      "description": "Information about the user completing the assessment"
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "questionId": {
+            "type": "string",
+            "description": "Unique identifier for this question"
+          },
+          "section": {
+            "type": "string",
+            "enum": [
+              "Sales",
+              "Marketing",
+              "Customer Success",
+              "Support",
+              "Finance",
+              "Product",
+              "Engineering",
+              "People/HR",
+              "Legal",
+              "Operations"
+            ],
+            "description": "Department section this question belongs to"
+          },
+          "question": {
+            "type": "string",
+            "description": "The question text presented to the user"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "boolean",
+              "scale",
+              "multi_choice",
+              "open"
+            ],
+            "description": "Question response type"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Available options for multi_choice questions"
+          },
+          "scaleMin": {
+            "type": "integer",
+            "description": "Minimum value for scale questions"
+          },
+          "scaleMax": {
+            "type": "integer",
+            "description": "Maximum value for scale questions"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "Critical",
+              "High",
+              "Medium",
+              "Low"
+            ],
+            "description": "Priority level of this question"
+          },
+          "branching": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "conditions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "ifAnswer": {
+                      "type": "string",
+                      "description": "The answer value that triggers this branch"
+                    },
+                    "matches": {
+                      "type": "string",
+                      "description": "Match condition for the answer"
+                    },
+                    "thenAsk": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Question IDs to ask if condition matches"
+                    },
+                    "elseSkip": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Question IDs to skip if condition does not match"
+                    }
+                  },
+                  "description": "A single branching condition"
+                },
+                "description": "Conditions that determine question branching"
+              }
+            },
+            "description": "Branching logic determining which questions to show next"
+          },
+          "adaptiveRules": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "onlyIfRelevant": {
+                "type": "boolean",
+                "description": "Whether this question is only shown if relevant to the user's context"
+              },
+              "skipIf": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "condition": {
+                      "type": "string",
+                      "description": "Condition expression that triggers skipping"
+                    }
+                  },
+                  "description": "A condition that would cause this question to be skipped"
+                },
+                "description": "Conditions under which this question should be skipped"
+              },
+              "askDeeper": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "when": {
+                      "type": "string",
+                      "description": "Condition that triggers deeper questioning"
+                    },
+                    "followUps": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Question IDs to ask as follow-ups"
+                    }
+                  },
+                  "description": "A rule for asking deeper follow-up questions"
+                },
+                "description": "Rules for asking deeper follow-up questions based on responses"
+              }
+            },
+            "description": "Adaptive rules controlling question visibility and depth"
+          },
+          "hypothesesValidated": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Pre-assessment hypotheses that this question helps validate"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting this question"
+          }
+        },
+        "description": "A single question in the assessment"
+      },
+      "description": "Questions presented during the assessment"
+    },
+    "responses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "questionId": {
+            "type": "string",
+            "description": "Reference to the question definition"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "boolean",
+              "scale",
+              "multi_choice",
+              "open"
+            ],
+            "description": "Question type for this response"
+          },
+          "answer": {
+            "description": "The answer provided. Type depends on question type: boolean -> boolean, scale -> integer, multi_choice -> string, open -> string"
+          },
+          "confidence": {
+            "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+            "description": "User's self-reported confidence in their answer"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional user notes or elaboration on the answer"
+          },
+          "answeredAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when this question was answered"
+          },
+          "timeSpentSeconds": {
+            "type": "integer",
+            "description": "Seconds the user spent on this question"
+          },
+          "branchSource": {
+            "type": "string",
+            "description": "If this question was reached via branching, the questionId that triggered it"
+          },
+          "wasSkipped": {
+            "type": "boolean",
+            "description": "Whether this question was automatically skipped"
+          },
+          "skipReason": {
+            "type": "string",
+            "description": "Why the question was skipped if applicable"
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "signalType": {
+                  "type": "string",
+                  "description": "Type of signal detected from this response"
+                },
+                "strength": {
+                  "type": "string",
+                  "enum": [
+                    "strong",
+                    "moderate",
+                    "weak"
+                  ],
+                  "description": "Strength of the detected signal"
+                },
+                "implication": {
+                  "type": "string",
+                  "description": "What this signal implies about the organization"
+                }
+              },
+              "description": "A signal derived from the response"
+            },
+            "description": "Signals detected from this response"
+          }
+        },
+        "description": "A single response to a question in the assessment"
+      },
+      "description": "All question responses in the assessment session"
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "signalId": {
+            "type": "string",
+            "description": "Unique identifier for this signal"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "growth",
+              "operational",
+              "technical",
+              "financial",
+              "organizational",
+              "cultural",
+              "compliance",
+              "competitive",
+              "strategic"
+            ],
+            "description": "Category of the detected signal"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the signal and what it indicates"
+          },
+          "strength": {
+            "type": "string",
+            "enum": [
+              "strong",
+              "moderate",
+              "weak"
+            ],
+            "description": "Strength of the detected signal"
+          },
+          "derivedFrom": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Question IDs that contributed to this signal"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting this signal"
+          }
+        },
+        "description": "A signal detected during the assessment"
+      },
+      "description": "Derived signals extracted from across all responses"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "adaptiveVersion": {
+          "type": "string",
+          "description": "Version of the adaptive algorithm used"
+        },
+        "totalQuestionsPresented": {
+          "type": "integer",
+          "description": "Total questions shown to the user varies due to branching"
+        },
+        "questionsSkipped": {
+          "type": "integer",
+          "description": "Number of questions skipped due to profile matching or adaptive rules"
+        },
+        "completionTimeMinutes": {
+          "type": "integer",
+          "description": "Total time in minutes to complete the assessment"
+        },
+        "userAgent": {
+          "type": "string",
+          "description": "Browser or client identifier used during the assessment"
+        },
+        "researchSnapshotId": {
+          "type": "string",
+          "description": "Reference to the research data snapshot used at assessment time"
+        }
+      },
+      "description": "Additional metadata about the assessment session"
+    }
+  },
+  "$defs": {
+    "confidenceLevel": {
+      "type": "string",
+      "enum": [
+        "Confirmed",
+        "High",
+        "Medium",
+        "Low",
+        "Unknown"
+      ],
+      "description": "Confidence level indicating reliability of a piece of evidence"
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "User",
+            "Research",
+            "Inference"
+          ],
+          "description": "Classification of how this evidence was obtained"
+        },
+        "source": {
+          "type": "string",
+          "description": "The origin or source of this evidence"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Detailed description of the evidence content"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL reference to the source of this evidence"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this evidence was recorded"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence level in this evidence item"
+        }
+      },
+      "description": "A single evidence item used across the Compass platform"
+    }
+  }
+}

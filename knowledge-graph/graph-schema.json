@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/knowledge-graph.schema.json",
+  "title": "Knowledge Graph Schema",
+  "description": "Schema for the organizational knowledge graph structure.",
+  "type": "object",
+  "properties": {
+    "graphId": { "type": "string", "description": "Unique graph identifier" },
+    "companyId": { "type": "string", "description": "Company this graph represents" },
+    "version": { "type": "string", "description": "Graph version" },
+    "lastUpdated": { "type": "string", "format": "date-time" },
+    "nodes": {
+      "type": "array",
+      "description": "All nodes in the graph",
+      "items": { "$ref": "#/$defs/graphNode" }
+    },
+    "edges": {
+      "type": "array",
+      "description": "All relationships between nodes",
+      "items": { "$ref": "#/$defs/graphEdge" }
+    }
+  },
+  "required": ["graphId", "companyId", "nodes", "edges"],
+  "$defs": {
+    "graphNode": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique node identifier" },
+        "type": { "type": "string", "enum": ["Department", "System", "Workflow", "Approval", "Meeting", "Document", "Person", "Knowledge", "Decision", "KPI", "Process", "Signal", "Opportunity", "Role"] },
+        "label": { "type": "string", "description": "Human-readable node label" },
+        "properties": {
+          "type": "object",
+          "description": "Node-specific properties",
+          "properties": {
+            "description": { "type": "string" },
+            "confidence": { "type": "string", "enum": ["Confirmed", "High", "Medium", "Low"] },
+            "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidenceRef" } },
+            "estimatedSize": { "type": "integer" },
+            "toolCategory": { "type": "string" },
+            "kpiValue": { "type": "string" },
+            "status": { "type": "string" },
+            "owner": { "type": "string" },
+            "frequency": { "type": "string" },
+            "duration": { "type": "string" }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "source": { "type": "string", "description": "What created this node (assessment, research, inference)" }
+      },
+      "required": ["id", "type", "label"]
+    },
+    "graphEdge": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sourceId": { "type": "string", "description": "Source node ID" },
+        "targetId": { "type": "string", "description": "Target node ID" },
+        "relationship": {
+          "type": "string",
+          "enum": [
+            "uses", "depends_on", "reports_to", "owns", "participates_in",
+            "produces", "consumes", "approves", "handoff_to", "scheduled_for",
+            "contributes_to", "implements", "requires", "enables", "blocks",
+            "synergizes_with", "feeds_into", "informs", "governs", "trains_on"
+          ]
+        },
+        "properties": {
+          "type": "object",
+          "properties": {
+            "strength": { "type": "string", "enum": ["Strong", "Medium", "Weak"] },
+            "frequency": { "type": "string", "enum": ["Always", "Often", "Sometimes", "Rarely"] },
+            "confidence": { "type": "string", "enum": ["Confirmed", "High", "Medium", "Low"] },
+            "evidence": { "type": "array", "items": { "$ref": "#/$defs/evidenceRef" } }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "sourceId", "targetId", "relationship"]
+    },
+    "evidenceRef": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["User", "Research", "Inference"] },
+        "source": { "type": "string" },
+        "detail": { "type": "string" }
+      },
+      "required": ["type", "source", "detail"]
+    }
+  }
+}

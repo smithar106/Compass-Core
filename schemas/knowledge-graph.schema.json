@@ -1,0 +1,541 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/knowledge-graph.schema.json",
+  "title": "Knowledge Graph",
+  "description": "Organizational knowledge graph representing nodes and edges between all entities Compass reasons about.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "graphId",
+    "version",
+    "builtAt",
+    "nodes",
+    "edges"
+  ],
+  "properties": {
+    "graphId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this knowledge graph instance"
+    },
+    "companyProfileId": {
+      "type": "string",
+      "description": "Reference to the company profile this graph represents"
+    },
+    "version": {
+      "type": "string",
+      "description": "Version of the knowledge graph schema"
+    },
+    "builtAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when this knowledge graph was built"
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for this node"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "department",
+              "system",
+              "workflow",
+              "person",
+              "kpi",
+              "document",
+              "approval",
+              "meeting",
+              "decision",
+              "knowledge",
+              "process",
+              "capability",
+              "constraint"
+            ],
+            "description": "Type of entity this node represents"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the node"
+          },
+          "label": {
+            "type": "string",
+            "description": "Short label or tag for the node"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of what this node represents"
+          },
+          "confidence": {
+            "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+            "description": "Confidence level in the existence or accuracy of this node"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting the creation of this node"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Arbitrary additional properties specific to this node type"
+          }
+        },
+        "required": [
+          "nodeId",
+          "type",
+          "name"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "department"
+                }
+              },
+              "required": ["type"]
+            },
+            "then": {
+              "properties": {
+                "departmentType": {
+                  "type": "string",
+                  "enum": [
+                    "Sales",
+                    "Marketing",
+                    "Customer Success",
+                    "Support",
+                    "Finance",
+                    "Product",
+                    "Engineering",
+                    "People/HR",
+                    "Legal",
+                    "Operations"
+                  ],
+                  "description": "Type of department this node represents"
+                },
+                "headcount": {
+                  "type": "integer",
+                  "description": "Estimated number of people in this department"
+                }
+              },
+              "required": ["departmentType"]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "system"
+                }
+              },
+              "required": ["type"]
+            },
+            "then": {
+              "properties": {
+                "systemCategory": {
+                  "type": "string",
+                  "description": "Category of the system"
+                },
+                "adoptionLevel": {
+                  "type": "string",
+                  "description": "Level of adoption for this system across the organization"
+                },
+                "vendor": {
+                  "type": "string",
+                  "description": "Vendor or provider of the system"
+                }
+              },
+              "required": ["systemCategory"]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "workflow"
+                }
+              },
+              "required": ["type"]
+            },
+            "then": {
+              "properties": {
+                "department": {
+                  "type": "string",
+                  "description": "Department that owns this workflow"
+                },
+                "estimatedDuration": {
+                  "type": "string",
+                  "description": "Estimated total duration to complete this workflow"
+                }
+              },
+              "required": ["department"]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "person"
+                }
+              },
+              "required": ["type"]
+            },
+            "then": {
+              "properties": {
+                "role": {
+                  "type": "string",
+                  "description": "Role title of this person"
+                },
+                "seniority": {
+                  "type": "string",
+                  "description": "Seniority level of this person"
+                },
+                "department": {
+                  "type": "string",
+                  "description": "Department this person belongs to"
+                }
+              },
+              "required": ["role"]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "kpi"
+                }
+              },
+              "required": ["type"]
+            },
+            "then": {
+              "properties": {
+                "currentValue": {
+                  "type": "string",
+                  "description": "Current measured value of this KPI"
+                },
+                "targetValue": {
+                  "type": "string",
+                  "description": "Target value for this KPI"
+                },
+                "unit": {
+                  "type": "string",
+                  "description": "Unit of measurement for this KPI"
+                }
+              },
+              "required": ["currentValue"]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "document"
+                }
+              },
+              "required": ["type"]
+            },
+            "then": {
+              "properties": {
+                "docType": {
+                  "type": "string",
+                  "description": "Type of document this node represents"
+                },
+                "owner": {
+                  "type": "string",
+                  "description": "Role or person who owns this document"
+                }
+              },
+              "required": ["docType"]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "approval"
+                }
+              },
+              "required": ["type"]
+            },
+            "then": {
+              "properties": {
+                "approvalType": {
+                  "type": "string",
+                  "description": "How this approval is processed"
+                },
+                "requiredBy": {
+                  "type": "string",
+                  "description": "Role or process that requires this approval"
+                }
+              },
+              "required": ["approvalType"]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "meeting"
+                }
+              },
+              "required": ["type"]
+            },
+            "then": {
+              "properties": {
+                "frequency": {
+                  "type": "string",
+                  "description": "How often this meeting occurs"
+                },
+                "participants": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Participants or roles attending this meeting"
+                },
+                "duration": {
+                  "type": "string",
+                  "description": "Typical duration of this meeting"
+                }
+              },
+              "required": ["frequency"]
+            }
+          }
+        ],
+        "description": "A node in the knowledge graph representing an entity"
+      },
+      "description": "Nodes in the knowledge graph representing entities"
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "edgeId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for this edge"
+          },
+          "sourceNodeId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Node ID of the source entity"
+          },
+          "targetNodeId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Node ID of the target entity"
+          },
+          "relationship": {
+            "type": "string",
+            "enum": [
+              "owns",
+              "depends_on",
+              "produces",
+              "blocks",
+              "approves",
+              "consumes",
+              "reports_to",
+              "uses",
+              "participates_in",
+              "creates",
+              "modifies",
+              "reviews",
+              "delegates_to",
+              "reports_on",
+              "influences",
+              "contributes_to",
+              "requires",
+              "belongs_to",
+              "precedes"
+            ],
+            "description": "Type of relationship between source and target nodes"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "directed",
+              "bidirectional"
+            ],
+            "description": "Directionality of the relationship"
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Strength or confidence weight of this edge between 0 and 1"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the relationship"
+          },
+          "confidence": {
+            "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+            "description": "Confidence level in the existence of this edge"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+            },
+            "description": "Evidence supporting the creation of this edge"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Arbitrary additional properties for this edge"
+          }
+        },
+        "required": [
+          "edgeId",
+          "sourceNodeId",
+          "targetNodeId",
+          "relationship",
+          "direction"
+        ],
+        "description": "A directed or bidirectional edge connecting two nodes"
+      },
+      "description": "Edges representing relationships between nodes in the graph"
+    },
+    "inferenceRules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ruleId": {
+            "type": "string",
+            "description": "Unique identifier for this inference rule"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of what this inference rule does"
+          },
+          "pattern": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "ifEdge": {
+                  "type": "string",
+                  "description": "Edge relationship that triggers this inference"
+                },
+                "thenInfer": {
+                  "type": "string",
+                  "description": "Entity or relationship to infer when the pattern matches"
+                }
+              },
+              "description": "A single inference pattern"
+            },
+            "description": "Patterns that define when to infer new relationships"
+          },
+          "confidence": {
+            "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+            "description": "Confidence level in the accuracy of this inference rule"
+          },
+          "examples": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Example applications of this inference rule"
+          }
+        },
+        "required": [
+          "ruleId",
+          "description"
+        ],
+        "description": "A rule for inferring new relationships from existing graph patterns"
+      },
+      "description": "Rules for inferring implicit relationships from explicit graph patterns"
+    },
+    "statistics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "totalNodes": {
+          "type": "integer",
+          "description": "Total number of nodes in the graph"
+        },
+        "totalEdges": {
+          "type": "integer",
+          "description": "Total number of edges in the graph"
+        },
+        "nodeCountByType": {
+          "type": "object",
+          "description": "Count of nodes grouped by their type"
+        },
+        "edgeCountByRelationship": {
+          "type": "object",
+          "description": "Count of edges grouped by their relationship type"
+        },
+        "density": {
+          "type": "number",
+          "description": "Graph density score between 0 and 1"
+        }
+      },
+      "description": "Statistical summary of the knowledge graph structure"
+    }
+  },
+  "$defs": {
+    "confidenceLevel": {
+      "type": "string",
+      "enum": [
+        "Confirmed",
+        "High",
+        "Medium",
+        "Low",
+        "Unknown"
+      ],
+      "description": "Confidence level indicating reliability of a piece of evidence"
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "User",
+            "Research",
+            "Inference"
+          ],
+          "description": "Classification of how this evidence was obtained"
+        },
+        "source": {
+          "type": "string",
+          "description": "The origin or source of this evidence"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Detailed description of the evidence content"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL reference to the source of this evidence"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this evidence was recorded"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence level in this evidence item"
+        }
+      },
+      "description": "A single evidence item used across the Compass platform"
+    }
+  }
+}

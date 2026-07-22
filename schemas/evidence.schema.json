@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compass.ai/schemas/evidence.schema.json",
+  "title": "Evidence",
+  "description": "Universal evidence envelope for every fact and inference in Compass.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "category",
+    "key",
+    "confidence",
+    "evidenceClass",
+    "sourceType",
+    "reasoning",
+    "observedAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique evidence identifier"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "company",
+        "technology",
+        "workflow",
+        "assessment",
+        "research",
+        "opportunity",
+        "deployment",
+        "benchmark"
+      ],
+      "description": "The category domain this evidence belongs to"
+    },
+    "key": {
+      "type": "string",
+      "description": "The specific attribute this evidence supports"
+    },
+    "value": {
+      "description": "The value or fact being asserted"
+    },
+    "confidence": {
+      "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+      "description": "Confidence level assigned to this evidence"
+    },
+    "evidenceClass": {
+      "type": "string",
+      "enum": [
+        "User",
+        "Research",
+        "Inference"
+      ],
+      "description": "Classification of how this evidence was obtained"
+    },
+    "sourceType": {
+      "type": "string",
+      "enum": [
+        "website",
+        "careers_page",
+        "help_center",
+        "documentation",
+        "pricing_page",
+        "news_article",
+        "sec_filing",
+        "crunchbase",
+        "linkedin",
+        "customer_statement",
+        "api_docs",
+        "social_media",
+        "job_posting",
+        "product_hunt",
+        "unknown"
+      ],
+      "description": "The type of source this evidence was derived from"
+    },
+    "sourceUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to the original source of this evidence"
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "Explanation of why this inference was made or evidence collected"
+    },
+    "observedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when this evidence was first observed"
+    },
+    "verifiedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when this evidence was last verified"
+    },
+    "verifiedBy": {
+      "type": "string",
+      "description": "Entity that performed the verification"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when this evidence becomes stale and should be re-evaluated"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Arbitrary tags for filtering and categorization"
+    }
+  },
+  "$defs": {
+    "confidenceLevel": {
+      "type": "string",
+      "enum": [
+        "Confirmed",
+        "High",
+        "Medium",
+        "Low",
+        "Unknown"
+      ],
+      "description": "Confidence level indicating reliability of a piece of evidence"
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "User",
+            "Research",
+            "Inference"
+          ],
+          "description": "Classification of how this evidence was obtained"
+        },
+        "source": {
+          "type": "string",
+          "description": "The origin or source of this evidence"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Detailed description of the evidence content"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL reference to the source of this evidence"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this evidence was recorded"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Confidence level in this evidence item"
+        }
+      },
+      "description": "A single evidence item used across the Compass platform"
+    },
+    "evidenceBundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/evidenceItem"
+          },
+          "description": "Collection of evidence items supporting a claim"
+        },
+        "confidence": {
+          "$ref": "https://compass.ai/schemas/evidence.schema.json#/$defs/confidenceLevel",
+          "description": "Aggregate confidence across all items in the bundle"
+        }
+      },
+      "description": "A bundle of evidence items with an aggregate confidence score"
+    },
+    "sourceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sourceType": {
+          "type": "string",
+          "description": "Classification of the source"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of the source"
+        },
+        "accessedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the source was accessed"
+        },
+        "relevance": {
+          "type": "string",
+          "description": "Description of why this source is relevant"
+        }
+      },
+      "description": "Reference to an external source of information"
+    }
+  }
+}
