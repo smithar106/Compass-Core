@@ -1,7 +1,8 @@
-import type { EvidenceRecord, OpportunityMap, RankedOpportunity, PipelineContext } from "../types/index.js";
+import type { EvidenceRecord, OpportunityMap, RankedOpportunity, RankedIntervention, PipelineContext } from "../types/index.js";
 
 interface PersistInput {
   opportunityMap: OpportunityMap;
+  rankedInterventions?: RankedIntervention[];
   evidence: EvidenceRecord[];
   sessionId: string;
   userId: string;
@@ -86,6 +87,130 @@ export async function persistOpportunityMap(input: PersistInput, context: Pipeli
     }
   }
 
+  // 3b. Persist intervention-intelligence entities (Priority 12)
+  for (const ri of input.rankedInterventions ?? []) {
+    // business_problems
+    const { error: problemError } = await context.supabase
+      .from("business_problems")
+      .upsert({
+        id: ri.problemId,
+        assessment_session_id: input.sessionId,
+        title: ri.problem.title,
+        description: ri.problem.description,
+        department: ri.problem.department,
+        workflow: ri.problem.workflow,
+        desired_outcome: ri.problem.desiredOutcome,
+        current_impact: ri.problem.currentImpact,
+        evidence_ids: ri.problem.evidenceIds,
+        engine_version: input.opportunityMap.interventionEngineVersion,
+      }, { onConflict: "id" });
+    if (problemError) {
+      context.log("persist_opportunity_map", "Failed to persist business problem", { id: ri.problemId, error: problemError.message });
+    }
+
+    // intervention_options (every compared path)
+    const { error: optionsError } = await context.supabase
+      .from("intervention_options")
+      .upsert(
+        ri.comparedOptions.map((o) => ({
+          id: `${ri.problemId}-${o.path}`,
+          problem_id: ri.problemId,
+          path: o.path,
+          summary: o.summary,
+          expected_impact: o.expectedImpact,
+          estimated_cost: o.estimatedCost,
+          estimated_time_to_value: o.estimatedTimeToValue,
+          implementation_complexity: o.implementationComplexity,
+          data_readiness: o.dataReadiness,
+          organizational_readiness: o.organizationalReadiness,
+          technical_risk: o.technicalRisk,
+          operational_risk: o.operationalRisk,
+          human_judgment_requirement: o.humanJudgmentRequirement,
+          reversibility: o.reversibility,
+          confidence: o.confidence,
+          eligible: o.eligible,
+          disqualifiers: o.disqualifiers,
+          evidence_ids: o.evidenceIds,
+          engine_version: input.opportunityMap.interventionEngineVersion,
+        })),
+        { onConflict: "id" },
+      );
+    if (optionsError) {
+      context.log("persist_opportunity_map", "Failed to persist intervention options", { id: ri.problemId, error: optionsError.message });
+    }
+
+    // selected_interventions
+    const { error: selectedError } = await context.supabase
+      .from("selected_interventions")
+      .upsert({
+        id: `sel-${ri.problemId}`,
+        problem_id: ri.problemId,
+        opportunity_map_id: input.opportunityMap.mapId,
+        selected_path: ri.selectedPath,
+        reasons_selected: ri.reasonsSelected,
+        confidence: ri.confidence,
+        tier: ri.tier,
+        sequence: ri.sequence,
+        recommendation: ri.recommendation,
+        ranked_score: ri.rankedScore,
+        pass_scores: {
+          eligibility: ri.eligibility,
+          business_leverage: ri.businessLeverage,
+          readiness: ri.readiness,
+          portfolio_priority: ri.portfolioPriority,
+        },
+        success_metrics: ri.successMetrics,
+        escalation_requirements: ri.escalationRequirements,
+        reasoning_trace_id: ri.reasoningTraceId,
+        engine_version: input.opportunityMap.interventionEngineVersion,
+        prioritization_version: input.opportunityMap.prioritizationVersion,
+      }, { onConflict: "id" });
+    if (selectedError) {
+      context.log("persist_opportunity_map", "Failed to persist selected intervention", { id: ri.problemId, error: selectedError.message });
+    }
+
+    // alternative_rejections
+    const { error: rejectionError } = await context.supabase
+      .from("alternative_rejections")
+      .upsert(
+        ri.reasonsAlternativesRejected.map((r) => ({
+          id: `${ri.problemId}-rej-${r.path}`,
+          problem_id: ri.problemId,
+          path: r.path,
+          primary_reason: r.primaryReason,
+          secondary_reasons: r.secondaryReasons,
+          evidence_ids: r.evidenceIds,
+        })),
+        { onConflict: "id" },
+      );
+    if (rejectionError) {
+      context.log("persist_opportunity_map", "Failed to persist alternative rejections", { id: ri.problemId, error: rejectionError.message });
+    }
+
+    // intervention_assumptions
+    const allAssumptions = ri.comparedOptions.flatMap((o) =>
+      o.assumptions.map((a) => ({ ...a, optionPath: o.path })),
+    );
+    if (allAssumptions.length > 0) {
+      const { error: assumptionError } = await context.supabase
+        .from("intervention_assumptions")
+        .upsert(
+          allAssumptions.map((a) => ({
+            id: a.id,
+            problem_id: ri.problemId,
+            option_path: a.optionPath,
+            statement: a.statement,
+            confidence: a.confidence,
+            evidence_ids: a.evidenceIds,
+          })),
+          { onConflict: "id" },
+        );
+      if (assumptionError) {
+        context.log("persist_opportunity_map", "Failed to persist assumptions", { id: ri.problemId, error: assumptionError.message });
+      }
+    }
+  }
+
   // 4. Persist reasoning trace
   const { error: traceError } = await context.supabase
     .from("reasoning_traces")
@@ -93,14 +218,17 @@ export async function persistOpportunityMap(input: PersistInput, context: Pipeli
       opportunity_map_id: input.opportunityMap.mapId,
       pipeline: {
         version: input.opportunityMap.pipelineVersion,
+        interventionEngineVersion: input.opportunityMap.interventionEngineVersion,
+        prioritizationVersion: input.opportunityMap.prioritizationVersion,
         stages: [
           "load_assessment",
           "build_company_context",
           "normalize_workflow_signals",
+          "generate_business_problems",
+          "generate_intervention_options",
           "generate_candidates",
-          "match_blueprints",
           "rank_opportunities",
-          "calculate_confidence",
+          "rank_interventions",
           "build_evidence_traces",
           "generate_explanations",
           "persist_opportunity_map",

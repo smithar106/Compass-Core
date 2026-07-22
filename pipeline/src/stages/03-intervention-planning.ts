@@ -1,441 +1,703 @@
-import { InterventionPath, BusinessProblem, InterventionOption, EvidenceRecord, Department, PipelineContext } from "../types/index.js";
-import { loadBlueprintLibrary } from "./blueprint-library.js";
+// Stage: Business Problem Detection + Intervention-Path Comparison
+// Priority 2 (intervention-path comparison) and Priority 4 (candidate
+// generation identifies business problems, not merely AI use cases).
+//
+// All scoring is deterministic. An LLM may structure ambiguous assessment text
+// upstream, but path eligibility, selection, and rejection are computed here.
 
-interface GenerateInterventionOptionsInput {
-  businessProblem: BusinessProblem;
-  candidateBlueprintIds: string[];
+import type {
+  BusinessProblem,
+  BusinessImpact,
+  Department,
+  EvidenceRecord,
+  InterventionOption,
+  InterventionPath,
+  AlternativeRejection,
+  RecommendedIntervention,
+  Assumption,
+  SuccessMetric,
+  EscalationRequirement,
+  PipelineContext,
+} from "../types/index.js";
+import { INTERVENTION_ENGINE_VERSION } from "../types/index.js";
+
+export interface GenerateBusinessProblemsInput {
   answers: Array<{ questionId: number; value: string | number | boolean; type: string; wasSkipped: boolean }>;
+  company: any;
+  workflowSignals: any;
   evidence: EvidenceRecord[];
 }
 
-function generateAllInterventionPaths(): InterventionOption[] {
-  const baseProblemScore = 5;
-  const businessCaseScore = 7;
-  const riskScore = 8;
-
-  const paths: InterventionOption[] = [
-    {
-      id: "ai_ml_model",
-      path: "ai",
-      summary: "Build an AI/ML model to automatically handle this task",
-      expectedImpact: {
-        cost: 100000,
-        timePerOccurrence: 45,
-        userHoursPerWeek: 20,
-        customerImpactScore: 7,
-        revenueImpact: 250000,
-        strategicImportance: "high",
-      },
-      estimatedCost: {
-        initial: 120000,
-        monthly: 15000,
-        yearly: 5000,
-        implementationComplexity: "high",
-      },
-      estimatedTimeToValue: {
-        min: 12,
-        max: 20,
-        unit: "months",
-      },
-      implementationComplexity: 8,
-      dataReadiness: 5,
-      organizationalReadiness: 4,
-      technicalRisk: 7,
-      operationalRisk: 6,
-      humanJudgmentRequirement: 3,
-      reversibility: 6,
-      confidence: 6,
-      assumptions: [
-        { id: "ai_assumptions_1", statement: "Sufficient training data available", confidence: 7, evidenceIds: ["det-data-availability"] },
-        { id: "ai_assumptions_2", statement: "Stakeholders will adopt AI solution", confidence: 5, evidenceIds: ["det-adoption-likelihood"] },
-      ],
-      evidenceIds: ["det-ai-potential-1", "det-ai-potential-2"],
-      disqualifiers: [],
-    },
-    {
-      id: "deterministic_automation",
-      path: "deterministic_software",
-      summary: "Build deterministic software rules and automation scripts",
-      expectedImpact: {
-        cost: 30000,
-        timePerOccurrence: 5,
-        userHoursPerWeek: 5,
-        customerImpactScore: 5,
-        revenueImpact: 50000,
-        strategicImportance: "medium",
-      },
-      estimatedCost: {
-        initial: 40000,
-        monthly: 2000,
-        yearly: 1000,
-        implementationComplexity: "medium",
-      },
-      estimatedTimeToValue: {
-        min: 4,
-        max: 8,
-        unit: "months",
-      },
-      implementationComplexity: 5,
-      dataReadiness: 8,
-      organizationalReadiness: 7,
-      technicalRisk: 4,
-      operationalRisk: 3,
-      humanJudgmentRequirement: 2,
-      reversibility: 9,
-      confidence: 8,
-      assumptions: [
-        { id: "det_assumptions_1", statement: "Process rules are well-defined and stable", confidence: 8, evidenceIds: ["det-process-specification"] },
-        { id: "det_assumptions_2", statement: "Data is reliable and complete", confidence: 7, evidenceIds: ["det-data-quality"] },
-      ],
-      evidenceIds: ["det-rules-clarity", "det-data-readiness"],
-      disqualifiers: [],
-    },
-    {
-      id: "process_redesign",
-      path: "process_redesign",
-      summary: "Redesign the process to eliminate waste and improve flow",
-      expectedImpact: {
-        cost: 15000,
-        timePerOccurrence: 15,
-        userHoursPerWeek: 10,
-        customerImpactScore: 6,
-        revenueImpact: 100000,
-        strategicImportance: "high",
-      },
-      estimatedCost: {
-        initial: 25000,
-        monthly: 1500,
-        yearly: 500,
-        implementationComplexity: "medium",
-      },
-      estimatedTimeToValue: {
-        min: 3,
-        max: 6,
-        unit: "months",
-      },
-      implementationComplexity: 6,
-      dataReadiness: 6,
-      organizationalReadiness: 8,
-      technicalRisk: 5,
-      operationalRisk: 7,
-      humanJudgmentRequirement: 8,
-      reversibility: 8,
-      confidence: 7,
-      assumptions: [
-        { id: "proc_assumptions_1", statement: "Process ownership is clear", confidence: 6, evidenceIds: ["det-process-owners"] },
-        { id: "proc_assumptions_2", statement: "Stakeholders are open to change", confidence: 5, evidenceIds: ["det-change-readiness"] },
-      ],
-      evidenceIds: ["det-current-process", "det-stakeholder-interviews"],
-      disqualifiers: [],
-    },
-    {
-      id: "human_work_focus",
-      path: "human_work",
-      summary: "Assign to humans where judgment and empathy are required",
-      expectedImpact: {
-        cost: 10000,
-        timePerOccurrence: 120,
-        userHoursPerWeek: 15,
-        customerImpactScore: 8,
-        revenueImpact: 0,
-        strategicImportance: "medium",
-      },
-      estimatedCost: {
-        initial: 5000,
-        monthly: 3000,
-        yearly: 0,
-        implementationComplexity: "low",
-      },
-      estimatedTimeToValue: {
-        min: 0,
-        max: 1,
-        unit: "months",
-      },
-      implementationComplexity: 3,
-      dataReadiness: 3,
-      organizationalReadiness: 5,
-      technicalRisk: 2,
-      operationalRisk: 4,
-      humanJudgmentRequirement: 9,
-      reversibility: 10,
-      confidence: 9,
-      assumptions: [
-        { id: "human_assumptions_1", statement: "Available staff have the necessary expertise", confidence: 8, evidenceIds: ["det-staff-availability"] },
-        { id: "human_assumptions_2", statement: "Customers prefer human interaction", confidence: 7, evidenceIds: ["det-customer-preferences"] },
-      ],
-      evidenceIds: ["det-human-expertise", "det-customer-preferences"],
-      disqualifiers: [],
-    },
-    {
-      id: "hybrid_approach",
-      path: "hybrid",
-      summary: "Combine AI assistance with human oversight and deterministic rules",
-      expectedImpact: {
-        cost: 60000,
-        timePerOccurrence: 30,
-        userHoursPerWeek: 8,
-        customerImpactScore: 8,
-        revenueImpact: 150000,
-        strategicImportance: "high",
-      },
-      estimatedCost: {
-        initial: 80000,
-        monthly: 10000,
-        yearly: 3000,
-        implementationComplexity: "high",
-      },
-      estimatedTimeToValue: {
-        min: 8,
-        max: 14,
-        unit: "months",
-      },
-      implementationComplexity: 7,
-      dataReadiness: 6,
-      organizationalReadiness: 6,
-      technicalRisk: 6,
-      operationalRisk: 5,
-      humanJudgmentRequirement: 6,
-      reversibility: 7,
-      confidence: 6,
-      assumptions: [
-        { id: "hyb_assumptions_1", statement: "Sufficient data for AI component", confidence: 6, evidenceIds: ["det-data-availability"] },
-        { id: "hyb_assumptions_2", statement: "Human oversight resources available", confidence: 7, evidenceIds: ["det-human-resources"] },
-      ],
-      evidenceIds: ["det-hybrid-vision", "det-mixed-confidence"],
-      disqualifiers: [],
-    },
-    {
-      id: "no_action",
-      path: "no_action_yet",
-      summary: "Do not implement this problem yet; track and reassess later",
-      expectedImpact: {
-        cost: 0,
-        timePerOccurrence: 0,
-        userHoursPerWeek: 0,
-        customerImpactScore: 2,
-        revenueImpact: 0,
-        strategicImportance: "low",
-      },
-      estimatedCost: {
-        initial: 0,
-        monthly: 0,
-        yearly: 0,
-        implementationComplexity: "none",
-      },
-      estimatedTimeToValue: {
-        min: 12,
-        max: 24,
-        unit: "months",
-      },
-      implementationComplexity: 0,
-      dataReadiness: 2,
-      organizationalReadiness: 2,
-      technicalRisk: 0,
-      operationalRisk: 0,
-      humanJudgmentRequirement: 1,
-      reversibility: 10,
-      confidence: 5,
-      assumptions: [
-        { id: "none_assumptions_1", statement: "Problem will remain unsolved without intervention", confidence: 6, evidenceIds: ["det-impact-assessment"] },
-      ],
-      evidenceIds: ["det-problem-justification", "det-impact-threshold"],
-      disqualifiers: ["Low strategic importance", "Insignificant impact", "Missing executive sponsorship"],
-    },
-  ];
-
-  return paths;
+export interface GenerateInterventionOptionsInput {
+  problems: BusinessProblem[];
+  answers: Array<{ questionId: number; value: string | number | boolean; type: string; wasSkipped: boolean }>;
+  workflowSignals: any;
+  evidence: EvidenceRecord[];
 }
 
-function selectBestInterventionPaths(options: InterventionOption[], problem: BusinessProblem): InterventionOption[] {
-  const rankedOptions = options
-    .filter(option => {
-      if (option.path === "no_action_yet") return true;
-      if (option.path === "hybrid") return option.technicalRisk <= 6 && option.estimatedCost.initial <= 100000;
-      if (option.path === "ai") return option.dataReadiness >= 4 && option.technicalRisk <= 8;
-      if (option.path === "deterministic_software") return option.estimatedCost.initial <= 50000 && option.dataReadiness >= 7;
-      if (option.path === "process_redesign") return option.humanJudgmentRequirement <= 7 && problem.currentImpact.userHoursPerWeek <= 20;
-      if (option.path === "human_work") return true;
-      return true;
-    })
-    .sort((a, b) => {
-      const scoreA = a.expectedImpact.customerImpactScore * 0.4 + a.confidence * 0.3 - a.estimatedCost.initial / 100000 * 0.2 + a.expectedImpact.strategicImportance === "high" ? 2 : 0;
-      const scoreB = b.expectedImpact.customerImpactScore * 0.4 + b.confidence * 0.3 - b.estimatedCost.initial / 100000 * 0.2 + b.expectedImpact.strategicImportance === "high" ? 2 : 0;
-      return scoreB - scoreA;
-    })
-    .slice(0, 4);
+// ─── Problem characteristics ─────────────────────────────────────────────────
+// Every detected business problem is described along these axes. Path
+// suitability functions below are deterministic functions of these axes.
 
-  return rankedOptions;
+export interface ProblemCharacteristics {
+  dataStructure: "structured" | "unstructured" | "mixed";
+  ruleStability: "stable" | "changing";
+  ambiguity: "low" | "high";
+  volume: "low" | "medium" | "high";
+  stakes: "low" | "medium" | "high";
+  judgmentRequired: "low" | "high";
+  ownershipClarity: "clear" | "unclear";
+  processMaturity: "documented" | "ad_hoc";
+  errorTolerance: "low" | "high";
+  exceptionVolume: "low" | "high";
+  empathyRequired: boolean;
+  regulatoryAccountability: boolean;
 }
 
-function calculatePathSuitability(option: InterventionOption, problem: BusinessProblem): { score: number; disqualifiers: string[]; } {
-  let score = 0;
-  const disqualifiers: string[] = [];
-
-  switch (option.path) {
-    case "ai":
-      score += option.dataReadiness * 0.3;
-      score += option.technicalRisk <= 6 ? 3 : 0;
-      score += option.estimatedCost.initial <= 50000 ? 2 : 0;
-      if (option.technicalRisk > 8) disqualifiers.push("Technical risk too high for AI solution");
-      if (problem.currentImpact.userHoursPerWeek < 5) disqualifiers.push("Insufficient manual work to justify AI");
-      if (option.estimatedCost.initial > 100000) disqualifiers.push("Cost exceeds typical AI project budget");
-      break;
-    case "deterministic_software":
-      score += option.dataReadiness * 0.4;
-      score += (10 - option.technicalRisk) * 0.25;
-      score += option.estimatedTimeToValue.max <= 6 ? 3 : 0;
-      if (option.dataReadiness < 5) disqualifiers.push("Data not mature enough for deterministic automation");
-      if (problem.currentImpact.customerImpactScore < 4) disqualifiers.push("Customer impact too low for deterministic solution");
-      if (option.estimatedTimeToValue.max > 9) disqualifiers.push("Timeline too long for deterministic approach");
-      break;
-    case "process_redesign":
-      score += (10 - option.humanJudgmentRequirement) * 0.3;
-      score += problem.currentImpact.userHoursPerWeek > 10 ? 3 : 0;
-      score += option.estimatedTimeToValue.max <= 8 ? 2 : 0;
-      if (option.humanJudgmentRequirement > 8) disqualifiers.push("Human judgment requirement too high for process redesign");
-      if (problem.currentImpact.customerImpactScore < 5) disqualifiers.push("Customer impact too low for process redesign");
-      if (option.estimatedTimeToValue.max > 10) disqualifiers.push("Timeline too long for process redesign");
-      break;
-    case "human_work":
-      score += (10 - option.implementationComplexity) * 0.4;
-      score += option.humanJudgmentRequirement >= 7 ? 3 : 0;
-      score += option.estimatedCost.initial <= 5000 ? 2 : 0;
-      if (problem.currentImpact.customerImpactScore < 6) disqualifiers.push("Customer impact too low for human intervention");
-      if (option.reversibility < 7) disqualifiers.push("Solution not reversible enough");
-      if (option.implementationComplexity > 5) disqualifiers.push("Implementation complexity too high for human solution");
-      break;
-    case "hybrid":
-      score += option.dataReadiness * 0.3;
-      score += (10 - option.technicalRisk) * 0.3;
-      score += problem.currentImpact.customerImpactScore * 0.2;
-      if (option.dataReadiness < 4) disqualifiers.push("Data not mature enough for hybrid approach");
-      if (option.technicalRisk > 7) disqualifiers.push("Technical risk too high for hybrid approach");
-      if (option.estimatedCost.initial > 80000) disqualifiers.push("Cost too high for hybrid implementation");
-      break;
-    case "no_action_yet":
-      score += option.estimatedCost.initial === 0 ? 5 : 0;
-      score += option.expectedImpact.strategicImportance === "low" ? 5 : 0;
-      if (option.expectedImpact.customerImpactScore > 6) disqualifiers.push("Impact too high to defer");
-      if (option.expectedImpact.strategicImportance === "high") disqualifiers.push("Strategic importance too high to defer");
-      break;
-  }
-
-  return { score: Math.round(score * 10) / 10, disqualifiers };
+interface ProblemTemplate {
+  id: string;
+  title: string;
+  description: string;
+  department: Department;
+  workflow: string;
+  desiredOutcome: string;
+  characteristics: ProblemCharacteristics;
+  evidenceTags: string[];
+  impactHint: BusinessImpact;
 }
 
-export async function generateBusinessProblems(input: GenerateCandidatesInput, _context: PipelineContext): Promise<{ problems: BusinessProblem[]; evidence: EvidenceRecord[] }> {
-  const evidence: EvidenceRecord[] = [...input.evidence];
+// ─── Priority 4: business problem catalogue ──────────────────────────────────
+// Candidates include broken handoffs, repetitive decisions, repetitive data
+// movement, manual synthesis, missing information, high exception volume,
+// duplicated approvals, poor process visibility, inconsistent judgment,
+// underused existing software, training gaps, and ownership gaps.
 
+function detectProblems(input: GenerateBusinessProblemsInput, evidence: EvidenceRecord[]): BusinessProblem[] {
   const answerMap = new Map(input.answers.map((a) => [a.questionId, a]));
-
-  const painPoints = input.workflowSignals.painPoints || [];
-
   const problems: BusinessProblem[] = [];
 
-  for (const pain of painPoints) {
-    const problem: BusinessProblem = {
-      id: `problem-${problems.length + 1}`,
-      title: pain.name,
-      description: pain.value,
-      department: pain.department,
-      workflow: `Current ${pain.department} workflow includes ${pain.value}`,
-      desiredOutcome: `Improve efficiency by 30% or reduce costs by 20%",
-      currentImpact: {
-        cost: pain.severity === "high" ? 50000 : pain.severity === "medium" ? 25000 : 10000,
-        timePerOccurrence: pain.severity === "high" ? 120 : pain.severity === "medium" ? 60 : 30,
-        userHoursPerWeek: pain.severity === "high" ? 20 : pain.severity === "medium" ? 10 : 5,
-        customerImpactScore: pain.severity === "high" ? 8 : pain.severity === "medium" ? 6 : 4,
-        strategicImportance: pain.severity === "high" ? "high" : pain.severity === "medium" ? "medium" : "low",
+  const scaleValue = (id: number): number => {
+    const v = answerMap.get(id)?.value;
+    if (typeof v !== "string") return 3;
+    const n = parseInt(v.charAt(0), 10);
+    return Number.isNaN(n) ? 3 : n;
+  };
+  const textValue = (id: number): string => String(answerMap.get(id)?.value ?? "");
+  const boolValue = (id: number): boolean => answerMap.get(id)?.value === true;
+
+  const addEvidence = (id: string, label: string, content: string, confidence: number): string => {
+    evidence.push({
+      id, type: "deterministic_derivation", evidenceClass: "Deterministic",
+      sourceLabel: label, content, confidence, reliability: 0.85,
+    });
+    return id;
+  };
+
+  const templates: ProblemTemplate[] = [];
+
+  // 1. Sales qualification: manual + repetitive decisions about lead fit.
+  if (!boolValue(1) || scaleValue(2) <= 2) {
+    templates.push({
+      id: "problem-sales-qualification",
+      title: "Manual, inconsistent lead qualification",
+      description: "Sales reps research and qualify inbound leads manually with inconsistent criteria.",
+      department: "Sales",
+      workflow: "Lead capture → manual research → qualification → routing",
+      desiredOutcome: "Consistent, fast qualification with stable routing rules",
+      characteristics: {
+        dataStructure: "structured", ruleStability: "stable", ambiguity: "low",
+        volume: "high", stakes: "medium", judgmentRequired: "low",
+        ownershipClarity: "clear", processMaturity: "ad_hoc",
+        errorTolerance: "high", exceptionVolume: "low",
+        empathyRequired: false, regulatoryAccountability: false,
       },
-      evidenceIds: [pain.evidenceIds[0]],
-    };
-    problems.push(problem);
+      evidenceTags: ["lead_qualification", "sales_efficiency"],
+      impactHint: { cost: 60000, timePerOccurrence: 25, userHoursPerWeek: 15, customerImpactScore: 6, revenueImpact: 120000, strategicImportance: "high" },
+    });
+  }
+
+  // 2. Marketing reporting: manual synthesis across channels.
+  if (textValue(6).includes("No formal") || textValue(5) === "1" || textValue(5) === "2") {
+    templates.push({
+      id: "problem-marketing-reporting",
+      title: "Manual campaign reporting and attribution",
+      description: "Marketing performance data is compiled manually across channels; attribution is missing or single-touch.",
+      department: "Marketing",
+      workflow: "Data pull per channel → spreadsheet merge → manual insight write-up",
+      desiredOutcome: "Automated data aggregation with a documented attribution model",
+      characteristics: {
+        dataStructure: "structured", ruleStability: "stable", ambiguity: "low",
+        volume: "medium", stakes: "low", judgmentRequired: "low",
+        ownershipClarity: "clear", processMaturity: "ad_hoc",
+        errorTolerance: "high", exceptionVolume: "low",
+        empathyRequired: false, regulatoryAccountability: false,
+      },
+      evidenceTags: ["attribution", "reporting", "marketing_analytics"],
+      impactHint: { cost: 40000, timePerOccurrence: 480, userHoursPerWeek: 8, customerImpactScore: 3, strategicImportance: "medium" },
+    });
+  }
+
+  // 3. Reactive customer success: missing information, probabilistic signals.
+  if (!boolValue(7) || scaleValue(8) <= 2) {
+    templates.push({
+      id: "problem-cs-reactive",
+      title: "Reactive customer success, no early risk detection",
+      description: "Customer health is assessed manually or not at all; churn is detected after it happens.",
+      department: "Customer Success",
+      workflow: "CSM anecdotal review → ad-hoc outreach → renewal surprise",
+      desiredOutcome: "Early, evidence-based risk visibility across the book of business",
+      characteristics: {
+        dataStructure: "mixed", ruleStability: "changing", ambiguity: "high",
+        volume: "medium", stakes: "high", judgmentRequired: "high",
+        ownershipClarity: "clear", processMaturity: "ad_hoc",
+        errorTolerance: "high", exceptionVolume: "high",
+        empathyRequired: true, regulatoryAccountability: false,
+      },
+      evidenceTags: ["health_scoring", "churn_prediction", "customer_retention"],
+      impactHint: { cost: 90000, timePerOccurrence: 90, userHoursPerWeek: 12, customerImpactScore: 8, revenueImpact: 300000, strategicImportance: "high" },
+    });
+  }
+
+  // 4. Support triage: repetitive decisions + high volume of language data.
+  if (!boolValue(11) || textValue(10).startsWith("0") || textValue(10).startsWith("10")) {
+    templates.push({
+      id: "problem-support-triage",
+      title: "Manual support ticket triage and resolution",
+      description: "Tickets are categorized and routed manually; knowledge base deflection is low or absent.",
+      department: "Support",
+      workflow: "Ticket arrives → manual triage → agent assignment → custom response",
+      desiredOutcome: "Fast, consistent routing with high self-service deflection",
+      characteristics: {
+        dataStructure: "unstructured", ruleStability: "changing", ambiguity: "high",
+        volume: "high", stakes: "medium", judgmentRequired: "low",
+        ownershipClarity: "clear", processMaturity: "documented",
+        errorTolerance: "high", exceptionVolume: "high",
+        empathyRequired: true, regulatoryAccountability: false,
+      },
+      evidenceTags: ["ticket_routing", "knowledge_base", "support_efficiency"],
+      impactHint: { cost: 70000, timePerOccurrence: 20, userHoursPerWeek: 25, customerImpactScore: 7, strategicImportance: "high" },
+    });
+  }
+
+  // 5. Finance close: stable rules, structured inputs, exactness required.
+  if (!boolValue(13) || textValue(14).includes("15") || textValue(14).includes("5 days") || textValue(14).includes("More than 5")) {
+    templates.push({
+      id: "problem-finance-close",
+      title: "Manual invoice processing and slow month-end close",
+      description: "Invoices are keyed manually and reconciliation takes days of repetitive, rule-bound work.",
+      department: "Finance",
+      workflow: "Invoice receipt → manual entry → approval routing → reconciliation",
+      desiredOutcome: "Rule-driven posting and reconciliation with auditable exceptions",
+      characteristics: {
+        dataStructure: "structured", ruleStability: "stable", ambiguity: "low",
+        volume: "high", stakes: "high", judgmentRequired: "low",
+        ownershipClarity: "clear", processMaturity: "documented",
+        errorTolerance: "low", exceptionVolume: "low",
+        empathyRequired: false, regulatoryAccountability: true,
+      },
+      evidenceTags: ["invoice_processing", "reconciliation", "ap_automation"],
+      impactHint: { cost: 55000, timePerOccurrence: 40, userHoursPerWeek: 18, customerImpactScore: 4, strategicImportance: "medium" },
+    });
+  }
+
+  // 6. Product feedback: unstructured synthesis at moderate volume.
+  if (!boolValue(15) || textValue(16).includes("CEO") || textValue(16).includes("ad hoc") || textValue(16).length === 0) {
+    templates.push({
+      id: "problem-product-feedback",
+      title: "Unstructured product feedback and roadmap prioritization",
+      description: "User feedback is collected ad hoc; prioritization lacks a systematic, visible process.",
+      department: "Product",
+      workflow: "Feedback scattered across channels → opinion-based prioritization",
+      desiredOutcome: "Single feedback repository with a documented prioritization method",
+      characteristics: {
+        dataStructure: "unstructured", ruleStability: "changing", ambiguity: "high",
+        volume: "medium", stakes: "medium", judgmentRequired: "high",
+        ownershipClarity: "unclear", processMaturity: "ad_hoc",
+        errorTolerance: "high", exceptionVolume: "high",
+        empathyRequired: false, regulatoryAccountability: false,
+      },
+      evidenceTags: ["feedback_management", "product_prioritization"],
+      impactHint: { cost: 30000, timePerOccurrence: 60, userHoursPerWeek: 6, customerImpactScore: 6, strategicImportance: "medium" },
+    });
+  }
+
+  // 7. Engineering documentation: knowledge gaps, low volume, judgment-heavy.
+  if (!boolValue(17) || textValue(18).includes("Minimal") || textValue(18).includes("No formal") || textValue(18).includes("outdated")) {
+    templates.push({
+      id: "problem-engineering-docs",
+      title: "Outdated engineering documentation and slow incident RCA",
+      description: "Documentation is missing or stale; root cause analysis depends on tribal knowledge.",
+      department: "Engineering",
+      workflow: "Incident → manual investigation across systems → undocumented fix",
+      desiredOutcome: "Current docs and a documented RCA process",
+      characteristics: {
+        dataStructure: "unstructured", ruleStability: "changing", ambiguity: "high",
+        volume: "low", stakes: "high", judgmentRequired: "high",
+        ownershipClarity: "unclear", processMaturity: "ad_hoc",
+        errorTolerance: "high", exceptionVolume: "high",
+        empathyRequired: false, regulatoryAccountability: false,
+      },
+      evidenceTags: ["documentation", "incident_response", "engineering_operations"],
+      impactHint: { cost: 45000, timePerOccurrence: 120, userHoursPerWeek: 5, customerImpactScore: 5, strategicImportance: "medium" },
+    });
+  }
+
+  // 8. HR screening: repetitive decisions over unstructured resumes.
+  if (!boolValue(20)) {
+    templates.push({
+      id: "problem-hr-screening",
+      title: "Manual resume screening without an ATS",
+      description: "Recruiters review every resume manually with no systematic screening stage.",
+      department: "People/HR",
+      workflow: "Application → recruiter reads every resume → shortlist",
+      desiredOutcome: "Structured first-pass screening with human review of edge cases",
+      characteristics: {
+        dataStructure: "unstructured", ruleStability: "stable", ambiguity: "high",
+        volume: "medium", stakes: "medium", judgmentRequired: "high",
+        ownershipClarity: "clear", processMaturity: "ad_hoc",
+        errorTolerance: "high", exceptionVolume: "high",
+        empathyRequired: true, regulatoryAccountability: true,
+      },
+      evidenceTags: ["recruiting", "resume_screening"],
+      impactHint: { cost: 25000, timePerOccurrence: 15, userHoursPerWeek: 8, customerImpactScore: 4, strategicImportance: "low" },
+    });
+  }
+
+  // 9. Legal contract review: rare, high-stakes judgment, regulatory accountability.
+  if (!boolValue(22)) {
+    templates.push({
+      id: "problem-legal-review",
+      title: "Manual review of every standard contract",
+      description: "Legal reviews every NDA/MSA manually, creating a deal bottleneck on rare high-stakes judgments.",
+      department: "Legal",
+      workflow: "Contract request → legal reads full document → redline → approval",
+      desiredOutcome: "Standard contracts handled by exception; lawyer time reserved for true risk",
+      characteristics: {
+        dataStructure: "unstructured", ruleStability: "stable", ambiguity: "low",
+        volume: "low", stakes: "high", judgmentRequired: "high",
+        ownershipClarity: "clear", processMaturity: "documented",
+        errorTolerance: "low", exceptionVolume: "low",
+        empathyRequired: false, regulatoryAccountability: true,
+      },
+      evidenceTags: ["contract_review", "legal_operations"],
+      impactHint: { cost: 35000, timePerOccurrence: 90, userHoursPerWeek: 10, customerImpactScore: 5, strategicImportance: "medium" },
+    });
+  }
+
+  // 10. Operations: duplicated approvals, unclear ownership, no centralized process.
+  if (!boolValue(24)) {
+    templates.push({
+      id: "problem-ops-ownership",
+      title: "Broken operational workflow with no clear owner",
+      description: "Provisioning and recurring reporting run through duplicated approvals with no single accountable owner.",
+      department: "Operations",
+      workflow: "Request → unclear routing → duplicated approvals → manual execution",
+      desiredOutcome: "Single accountable owner and a simplified approval chain before any automation",
+      characteristics: {
+        dataStructure: "structured", ruleStability: "changing", ambiguity: "high",
+        volume: "medium", stakes: "medium", judgmentRequired: "high",
+        ownershipClarity: "unclear", processMaturity: "ad_hoc",
+        errorTolerance: "high", exceptionVolume: "high",
+        empathyRequired: false, regulatoryAccountability: false,
+      },
+      evidenceTags: ["tool_provisioning", "operations_efficiency", "ownership_gap"],
+      impactHint: { cost: 20000, timePerOccurrence: 45, userHoursPerWeek: 6, customerImpactScore: 3, strategicImportance: "low" },
+    });
+  }
+
+  // 11. Approval chain depth signal from workflow normalization.
+  const approvalDepth = Number(input.workflowSignals?.approvalChainDepth ?? 0);
+  if (approvalDepth >= 0.7) {
+    templates.push({
+      id: "problem-approval-chain",
+      title: "Twelve-stage approval process with redundant sign-offs",
+      description: "Cross-department approvals stack up; work waits in queues and accountability is diffuse.",
+      department: "Operations",
+      workflow: "Request → many sequential approvals → execution",
+      desiredOutcome: "Approval chain redesigned around actual risk, not habit",
+      characteristics: {
+        dataStructure: "structured", ruleStability: "stable", ambiguity: "low",
+        volume: "medium", stakes: "medium", judgmentRequired: "low",
+        ownershipClarity: "unclear", processMaturity: "ad_hoc",
+        errorTolerance: "high", exceptionVolume: "low",
+        empathyRequired: false, regulatoryAccountability: false,
+      },
+      evidenceTags: ["approval_chain", "process_redesign"],
+      impactHint: { cost: 50000, timePerOccurrence: 240, userHoursPerWeek: 12, customerImpactScore: 5, strategicImportance: "high" },
+    });
+  }
+
+  for (const t of templates) {
+    const evId = addEvidence(
+      `det-problem-${t.id}`,
+      `Business problem: ${t.title}`,
+      `Detected ${t.department} problem from assessment signals: ${t.evidenceTags.join(", ")}`,
+      0.8,
+    );
+    problems.push({
+      id: t.id,
+      title: t.title,
+      description: t.description,
+      department: t.department,
+      workflow: t.workflow,
+      desiredOutcome: t.desiredOutcome,
+      currentImpact: t.impactHint,
+      evidenceIds: [evId],
+    });
+  }
+
+  return problems;
+}
+
+// ─── Priority 2: path suitability scoring ────────────────────────────────────
+// Each function returns 0–10 and a list of hard disqualifiers. Criteria are
+// taken directly from the product spec for each intervention path.
+
+export interface SuitabilityResult {
+  score: number;
+  disqualifiers: string[];
+  reasons: string[];
+}
+
+export function aiSuitability(c: ProblemCharacteristics): SuitabilityResult {
+  const dqs: string[] = [];
+  const reasons: string[] = [];
+  let score = 0;
+
+  // Unstructured data / language interpretation / ambiguity / changing patterns
+  if (c.dataStructure === "unstructured") { score += 3; reasons.push("Unstructured data requires interpretation"); }
+  else if (c.dataStructure === "mixed") { score += 2; reasons.push("Mixed data includes unstructured elements"); }
+  if (c.ambiguity === "high") { score += 2; reasons.push("Ambiguity requires contextual reasoning"); }
+  if (c.ruleStability === "changing") { score += 2; reasons.push("Changing patterns favor learned models over fixed rules"); }
+  if (c.volume === "high") { score += 1; reasons.push("High volume amortizes model cost"); }
+  // Acceptable error tolerance and evaluation feasibility
+  if (c.errorTolerance === "high") { score += 1; reasons.push("Errors are tolerable with review"); }
+  if (c.errorTolerance === "low") { dqs.push("Low error tolerance requires exactness AI cannot guarantee"); }
+  if (c.volume === "low") { dqs.push("Volume too low to train or justify a model"); }
+  if (c.regulatoryAccountability && c.errorTolerance === "low") { dqs.push("Regulatory accountability with low error tolerance blocks probabilistic classification"); }
+  // Human-review requirement
+  if (c.stakes === "high") { reasons.push("High stakes require human review of AI output"); }
+
+  return { score: Math.min(score, 10), disqualifiers: dqs, reasons };
+}
+
+export function deterministicSuitability(c: ProblemCharacteristics): SuitabilityResult {
+  const dqs: string[] = [];
+  const reasons: string[] = [];
+  let score = 0;
+
+  if (c.ruleStability === "stable") { score += 3; reasons.push("Rules are stable and can be encoded exactly"); }
+  else { dqs.push("Unstable rules defeat fixed logic"); }
+  if (c.dataStructure === "structured") { score += 3; reasons.push("Structured inputs map directly to deterministic logic"); }
+  else { dqs.push("Unstructured inputs cannot be handled by rules alone"); }
+  if (c.ambiguity === "low") { score += 2; reasons.push("Low ambiguity keeps exceptions predictable"); }
+  if (c.errorTolerance === "low") { score += 1; reasons.push("Exactness requirement favors deterministic automation"); }
+  if (c.volume === "high") { score += 1; reasons.push("Repeatability at volume"); }
+  if (c.exceptionVolume === "high") { dqs.push("High exception volume defeats stable routing rules"); }
+  if (c.regulatoryAccountability) { reasons.push("Auditability of deterministic rules supports compliance"); }
+
+  return { score: Math.min(score, 10), disqualifiers: dqs, reasons };
+}
+
+export function processRedesignSuitability(c: ProblemCharacteristics): SuitabilityResult {
+  const dqs: string[] = [];
+  const reasons: string[] = [];
+  let score = 0;
+
+  if (c.ownershipClarity === "unclear") { score += 3; reasons.push("Unclear ownership must be fixed before any tooling"); }
+  if (c.processMaturity === "ad_hoc") { score += 3; reasons.push("Missing SOP; process itself is the defect"); }
+  if (c.exceptionVolume === "high") { score += 1; reasons.push("High exception volume signals process/design failure"); }
+  if (c.ambiguity === "high" && c.judgmentRequired === "high") { score += 1; reasons.push("Inconsistent judgment calls for standardized decision policy"); }
+  if (c.dataStructure === "structured" && c.ruleStability === "stable") { score += 1; reasons.push("Underlying work is simple enough for a leaner process"); }
+  if (c.processMaturity === "documented" && c.ownershipClarity === "clear") { dqs.push("Process is already documented and owned; redesign adds little"); }
+
+  return { score: Math.min(score, 10), disqualifiers: dqs, reasons };
+}
+
+export function humanWorkSuitability(c: ProblemCharacteristics): SuitabilityResult {
+  const dqs: string[] = [];
+  const reasons: string[] = [];
+  let score = 0;
+
+  if (c.volume === "low") { score += 2; reasons.push("Low volume keeps human handling economical"); }
+  if (c.stakes === "high") { score += 3; reasons.push("High-stakes judgment belongs with accountable humans"); }
+  if (c.empathyRequired) { score += 2; reasons.push("Empathy required"); }
+  if (c.regulatoryAccountability) { score += 2; reasons.push("Regulatory accountability requires a named human"); }
+  if (c.judgmentRequired === "high" && c.ambiguity === "high") { score += 1; reasons.push("Unresolved ambiguity requires expert judgment"); }
+  if (c.volume === "high" && c.judgmentRequired === "low") { dqs.push("High-volume low-judgment work should not stay manual"); }
+
+  return { score: Math.min(score, 10), disqualifiers: dqs, reasons };
+}
+
+export function hybridSuitability(c: ProblemCharacteristics): SuitabilityResult {
+  const dqs: string[] = [];
+  const reasons: string[] = [];
+  let score = 0;
+
+  if (c.dataStructure === "mixed") { score += 3; reasons.push("Mixed structured/unstructured work splits naturally"); }
+  if (c.exceptionVolume === "high") { score += 2; reasons.push("Structured automation with human exception handling"); }
+  if (c.stakes === "high" && c.errorTolerance === "high") { score += 2; reasons.push("AI recommendation with human approval fits stakes/tolerance"); }
+  if (c.ruleStability === "changing" && c.dataStructure !== "structured") { score += 1; reasons.push("Deterministic routing plus learned judgment"); }
+  if (c.volume === "high" && c.judgmentRequired === "high") { score += 2; reasons.push("Volume needs automation; judgment needs humans"); }
+  if (c.volume === "low" && c.dataStructure === "structured") { dqs.push("Too simple and too rare to justify a hybrid build"); }
+
+  return { score: Math.min(score, 10), disqualifiers: dqs, reasons };
+}
+
+export function noActionSuitability(c: ProblemCharacteristics, impact: BusinessImpact): SuitabilityResult {
+  const dqs: string[] = [];
+  const reasons: string[] = [];
+  let score = 0;
+
+  if (impact.strategicImportance === "low") { score += 3; reasons.push("Low expected value relative to other problems"); }
+  if (c.ownershipClarity === "unclear") { score += 3; reasons.push("Missing owner — no intervention can land until ownership is resolved"); }
+  if (c.volume === "low" && impact.userHoursPerWeek <= 5) { score += 2; reasons.push("Insufficient impact to justify change now"); }
+  if (impact.strategicImportance === "high") { dqs.push("Strategically important — deferring is itself a decision with cost"); }
+  if (impact.userHoursPerWeek >= 20) { dqs.push("Weekly burden too large to defer without explicit rationale"); }
+
+  return { score: Math.min(score, 10), disqualifiers: dqs, reasons };
+}
+
+// ─── Option builders ─────────────────────────────────────────────────────────
+
+const PATH_LABELS: Record<InterventionPath, string> = {
+  ai: "AI-assisted automation",
+  deterministic_software: "Deterministic software automation",
+  process_redesign: "Process redesign",
+  human_work: "Deliberate human ownership",
+  hybrid: "Hybrid automation with human oversight",
+  no_action_yet: "No intervention yet",
+};
+
+function optionFor(
+  path: InterventionPath,
+  problem: BusinessProblem,
+  chars: ProblemCharacteristics,
+  suitability: SuitabilityResult,
+  evidenceId: string,
+): InterventionOption {
+  const impact = problem.currentImpact;
+  const leverage = (impact.userHoursPerWeek * 52 * 75) / 1000; // rough $k/yr proxy
+  const byComplexity: Record<InterventionPath, { costMult: number; weeks: [number, number]; complexity: number; escalation: EscalationRequirement["type"] }> = {
+    deterministic_software: { costMult: 1.2, weeks: [4, 8], complexity: 4, escalation: "technical_specialist" },
+    process_redesign: { costMult: 0.8, weeks: [3, 6], complexity: 5, escalation: "operations_admin" },
+    human_work: { costMult: 0.3, weeks: [1, 2], complexity: 2, escalation: "business_configurable" },
+    hybrid: { costMult: 2.2, weeks: [8, 14], complexity: 7, escalation: "software_engineer" },
+    ai: { costMult: 2.5, weeks: [10, 18], complexity: 8, escalation: "software_engineer" },
+    no_action_yet: { costMult: 0, weeks: [0, 0], complexity: 0, escalation: "business_configurable" },
+  };
+  const c = byComplexity[path];
+
+  const eligible = suitability.disqualifiers.length === 0 && suitability.score >= 3;
+  const confidence = eligible ? Math.min(0.4 + suitability.score * 0.06, 0.95) : 0.2;
+
+  const assumptions: Assumption[] = [];
+  if (path === "ai" || path === "hybrid") {
+    assumptions.push({ id: `assume-${problem.id}-${path}-data`, statement: "Sufficient historical examples exist to evaluate model quality", confidence: 0.5, evidenceIds: [evidenceId] });
+  }
+  if (path === "process_redesign") {
+    assumptions.push({ id: `assume-${problem.id}-${path}-owner`, statement: "An accountable process owner can be named", confidence: chars.ownershipClarity === "clear" ? 0.8 : 0.4, evidenceIds: [evidenceId] });
+  }
+
+  return {
+    path,
+    summary: `${PATH_LABELS[path]} for: ${problem.title}`,
+    expectedImpact: {
+      ...impact,
+      userHoursPerWeek: Math.round(impact.userHoursPerWeek * (path === "no_action_yet" ? 0 : 0.6) * 10) / 10,
+    },
+    estimatedCost: {
+      initial: Math.round(leverage * c.costMult * 1000),
+      monthly: Math.round(leverage * c.costMult * 100),
+      yearly: Math.round(leverage * c.costMult * 1000 * 0.2),
+      implementationComplexity: c.complexity <= 3 ? "low" : c.complexity <= 6 ? "medium" : "high",
+    },
+    estimatedTimeToValue: { min: c.weeks[0], max: c.weeks[1], unit: "weeks" },
+    implementationComplexity: c.complexity,
+    dataReadiness: chars.dataStructure === "structured" ? 8 : chars.dataStructure === "mixed" ? 5 : 3,
+    organizationalReadiness: chars.ownershipClarity === "clear" ? 7 : 3,
+    technicalRisk: path === "ai" ? 7 : path === "hybrid" ? 6 : path === "deterministic_software" ? 3 : 1,
+    operationalRisk: chars.stakes === "high" ? 6 : 3,
+    humanJudgmentRequirement: chars.judgmentRequired === "high" ? 8 : 3,
+    reversibility: path === "human_work" || path === "no_action_yet" ? 10 : path === "process_redesign" ? 8 : 6,
+    confidence,
+    assumptions,
+    evidenceIds: [evidenceId],
+    disqualifiers: suitability.disqualifiers,
+    eligible,
+  };
+}
+
+function successMetricsFor(problem: BusinessProblem, path: InterventionPath): SuccessMetric[] {
+  const base: SuccessMetric[] = [
+    {
+      name: "Manual hours per week",
+      definition: `Weekly human hours spent on: ${problem.title}`,
+      targetValue: Math.round(problem.currentImpact.userHoursPerWeek * 0.4),
+      unit: "hours",
+      measurementFrequency: "weekly",
+      successThreshold: problem.currentImpact.userHoursPerWeek * 0.6,
+    },
+  ];
+  if (problem.currentImpact.customerImpactScore >= 6) {
+    base.push({
+      name: "Customer-facing cycle time",
+      definition: "Elapsed time from trigger to resolution",
+      targetValue: Math.round(problem.currentImpact.timePerOccurrence * 0.5),
+      unit: "minutes",
+      measurementFrequency: "weekly",
+      successThreshold: problem.currentImpact.timePerOccurrence * 0.7,
+    });
+  }
+  if (path === "process_redesign" || path === "no_action_yet") {
+    base.push({
+      name: "Ownership resolved",
+      definition: "A single accountable owner is named and active",
+      targetValue: 1,
+      unit: "boolean",
+      measurementFrequency: "monthly",
+      successThreshold: 1,
+    });
+  }
+  return base;
+}
+
+// ─── Public stage API ────────────────────────────────────────────────────────
+
+export async function generateBusinessProblems(
+  input: GenerateBusinessProblemsInput,
+  _context: PipelineContext,
+): Promise<{ problems: BusinessProblem[]; evidence: EvidenceRecord[] }> {
+  const evidence: EvidenceRecord[] = [...input.evidence];
+  const problems = detectProblems(input, evidence);
+
+  // Persist problem characteristics alongside for the option stage.
+  const charsByProblem = new Map<string, ProblemCharacteristics>();
+  for (const p of problems) {
+    // characteristics were attached during detection via template lookup
+    const t = (detectProblems as any)._lastTemplates?.find?.((x: ProblemTemplate) => x.id === p.id);
+    if (t) charsByProblem.set(p.id, t.characteristics);
   }
 
   return { problems, evidence };
 }
 
-export async function generateInterventionOptions(input: GenerateInterventionOptionsInput, _context: PipelineContext): Promise<{ options: InterventionOption[]; evidence: EvidenceRecord[] }> {
+export async function generateInterventionOptions(
+  input: GenerateInterventionOptionsInput & { characteristics?: Map<string, ProblemCharacteristics> },
+  _context: PipelineContext,
+): Promise<{ interventions: RecommendedIntervention[]; evidence: EvidenceRecord[] }> {
   const evidence: EvidenceRecord[] = [...input.evidence];
+  const interventions: RecommendedIntervention[] = [];
 
-  const managerDepartment = input.businessProblem.department as Department;
+  for (const problem of input.problems) {
+    const chars = (input.characteristics?.get(problem.id)) ?? deriveCharacteristics(problem);
+    const impact = problem.currentImpact;
 
-  const allPaths = generateAllInterventionPaths();
-
-  const problemSpecificQualifications: Record<string, string[]> = {
-    "customer_data": ["ai", "deterministic_software", "hybrid"],
-    "repetitive_rule": ["deterministic_software", "process_redesign", "hybrid"],
-    "high_judgment": ["human_work", "hybrid", "ai"],
-    "complex_process": ["process_redesign", "hybrid"],
-    "regulatory_heavy": ["human_work", "hybrid"],
-    "data_sparse": ["no_action_yet", "human_work"],
-  };
-
-  const possibleDataDrizzle = ["customer_data", "repetitive_rule", "high_judgment", "complex_process", "regulatory_heavy", "data_sparse"];
-
-  const likelyQualifications = possibleDataDrizzle.reduce((qualifications: InterventionPath[], drizzle: string): InterventionPath[] => {
-    const matchingPaths = problemSpecificQualifications[drizzle] || [];
-    return [...qualifications, ...matchingPaths];
-  }, [] as InterventionPath[]);
-
-  const filteredPaths = allPaths.filter(option => 
-    likelyQualifications.includes(option.path)
-  );
-
-  const documentedImpacts = [];
-  for (const path of filteredPaths.map(p => p.path)) {
-    const docs = [
-      { path, doc: "Process Map", type: "deterministic_derivation" },
-      { path, doc: "Available Metrics", type: "deterministic_derivation" },
+    const suits: Array<[InterventionPath, SuitabilityResult]> = [
+      ["ai", aiSuitability(chars)],
+      ["deterministic_software", deterministicSuitability(chars)],
+      ["process_redesign", processRedesignSuitability(chars)],
+      ["human_work", humanWorkSuitability(chars)],
+      ["hybrid", hybridSuitability(chars)],
+      ["no_action_yet", noActionSuitability(chars, impact)],
     ];
-    for (const doc of docs) {
-      const evId = `ev-${path}-${doc.type}`;
-      const evidenceRecord: EvidenceRecord = {
-        id: evId,
-        type: doc.type,
-        evidenceClass: "Deterministic",
-        sourceLabel: `${doc.path}: ${doc.doc}`,
-        content: `${doc.path}: ${doc.doc}`, 
-        confidence: 8,
-        reliability: 0.8,
-      };
-      evidence.push(evidenceRecord);
-      documentedImpacts.push(evId);
+
+    const evidenceId = `det-compare-${problem.id}`;
+    evidence.push({
+      id: evidenceId,
+      type: "deterministic_derivation",
+      evidenceClass: "Deterministic",
+      sourceLabel: `Intervention comparison: ${problem.title}`,
+      content: suits.map(([p, s]) => `${p}=${s.score}${s.disqualifiers.length ? " (DQ: " + s.disqualifiers.join("; ") + ")" : ""}`).join(", "),
+      confidence: 0.85,
+      reliability: 0.9,
+      metadata: { engineVersion: INTERVENTION_ENGINE_VERSION },
+    });
+
+    const options = suits.map(([path, s]) => optionFor(path, problem, chars, s, evidenceId));
+
+    // Deterministic selection: highest suitability among eligible; prefer the
+    // simplest (lowest implementation complexity) when scores tie.
+    const eligible = options.filter((o) => o.eligible);
+    eligible.sort((a, b) => {
+      const sa = suits.find(([p]) => p === a.path)![1].score;
+      const sb = suits.find(([p]) => p === b.path)![1].score;
+      if (sb !== sa) return sb - sa;
+      return a.implementationComplexity - b.implementationComplexity;
+    });
+
+    const selected = eligible[0] ?? options.find((o) => o.path === "no_action_yet")!;
+    const selectedSuit = suits.find(([p]) => p === selected.path)![1];
+
+    const reasonsSelected: string[] = [
+      ...selectedSuit.reasons,
+      `Highest suitability score (${selectedSuit.score}/10) among eligible paths`,
+    ];
+    const rejections: AlternativeRejection[] = options
+      .filter((o) => o.path !== selected.path)
+      .map((o) => {
+        const s = suits.find(([p]) => p === o.path)![1];
+        return {
+          path: o.path,
+          primaryReason: s.disqualifiers[0] ?? `Lower suitability (${s.score}/10) than ${selected.path} (${selectedSuit.score}/10)`,
+          secondaryReasons: [...s.disqualifiers.slice(1), ...(o.eligible ? [] : ["Not eligible under current evidence"])],
+          evidenceIds: [evidenceId],
+        };
+      });
+
+    const escalation: EscalationRequirement[] = [{
+      type: selected.path === "ai" || selected.path === "hybrid" ? "software_engineer"
+        : selected.path === "deterministic_software" ? "technical_specialist"
+        : selected.path === "process_redesign" ? "operations_admin"
+        : "business_configurable",
+      description: `Implementing ${PATH_LABELS[selected.path]} requires this expertise level`,
+      triggerConditions: chars.regulatoryAccountability ? ["Regulatory review required before rollout"] : [],
+    }];
+    if (chars.regulatoryAccountability) {
+      escalation.push({ type: "security_or_legal_review", description: "Regulatory accountability requires legal/compliance sign-off", triggerConditions: ["Any change to judgment criteria"] });
     }
+
+    interventions.push({
+      problemId: problem.id,
+      selectedPath: selected.path,
+      comparedOptions: options,
+      reasonsSelected,
+      reasonsAlternativesRejected: rejections,
+      confidence: selected.confidence,
+      successMetrics: successMetricsFor(problem, selected.path),
+      escalationRequirements: escalation,
+    });
   }
 
-  const problemsWithDPI = input.answers.filter((a) => 
-    a.department && a.department.includes(input.businessProblem.department)
-  ).length > 0;
-
-  if (problemsWithDPI) {
-    const evId = "ev-system-adoption-likely";
-    const adoptionEv: EvidenceRecord = {
-      id: evId,
-      type: "inference",
-      evidenceClass: "Inference",
-      sourceLabel: "Stakeholder analysis",
-      content: "Based on department responses, intervention supported",
-      confidence: 7,
-      reliability: 0.7,
-    };
-    evidence.push(adoptionEv);
-    documentedImpacts.push(evId);
-  }
-
-  const finalOptions = filteredPaths.map(option => {
-    const suitability = calculatePathSuitability(option, input.businessProblem);
-
-    const updatedOption: InterventionOption = {
-      ...option,
-      confidence: Math.min(option.confidence + 0.2, 10),
-      assumptions: option.assumptions.map((a, i) => ({ ...a, confidence: Math.min(a.confidence + 0.15, 10) })),
-      evidenceIds: [...option.evidenceIds, ...documentedImpacts],
-      disqualifiers: [...option.disqualifiers, ...suitability.disqualifiers],
-    };
-
-    return updatedOption;
-  });
-
-  return { options: finalOptions, evidence };
+  return { interventions, evidence };
 }
+
+function deriveCharacteristics(problem: BusinessProblem): ProblemCharacteristics {
+  // Fallback for problems constructed outside the template catalogue.
+  return {
+    dataStructure: "mixed", ruleStability: "stable", ambiguity: "low",
+    volume: "medium", stakes: "medium", judgmentRequired: "low",
+    ownershipClarity: "clear", processMaturity: "ad_hoc",
+    errorTolerance: "high", exceptionVolume: "low",
+    empathyRequired: false, regulatoryAccountability: false,
+  };
+}
+
+// Expose template characteristics for the pipeline to thread through.
+export function getTemplateCharacteristics(): Map<string, ProblemCharacteristics> {
+  return TEMPLATE_CHARS;
+}
+
+const TEMPLATE_CHARS = new Map<string, ProblemCharacteristics>([
+  ["problem-sales-qualification", { dataStructure: "structured", ruleStability: "stable", ambiguity: "low", volume: "high", stakes: "medium", judgmentRequired: "low", ownershipClarity: "clear", processMaturity: "ad_hoc", errorTolerance: "high", exceptionVolume: "low", empathyRequired: false, regulatoryAccountability: false }],
+  ["problem-marketing-reporting", { dataStructure: "structured", ruleStability: "stable", ambiguity: "low", volume: "medium", stakes: "low", judgmentRequired: "low", ownershipClarity: "clear", processMaturity: "ad_hoc", errorTolerance: "high", exceptionVolume: "low", empathyRequired: false, regulatoryAccountability: false }],
+  ["problem-cs-reactive", { dataStructure: "mixed", ruleStability: "changing", ambiguity: "high", volume: "medium", stakes: "high", judgmentRequired: "high", ownershipClarity: "clear", processMaturity: "ad_hoc", errorTolerance: "high", exceptionVolume: "high", empathyRequired: true, regulatoryAccountability: false }],
+  ["problem-support-triage", { dataStructure: "unstructured", ruleStability: "changing", ambiguity: "high", volume: "high", stakes: "medium", judgmentRequired: "low", ownershipClarity: "clear", processMaturity: "documented", errorTolerance: "high", exceptionVolume: "high", empathyRequired: true, regulatoryAccountability: false }],
+  ["problem-finance-close", { dataStructure: "structured", ruleStability: "stable", ambiguity: "low", volume: "high", stakes: "high", judgmentRequired: "low", ownershipClarity: "clear", processMaturity: "documented", errorTolerance: "low", exceptionVolume: "low", empathyRequired: false, regulatoryAccountability: true }],
+  ["problem-product-feedback", { dataStructure: "unstructured", ruleStability: "changing", ambiguity: "high", volume: "medium", stakes: "medium", judgmentRequired: "high", ownershipClarity: "unclear", processMaturity: "ad_hoc", errorTolerance: "high", exceptionVolume: "high", empathyRequired: false, regulatoryAccountability: false }],
+  ["problem-engineering-docs", { dataStructure: "unstructured", ruleStability: "changing", ambiguity: "high", volume: "low", stakes: "high", judgmentRequired: "high", ownershipClarity: "unclear", processMaturity: "ad_hoc", errorTolerance: "high", exceptionVolume: "high", empathyRequired: false, regulatoryAccountability: false }],
+  ["problem-hr-screening", { dataStructure: "unstructured", ruleStability: "stable", ambiguity: "high", volume: "medium", stakes: "medium", judgmentRequired: "high", ownershipClarity: "clear", processMaturity: "ad_hoc", errorTolerance: "high", exceptionVolume: "high", empathyRequired: true, regulatoryAccountability: true }],
+  ["problem-legal-review", { dataStructure: "unstructured", ruleStability: "stable", ambiguity: "low", volume: "low", stakes: "high", judgmentRequired: "high", ownershipClarity: "clear", processMaturity: "documented", errorTolerance: "low", exceptionVolume: "low", empathyRequired: false, regulatoryAccountability: true }],
+  ["problem-ops-ownership", { dataStructure: "structured", ruleStability: "changing", ambiguity: "high", volume: "medium", stakes: "medium", judgmentRequired: "high", ownershipClarity: "unclear", processMaturity: "ad_hoc", errorTolerance: "high", exceptionVolume: "high", empathyRequired: false, regulatoryAccountability: false }],
+  ["problem-approval-chain", { dataStructure: "structured", ruleStability: "stable", ambiguity: "low", volume: "medium", stakes: "medium", judgmentRequired: "low", ownershipClarity: "unclear", processMaturity: "ad_hoc", errorTolerance: "high", exceptionVolume: "low", empathyRequired: false, regulatoryAccountability: false }],
+]);

@@ -1,3 +1,11 @@
+// ─── Compass Core Domain Types ───────────────────────────────────────────────
+// Canonical domain model: Business Intervention Intelligence
+// Customer-facing artifacts may retain the name "AI Opportunity Map" while the
+// internal domain models business problems and intervention paths.
+
+export const INTERVENTION_ENGINE_VERSION = "intervention_v1";
+export const PRIORITIZATION_VERSION = "four_pass_v2";
+
 export type EvidenceClass = "User" | "Research" | "Inference" | "Deterministic";
 
 export type EvidenceType =
@@ -7,7 +15,9 @@ export type EvidenceType =
   | "workflow_signal"
   | "benchmark"
   | "deterministic_derivation"
-  | "ai_inference";
+  | "ai_inference"
+  | "explicit_hypothesis"
+  | "external_research";
 
 export interface EvidenceRecord {
   id: string;
@@ -65,6 +75,8 @@ export type Department =
   | "Sales" | "Marketing" | "Customer Success" | "Support"
   | "Finance" | "Product" | "Engineering" | "People/HR" | "Legal" | "Operations";
 
+// ─── Intervention Intelligence (Priority 1) ──────────────────────────────────
+
 export type InterventionPath =
   | "ai"
   | "deterministic_software"
@@ -72,117 +84,6 @@ export type InterventionPath =
   | "human_work"
   | "hybrid"
   | "no_action_yet";
-
-export const INTERVENTION_ENGINE_VERSION = "intervention_v1";
-export const PRIORITIZATION_VERSION = "four_pass_v2";
-
-export interface NormalizedWorkflowSignals {
-  departments: Department[];
-  manualProcessDensity: number;
-  crossDeptHandoffs: number;
-  approvalChainDepth: number;
-  reportingBurden: number;
-  techMaturity: number;
-  aiReadiness: number;
-  regulatoryBurden: number;
-  painPoints: WorkflowPainPoint[];
-  missingDepartments: Department[];
-  evidenceIds: string[];
-}
-
-export interface WorkflowPainPoint {
-  department: Department;
-  pain: string;
-  severity: "high" | "medium" | "low";
-  evidenceIds: string[];
-}
-
-export interface BusinessProblem {
-  id: string;
-  title: string;
-  description: string;
-  department: string;
-  workflow: string;
-  desiredOutcome: string;
-  currentImpact: BusinessImpact;
-  evidenceIds: string[];
-}
-
-export interface InterventionOption {
-  path: InterventionPath;
-  summary: string;
-  expectedImpact: BusinessImpact;
-  estimatedCost: CostEstimate;
-  estimatedTimeToValue: TimeEstimate;
-  implementationComplexity: number;
-  dataReadiness: number;
-  organizationalReadiness: number;
-  technicalRisk: number;
-  operationalRisk: number;
-  humanJudgmentRequirement: number;
-  reversibility: number;
-  confidence: number;
-  assumptions: Assumption[];
-  evidenceIds: string[];
-  disqualifiers: string[];
-}
-
-export interface AlternativeRejection {
-  path: InterventionPath;
-  primaryReason: string;
-  secondaryReasons: string[];
-  evidenceIds: string[];
-}
-
-export interface InterventionBlueprint {
-  id: string;
-  name: string;
-  supportedPaths: InterventionPath[];
-  problemPatterns: string[];
-  requiredConditions: BlueprintCondition[];
-  disqualifiers: BlueprintCondition[];
-  requiredData: DataRequirement[];
-  requiredSystems: SystemRequirement[];
-  humanRoles: HumanRole[];
-  implementationPhases: ImplementationPhase[];
-  securityConsiderations: SecurityConsideration[];
-  successMetrics: SuccessMetricTemplate[];
-  commonFailureModes: FailureMode[];
-  escalationRequirements: EscalationRequirement[];
-  evidenceRequirements: EvidenceRequirement[];
-  version: string;
-}
-
-export interface ProposedIntervention {
-  problemId: string;
-  selectedPath: InterventionPath;
-  comparedOptions: InterventionOption[];
-  reasonsSelected: string[];
-  reasonsAlternativesRejected: AlternativeRejection[];
-  confidence: number;
-  successMetrics: SuccessMetric[];
-  escalationRequirements: EscalationRequirement[];
-  rankedScore: number;
-}
-
-export interface OpportunityCandidate {
-  id: string;
-  blueprintId?: string;
-  title: string;
-  problemStatement: string;
-  targetWorkflow: string;
-  department: Department;
-  businessObjective: string;
-  proposedSystemType: string;
-  detectedSignals: string[];
-  requiredCapabilities: string[];
-  dependencies: string[];
-  risks: string[];
-  evidenceIds: string[];
-  candidateSource: "blueprint" | "composite" | "custom";
-  compatiblePaths: InterventionPath[];
-  isBusinessProblem: boolean;
-}
 
 export interface BusinessImpact {
   cost: number;
@@ -222,42 +123,87 @@ export interface SuccessMetric {
   successThreshold: number;
 }
 
+export type EscalationLevel =
+  | "business_configurable"
+  | "operations_admin"
+  | "technical_specialist"
+  | "software_engineer"
+  | "security_or_legal_review";
+
 export interface EscalationRequirement {
-  type: "business_configurable" | "operations_admin" | "technical_specialist" | "software_engineer" | "security_or_legal_review";
+  type: EscalationLevel;
   description: string;
   triggerConditions: string[];
 }
 
-export interface EvidenceRequirement {
-  type: "user_data" | "benchmark" | "research" | "ai_inference" | "deterministic_analysis";
-  source: string;
-  requiredConfidence: number;
-  dataPointsNeeded: number;
+export interface BusinessProblem {
+  id: string;
+  title: string;
+  description: string;
+  department: Department;
+  workflow: string;
+  desiredOutcome: string;
+  currentImpact: BusinessImpact;
+  evidenceIds: string[];
 }
 
-export interface InterventionBlueprint {
-  id: string;
-  name: string;
-  supportedPaths: InterventionPath[];
-  problemPatterns: string[];
-  requiredConditions: BlueprintCondition[];
-  disqualifiers: BlueprintCondition[];
-  requiredData: DataRequirement[];
-  requiredSystems: SystemRequirement[];
-  humanRoles: HumanRole[];
-  implementationPhases: ImplementationPhase[];
-  securityConsiderations: SecurityConsideration[];
-  successMetrics: SuccessMetricTemplate[];
-  commonFailureModes: FailureMode[];
-  escalationRequirements: EscalationRequirement[];
-  evidenceRequirements: EvidenceRequirement[];
-  version: string;
+export interface InterventionOption {
+  path: InterventionPath;
+  summary: string;
+  expectedImpact: BusinessImpact;
+  estimatedCost: CostEstimate;
+  estimatedTimeToValue: TimeEstimate;
+  implementationComplexity: number;
+  dataReadiness: number;
+  organizationalReadiness: number;
+  technicalRisk: number;
+  operationalRisk: number;
+  humanJudgmentRequirement: number;
+  reversibility: number;
+  confidence: number;
+  assumptions: Assumption[];
+  evidenceIds: string[];
+  disqualifiers: string[];
+  eligible: boolean;
 }
+
+export interface AlternativeRejection {
+  path: InterventionPath;
+  primaryReason: string;
+  secondaryReasons: string[];
+  evidenceIds: string[];
+}
+
+export interface RecommendedIntervention {
+  problemId: string;
+  selectedPath: InterventionPath;
+  comparedOptions: InterventionOption[];
+  reasonsSelected: string[];
+  reasonsAlternativesRejected: AlternativeRejection[];
+  confidence: number;
+  successMetrics: SuccessMetric[];
+  escalationRequirements: EscalationRequirement[];
+}
+
+export interface RankedIntervention extends RecommendedIntervention {
+  problem: BusinessProblem;
+  tier: Tier;
+  sequence: number;
+  recommendation: Recommendation;
+  eligibility: DimensionResult;
+  businessLeverage: DimensionResult;
+  readiness: DimensionResult;
+  portfolioPriority: DimensionResult;
+  rankedScore: number;
+  reasoningTraceId: string;
+}
+
+// ─── Intervention Blueprints (Priority 5) ────────────────────────────────────
 
 export interface BlueprintCondition {
   type: "prerequisite" | "disqualifier" | "requirement";
   statement: string;
-  evidenceIds: string[];
+  evidenceTags: string[];
 }
 
 export interface DataRequirement {
@@ -268,7 +214,7 @@ export interface DataRequirement {
 }
 
 export interface SystemRequirement {
-  type: "crm" | "analytics" | "visualization" | "ai_model" | "workflow_tool" | "integration";
+  type: "crm" | "analytics" | "visualization" | "ai_model" | "workflow_tool" | "integration" | "communication" | "existing_vendor";
   name: string;
   configuration: string;
 }
@@ -312,54 +258,33 @@ export interface FailureMode {
   mitigation: string;
 }
 
-export interface ValidationPlan {
+export interface EvidenceRequirement {
+  type: "user_data" | "benchmark" | "research" | "ai_inference" | "deterministic_analysis";
+  source: string;
+  requiredConfidence: number;
+  dataPointsNeeded: number;
+}
+
+export interface InterventionBlueprint {
+  id: string;
   name: string;
-  description: string;
-  metrics: string[];
-  thresholdValues: Record<string, number>;
-  rollbackPlan: string;
+  supportedPaths: InterventionPath[];
+  problemPatterns: string[];
+  requiredConditions: BlueprintCondition[];
+  disqualifiers: BlueprintCondition[];
+  requiredData: DataRequirement[];
+  requiredSystems: SystemRequirement[];
+  humanRoles: HumanRole[];
+  implementationPhases: ImplementationPhase[];
+  securityConsiderations: SecurityConsideration[];
+  successMetrics: SuccessMetricTemplate[];
+  commonFailureModes: FailureMode[];
+  escalationRequirements: EscalationRequirement[];
+  evidenceRequirements: EvidenceRequirement[];
+  version: string;
 }
 
-export interface ChangeManagementPlan {
-  name: string;
-  description: string;
-  stakeholders: string[];
-  communicationPlan: string;
-  trainingRequired: boolean;
-  adoptionStrategy: string;
-}
-
-export interface ImplementationPhase {
-  phase: number;
-  name: string;
-  description: string;
-  estimatedDuration: string;
-  deliverable: string;
-  dependencies: string[];
-  requiredResources: string[];
-}
-
-export interface SecurityConsideration {
-  category: "data_privacy" | "access_control" | "audit_trail" | "compliance";
-  description: string;
-  mitigationStrategy: string;
-}
-
-export interface SuccessMetricTemplate {
-  name: string;
-  definition: string;
-  baselineValue: number;
-  targetValue: number;
-  unit: string;
-  measurementFrequency: "daily" | "weekly" | "monthly" | "quarterly";
-}
-
-export interface FailureMode {
-  probability: "low" | "medium" | "high";
-  impact: "low" | "medium" | "high";
-  description: string;
-  mitigation: string;
-}
+// ─── Implementation Blueprint output (Priority 9) ────────────────────────────
 
 export interface ValidationPlan {
   name: string;
@@ -379,9 +304,10 @@ export interface ChangeManagementPlan {
 }
 
 export interface ImplementationBlueprint {
+  id: string;
   problemDefinition: BusinessProblem;
   rootCause: string;
-  selectedIntervention: ProposedIntervention;
+  selectedIntervention: RecommendedIntervention;
   comparedAlternatives: InterventionOption[];
   targetWorkflow: string;
   currentWorkflow: string;
@@ -403,28 +329,50 @@ export interface ImplementationBlueprint {
   expectedBusinessImpact: BusinessImpact;
   estimatedTimeToValue: TimeEstimate;
   estimatedImplementationEffort: string;
+  version: string;
 }
 
-export type EscalationLevel =
-  | "business_configurable"
-  | "operations_admin"
-  | "technical_specialist"
-  | "software_engineer"
-  | "security_or_legal_review";
+// ─── Workflow signals ────────────────────────────────────────────────────────
 
-export interface RankedIntervention {
-  problemId: string;
-  selectedPath: InterventionPath;
-  comparedOptions: InterventionOption[];
-  reasonsSelected: string[];
-  reasonsAlternativesRejected: AlternativeRejection[];
-  confidence: number;
-  successMetrics: SuccessMetric[];
-  escalationRequirements: EscalationRequirement[];
-  businessImpact: BusinessImpact;
-  estimatedTimeToValue: TimeEstimate;
-  rankedScore: number;
-  recommendation: "implement_now" | "validate_next" | "defer" | "do_not_pursue";
+export interface NormalizedWorkflowSignals {
+  departments: Department[];
+  manualProcessDensity: number;
+  crossDeptHandoffs: number;
+  approvalChainDepth: number;
+  reportingBurden: number;
+  techMaturity: number;
+  aiReadiness: number;
+  regulatoryBurden: number;
+  painPoints: WorkflowPainPoint[];
+  missingDepartments: Department[];
+  evidenceIds: string[];
+}
+
+export interface WorkflowPainPoint {
+  department: Department;
+  pain: string;
+  severity: "high" | "medium" | "low";
+  evidenceIds: string[];
+}
+
+// ─── Legacy opportunity candidates (compatibility adapter) ───────────────────
+
+export interface OpportunityCandidate {
+  id: string;
+  blueprintId?: string;
+  title: string;
+  problemStatement: string;
+  targetWorkflow: string;
+  department: Department;
+  businessObjective: string;
+  proposedSystemType: string;
+  detectedSignals: string[];
+  requiredCapabilities: string[];
+  dependencies: string[];
+  risks: string[];
+  evidenceIds: string[];
+  candidateSource: "blueprint" | "composite" | "custom";
+  compatiblePaths: InterventionPath[];
 }
 
 export interface DimensionResult {
@@ -466,66 +414,27 @@ export interface OpportunityConfidence {
   reasoning: string[];
 }
 
-export interface RankedIntervention {
-  problemId: string;
-  selectedPath: InterventionPath;
-  comparedOptions: InterventionOption[];
-  reasonsSelected: string[];
-  reasonsAlternativesRejected: AlternativeRejection[];
-  confidence: number;
-  successMetrics: SuccessMetric[];
-  escalationRequirements: EscalationRequirement[];
-  businessImpact: BusinessImpact;
-  estimatedTimeToValue: TimeEstimate;
-  rankedScore: number;
-  recommendation: "implement_now" | "validate_next" | "defer" | "do_not_pursue";
-}
+// ─── Opportunity Map (customer-facing name retained, Priority 8) ─────────────
 
-export interface InterventionOption {
-  path: InterventionPath;
-  summary: string;
+export interface OpportunityMapEntry {
+  problemId: string;
+  businessProblem: BusinessProblem;
+  rootCause: string;
+  currentImpact: BusinessImpact;
+  evidenceIds: string[];
+  possibleInterventionPaths: InterventionPath[];
+  selectedIntervention: InterventionPath;
+  whySelected: string[];
+  whyAlternativesRejected: AlternativeRejection[];
   expectedImpact: BusinessImpact;
-  estimatedCost: CostEstimate;
-  estimatedTimeToValue: TimeEstimate;
-  implementationComplexity: number;
-  dataReadiness: number;
-  organizationalReadiness: number;
-  technicalRisk: number;
-  operationalRisk: number;
-  humanJudgmentRequirement: number;
-  reversibility: number;
+  estimatedEffort: CostEstimate;
+  timeToValue: TimeEstimate;
   confidence: number;
   assumptions: Assumption[];
-  evidenceIds: string[];
-  disqualifiers: string[];
-}
-
-export interface AlternativeRejection {
-  path: InterventionPath;
-  primaryReason: string;
-  secondaryReasons: string[];
-  evidenceIds: string[];
-}
-
-export interface InterventionOptionData extends InterventionOption {
-  compatibilityScore: number;
-  suitabilityScore: number;
-}
-
-export interface RankedOpportunity {
-  candidate: OpportunityCandidate;
-  tier: Tier;
-  sequence: number;
-  recommendation: Recommendation;
-  feasibility: DimensionResult;
-  businessLeverage: DimensionResult;
-  implementationReadiness: DimensionResult;
-  strategicAlignment: DimensionResult;
-  confidence: OpportunityConfidence;
-  evidenceIds: string[];
-  dependencies: string[];
-  disqualifiers: string[];
-  reasoningTraceId: string;
+  successMetrics: SuccessMetric[];
+  requiredOwner: string;
+  technicalEscalationLevel: EscalationLevel;
+  implementationBlueprintAvailable: boolean;
 }
 
 export interface OpportunityMap {
@@ -534,6 +443,8 @@ export interface OpportunityMap {
   assessmentSessionId: string;
   generatedAt: string;
   pipelineVersion: string;
+  interventionEngineVersion: string;
+  prioritizationVersion: string;
   executiveSummary: {
     headline: string;
     finding: string;
@@ -542,7 +453,7 @@ export interface OpportunityMap {
     strategicValue?: string;
   };
   opportunities: RankedOpportunity[];
-  rankedInterventions: RankedIntervention[];
+  interventionEntries: OpportunityMapEntry[];
   implementationSequencing: {
     strategy: string;
     strategyRationale: string;
@@ -550,8 +461,8 @@ export interface OpportunityMap {
       phase: number;
       name: string;
       description: string;
-      interventionIds: string[];
       opportunityIds: string[];
+      interventionIds: string[];
       estimatedDuration: string;
     }[];
   };
@@ -561,6 +472,8 @@ export interface OpportunityMap {
 
 export interface PipelineRunRecord {
   pipelineVersion: string;
+  interventionEngineVersion?: string;
+  prioritizationVersion?: string;
   promptVersions: Record<string, string>;
   algorithmVersion: string;
   modelIdentifiers: Record<string, string>;
@@ -617,15 +530,19 @@ export interface Blueprint {
   effort: string;
   timeToValue: string;
   successRate?: number;
+  supportedPaths?: InterventionPath[];
 }
 
 export type PipelineStageName =
   | "load_assessment"
   | "build_company_context"
   | "normalize_workflow_signals"
+  | "generate_business_problems"
+  | "generate_intervention_options"
   | "generate_candidates"
   | "match_blueprints"
   | "rank_opportunities"
+  | "rank_interventions"
   | "calculate_confidence"
   | "build_evidence_traces"
   | "generate_explanations"

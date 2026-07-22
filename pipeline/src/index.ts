@@ -1,20 +1,22 @@
 import { loadAssessment } from "./stages/01-load-assessment.js";
 import { buildCompanyContext } from "./stages/02-build-company-context.js";
 import { normalizeWorkflowSignals } from "./stages/03-normalize-workflow.js";
-import { generateBusinessProblems } from "./stages/03-intervention-planning.js";
-import { generateInterventionOptions } from "./stages/03-intervention-planning.js";
+import { generateBusinessProblems, generateInterventionOptions, getTemplateCharacteristics } from "./stages/03-intervention-planning.js";
 import { generateOpportunityCandidates } from "./stages/04-generate-candidates.js";
-import { rankInterventions } from "./stages/05-rank-interventions.js";
 import { rankOpportunities } from "./stages/05-rank-opportunities.js";
+import { rankInterventions } from "./stages/05-rank-interventions.js";
 import { buildEvidenceTraces } from "./stages/06-build-evidence.js";
 import { generateExplanations } from "./stages/07-generate-explanations.js";
 import { persistOpportunityMap } from "./stages/08-persist.js";
-import type { PipelineContext, PipelineRunRecord, OpportunityMap, RunAssessmentInput, RankedIntervention, BusinessProblem, InterventionOption, ProposedIntervention, BusinessImpact, CostEstimate, TimeEstimate, Assumption, SuccessMetric, EscalationRequirement } from "./types/index.js";
+import {
+  INTERVENTION_ENGINE_VERSION,
+  PRIORITIZATION_VERSION,
+} from "./types/index.js";
+import type { PipelineContext, OpportunityMap, RunAssessmentInput } from "./types/index.js";
 
 export const PIPELINE_VERSION = "2.0.0";
-export const ALGORITHM_VERSION = "2.0.0";
-export const INTERVENTION_ENGINE_VERSION = "intervention_v1";
-export const PRIORITIZATION_VERSION = "four_pass_v2";
+export const ALGORITHM_VERSION = PRIORITIZATION_VERSION;
+export { INTERVENTION_ENGINE_VERSION, PRIORITIZATION_VERSION };
 export const PROMPT_VERSIONS = {
   company_intelligence: "1.0.0",
   opportunity_explanation: "1.0.0",
@@ -45,10 +47,28 @@ export async function runAssessment(input: RunAssessmentInput, supabase: any): P
 
   context.log("pipeline", "Starting pipeline run", {
     pipelineVersion: PIPELINE_VERSION,
+    interventionEngineVersion: INTERVENTION_ENGINE_VERSION,
+    prioritizationVersion: PRIORITIZATION_VERSION,
     sessionId: input.sessionId,
   });
 
   let currentEvidence: any[] = [];
+
+  const baseRunRecord = {
+    pipelineVersion: PIPELINE_VERSION,
+    interventionEngineVersion: INTERVENTION_ENGINE_VERSION,
+    prioritizationVersion: PRIORITIZATION_VERSION,
+    promptVersions: PROMPT_VERSIONS,
+    algorithmVersion: ALGORITHM_VERSION,
+    modelIdentifiers: { deterministic: "none" },
+    timestamps: { startedAt, completedAt: "" },
+    duration: 0,
+    stageDurations,
+    inputReferences: [input.sessionId],
+    outputReferences: [] as string[],
+    errorState: null as string | null,
+    retryCount: 0,
+  };
 
   try {
     // Stage 1: Load assessment
@@ -75,7 +95,31 @@ export async function runAssessment(input: RunAssessmentInput, supabase: any): P
     stageDurations.normalize_workflow_signals = Date.now() - start;
     currentEvidence = workflowResult.evidence;
 
-    // Stage 4: Generate opportunity candidates
+    // Stage 4a: Generate business problems (Priority 4)
+    start = Date.now();
+    const problemResult = await generateBusinessProblems(
+      { answers: assessment.answers, company: companyResult.company, workflowSignals: workflowResult.signals, evidence: currentEvidence },
+      context
+    );
+    stageDurations.generate_business_problems = Date.now() - start;
+    currentEvidence = problemResult.evidence;
+
+    // Stage 4b: Compare all intervention paths per problem (Priority 2)
+    start = Date.now();
+    const interventionResult = await generateInterventionOptions(
+      {
+        problems: problemResult.problems,
+        answers: assessment.answers,
+        workflowSignals: workflowResult.signals,
+        evidence: currentEvidence,
+        characteristics: getTemplateCharacteristics(),
+      },
+      context
+    );
+    stageDurations.generate_intervention_options = Date.now() - start;
+    currentEvidence = interventionResult.evidence;
+
+    // Stage 4c: Legacy opportunity candidates (compatibility adapter)
     start = Date.now();
     const candidateResult = await generateOpportunityCandidates(
       { answers: assessment.answers, company: companyResult.company, workflowSignals: workflowResult.signals, evidence: currentEvidence },
@@ -84,7 +128,7 @@ export async function runAssessment(input: RunAssessmentInput, supabase: any): P
     stageDurations.generate_candidates = Date.now() - start;
     currentEvidence = candidateResult.evidence;
 
-    // Stage 5: Rank opportunities
+    // Stage 5a: Rank opportunities (legacy, retained for compatibility)
     start = Date.now();
     const rankingResult = await rankOpportunities(
       { candidates: candidateResult.candidates, answers: assessment.answers, company: companyResult.company, workflowSignals: workflowResult.signals, evidence: currentEvidence },
@@ -93,46 +137,49 @@ export async function runAssessment(input: RunAssessmentInput, supabase: any): P
     stageDurations.rank_opportunities = Date.now() - start;
     currentEvidence = rankingResult.evidence;
 
+    // Stage 5b: Rank interventions (four_pass_v2, Priority 3)
+    start = Date.now();
+    const interventionRankingResult = await rankInterventions(
+      {
+        problems: problemResult.problems,
+        interventions: interventionResult.interventions,
+        workflowSignals: workflowResult.signals,
+        evidence: currentEvidence,
+      },
+      context
+    );
+    stageDurations.rank_interventions = Date.now() - start;
+    currentEvidence = interventionRankingResult.evidence;
+
     // Stage 6: Build evidence traces
     start = Date.now();
     const evidenceResult = await buildEvidenceTraces(
       { ranked: rankingResult.ranked, evidence: currentEvidence },
       context
     );
-    stageDurations.calculate_confidence = Date.now() - start;
     stageDurations.build_evidence_traces = Date.now() - start;
     currentEvidence = evidenceResult.evidence;
 
-    // Stage 7: Generate explanations
+    // Stage 7: Generate explanations + Opportunity Map (Priority 8)
     start = Date.now();
     const explanationResult = await generateExplanations({
       companySummary: companyResult.company.companySummary,
       ranked: evidenceResult.opportunities,
+      rankedInterventions: interventionRankingResult.ranked,
       evidence: currentEvidence,
       sessionId: input.sessionId,
       pipelineVersion: PIPELINE_VERSION,
       stageDurations,
-      runRecord: {
-        pipelineVersion: PIPELINE_VERSION,
-        promptVersions: PROMPT_VERSIONS,
-        algorithmVersion: ALGORITHM_VERSION,
-        modelIdentifiers: { deterministic: "none" },
-        timestamps: { startedAt, completedAt: "" },
-        duration: 0,
-        stageDurations,
-        inputReferences: [input.sessionId],
-        outputReferences: [],
-        errorState: null,
-        retryCount: 0,
-      },
+      runRecord: baseRunRecord,
     }, context);
     stageDurations.generate_explanations = Date.now() - start;
     currentEvidence = explanationResult.evidence;
 
-    // Stage 8: Persist
+    // Stage 8: Persist (Priority 12)
     start = Date.now();
     await persistOpportunityMap({
       opportunityMap: explanationResult.opportunityMap,
+      rankedInterventions: interventionRankingResult.ranked,
       evidence: currentEvidence,
       sessionId: input.sessionId,
       userId: input.userId,
@@ -142,6 +189,7 @@ export async function runAssessment(input: RunAssessmentInput, supabase: any): P
     context.log("pipeline", "Pipeline completed successfully", {
       duration: Object.values(stageDurations).reduce((a, b) => a + b, 0),
       opportunityCount: explanationResult.opportunityMap.opportunities.length,
+      interventionCount: explanationResult.opportunityMap.interventionEntries.length,
     });
 
     return {
@@ -169,6 +217,8 @@ export async function runAssessment(input: RunAssessmentInput, supabase: any): P
           assessmentSessionId: input.sessionId,
           generatedAt: new Date().toISOString(),
           pipelineVersion: PIPELINE_VERSION,
+          interventionEngineVersion: INTERVENTION_ENGINE_VERSION,
+          prioritizationVersion: PRIORITIZATION_VERSION,
           executiveSummary: {
             headline: "Pipeline did not complete",
             finding: `The opportunity discovery pipeline encountered an error: ${errorMessage}`,
@@ -176,26 +226,21 @@ export async function runAssessment(input: RunAssessmentInput, supabase: any): P
             quickWins: 0,
           },
           opportunities: [],
+          interventionEntries: [],
           implementationSequencing: {
             strategy: "Retry",
             strategyRationale: "Pipeline failed before generating recommendations",
-            phases: [{ phase: 1, name: "Retry", description: "Re-run the pipeline", opportunityIds: [], estimatedDuration: "Immediate" }],
+            phases: [{ phase: 1, name: "Retry", description: "Re-run the pipeline", opportunityIds: [], interventionIds: [], estimatedDuration: "Immediate" }],
           },
           evidence: currentEvidence,
           generationMetadata: {
-            pipelineVersion: PIPELINE_VERSION,
-            promptVersions: PROMPT_VERSIONS,
-            algorithmVersion: ALGORITHM_VERSION,
-            modelIdentifiers: { deterministic: "none" },
+            ...baseRunRecord,
             timestamps: { startedAt, completedAt: new Date().toISOString() },
             duration: Object.values(stageDurations).reduce((a, b) => a + b, 0),
-            stageDurations,
-            inputReferences: [input.sessionId],
-            outputReferences: [],
             errorState: errorMessage,
-            retryCount: 0,
           },
         },
+        rankedInterventions: [],
         evidence: currentEvidence,
         sessionId: input.sessionId,
         userId: input.userId,

@@ -1,11 +1,8 @@
-"use strict";
+import { describe, it, expect } from "vitest";
+import { rankOpportunities } from "./05-rank-opportunities.js";
+import type { OpportunityCandidate } from "../types/index.js";
 
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { RankedOpportunity } from "../src/types/index.js";
-import { RankOpportunitiesInput } from "../src/stages/05-rank-opportunities.js";
-
-// Test fixtures
-const mockCandidates = [
+const mockCandidates: OpportunityCandidate[] = [
   {
     id: "candidate-1",
     blueprintId: "BP-SALES-001",
@@ -20,7 +17,8 @@ const mockCandidates = [
     dependencies: [],
     risks: ["CRM data quality"],
     evidenceIds: ["det-pain-sales-qual"],
-    candidateSource: "blueprint" as const,
+    candidateSource: "blueprint",
+    compatiblePaths: ["ai", "hybrid", "deterministic_software"],
   },
   {
     id: "candidate-2",
@@ -36,7 +34,8 @@ const mockCandidates = [
     dependencies: ["ERP API access"],
     risks: ["ERP integration complexity"],
     evidenceIds: ["det-finance-close", "det-finance-expenses"],
-    candidateSource: "blueprint" as const,
+    candidateSource: "blueprint",
+    compatiblePaths: ["deterministic_software", "ai", "hybrid"],
   },
 ];
 
@@ -48,28 +47,23 @@ const mockAnswers = [
 
 const mockCompany = {};
 const mockWorkflowSignals = {};
-const mockEvidence = [];
+const mockEvidence: any[] = [];
 
-describe("Ranking Tests", () => {
-  beforeEach(() => {});
+const ctx = {
+  sessionId: "test-session",
+  userId: "test-user",
+  supabase: null,
+  log: () => {},
+  requestId: "test-request",
+  startedAt: new Date().toISOString(),
+} as any;
 
-  it("should produce Tier 1 for high feasibility and business leverage", () => {
-    const input: RankOpportunitiesInput = {
-      candidates: mockCandidates,
-      answers: mockAnswers,
-      company: mockCompany,
-      workflowSignals: mockWorkflowSignals,
-      evidence: mockEvidence,
-    };
-    // Import and run ranking stage
-    const { rankOpportunities } = require("../src/stages/05-rank-opportunities.js");
-    const result = await rankOpportunities(input, {
-      sessionId: "test-session",
-      userId: "test-user",
-      supabase: null,
-      log: () => {},
-      requestId: "test-request",
-    } as any);
+describe("rankOpportunities (legacy compatibility)", () => {
+  it("produces Tier 1 for high feasibility and business leverage", async () => {
+    const result = await rankOpportunities(
+      { candidates: mockCandidates, answers: mockAnswers, company: mockCompany, workflowSignals: mockWorkflowSignals, evidence: mockEvidence },
+      ctx,
+    );
 
     expect(result.ranked).toHaveLength(2);
     expect(result.ranked[0]).toBeDefined();
@@ -81,8 +75,8 @@ describe("Ranking Tests", () => {
     expect(result.ranked[1].recommendation).toBe("validate_next");
   });
 
-  it("should identify feasible but low-value opportunity -> Tier 3", () => {
-    const lowValueCandidate = {
+  it("identifies feasible but low-value opportunity -> Tier 3", async () => {
+    const lowValueCandidate: OpportunityCandidate = {
       id: "candidate-low",
       title: "Minor Feature Enhancement",
       problemStatement: "Small improvement to existing dashboard",
@@ -95,63 +89,32 @@ describe("Ranking Tests", () => {
       dependencies: ["developer time"],
       risks: [],
       evidenceIds: ["det-low-impact"],
-      candidateSource: "composite" as const,
+      candidateSource: "composite",
+      compatiblePaths: ["deterministic_software"],
     };
 
-    const input: RankOpportunitiesInput = {
-      candidates: [mockCandidates[0], lowValueCandidate],
-      answers: mockAnswers,
-      company: mockCompany,
-      workflowSignals: mockWorkflowSignals,
-      evidence: mockEvidence,
-    };
-
-    const { rankOpportunities } = require("../src/stages/05-rank-opportunities.js");
-    const result = await rankOpportunities(input, {
-      sessionId: "test-session",
-      userId: "test-user",
-      supabase: null,
-      log: () => {},
-      requestId: "test-request",
-    } as any);
+    const result = await rankOpportunities(
+      { candidates: [mockCandidates[0], lowValueCandidate], answers: mockAnswers, company: mockCompany, workflowSignals: mockWorkflowSignals, evidence: mockEvidence },
+      ctx,
+    );
 
     expect(result.ranked).toHaveLength(2);
     expect(result.ranked[1].tier).toBe(3);
     expect(result.ranked[1].recommendation).toBe("defer");
     expect(result.ranked[1].feasibility.label).toBe("pass");
-    expect(result.ranked[1].businessLeverage.score).toBeLessThanOrEqualTo(10);
+    expect(result.ranked[1].businessLeverage.score).toBeLessThanOrEqual(10);
   });
 
-  it("should produce deterministic output for same input", () => {
-    const input: RankOpportunitiesInput = {
-      candidates: mockCandidates,
-      answers: mockAnswers,
-      company: mockCompany,
-      workflowSignals: mockWorkflowSignals,
-      evidence: mockEvidence,
-    };
+  it("produces deterministic output for same input", async () => {
+    const input = { candidates: mockCandidates, answers: mockAnswers, company: mockCompany, workflowSignals: mockWorkflowSignals, evidence: mockEvidence };
+    const result1 = await rankOpportunities(input, ctx);
+    const result2 = await rankOpportunities(input, ctx);
 
-    const { rankOpportunities } = require("../src/stages/05-rank-opportunities.js");
-    const result1 = await rankOpportunities(input, {
-      sessionId: "test-session",
-      userId: "test-user",
-      supabase: null,
-      log: () => {},
-      requestId: "test-request",
-    } as any);
-    const result2 = await rankOpportunities(input, {
-      sessionId: "test-session",
-      userId: "test-user",
-      supabase: null,
-      log: () => {},
-      requestId: "test-request",
-    } as any);
-
-    expect(JSON.stringify(result1)).toBe(JSON.stringify(result2));
+    expect(JSON.stringify(result1.ranked)).toBe(JSON.stringify(result2.ranked));
   });
 
-  it("should produce all candidates as Tier 4 when feasibility fails", () => {
-    const noDataCandidate = {
+  it("produces Tier 4 when feasibility fails", async () => {
+    const noDataCandidate: OpportunityCandidate = {
       id: "candidate-no-evidence",
       title: "Mystery System",
       problemStatement: "Unknown problem",
@@ -164,25 +127,14 @@ describe("Ranking Tests", () => {
       dependencies: [],
       risks: [],
       evidenceIds: [],
-      candidateSource: "custom" as const,
+      candidateSource: "custom",
+      compatiblePaths: ["ai"],
     };
 
-    const input: RankOpportunitiesInput = {
-      candidates: [noDataCandidate],
-      answers: mockAnswers,
-      company: mockCompany,
-      workflowSignals: mockWorkflowSignals,
-      evidence: mockEvidence,
-    };
-
-    const { rankOpportunities } = require("../src/stages/05-rank-opportunities.js");
-    const result = await rankOpportunities(input, {
-      sessionId: "test-session",
-      userId: "test-user",
-      supabase: null,
-      log: () => {},
-      requestId: "test-request",
-    } as any);
+    const result = await rankOpportunities(
+      { candidates: [noDataCandidate], answers: mockAnswers, company: mockCompany, workflowSignals: mockWorkflowSignals, evidence: mockEvidence },
+      ctx,
+    );
 
     expect(result.ranked).toHaveLength(1);
     expect(result.ranked[0].tier).toBe(4);
@@ -190,8 +142,8 @@ describe("Ranking Tests", () => {
     expect(result.ranked[0].recommendation).toBe("do_not_pursue");
   });
 
-  it("should handle conflicting evidence gracefully", () => {
-    const conflictingCandidate = {
+  it("handles conflicting evidence gracefully", async () => {
+    const conflictingCandidate: OpportunityCandidate = {
       id: "candidate-conflict",
       title: "Conflicting Solution",
       problemStatement: "Both good and bad signals present",
@@ -204,25 +156,14 @@ describe("Ranking Tests", () => {
       dependencies: [],
       risks: ["integration complexity", "data quality"],
       evidenceIds: ["evidence-good", "evidence-bad"],
-      candidateSource: "composite" as const,
+      candidateSource: "composite",
+      compatiblePaths: ["hybrid", "process_redesign"],
     };
 
-    const input: RankOpportunitiesInput = {
-      candidates: [conflictingCandidate],
-      answers: mockAnswers,
-      company: mockCompany,
-      workflowSignals: mockWorkflowSignals,
-      evidence: mockEvidence,
-    };
-
-    const { rankOpportunities } = require("../src/stages/05-rank-opportunities.js");
-    const result = await rankOpportunities(input, {
-      sessionId: "test-session",
-      userId: "test-user",
-      supabase: null,
-      log: () => {},
-      requestId: "test-request",
-    } as any);
+    const result = await rankOpportunities(
+      { candidates: [conflictingCandidate], answers: mockAnswers, company: mockCompany, workflowSignals: mockWorkflowSignals, evidence: mockEvidence },
+      ctx,
+    );
 
     expect(result.ranked).toHaveLength(1);
     expect([1, 2, 3, 4].includes(result.ranked[0].tier)).toBe(true);

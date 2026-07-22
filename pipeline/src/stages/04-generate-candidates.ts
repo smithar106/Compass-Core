@@ -84,6 +84,7 @@ export async function generateOpportunityCandidates(input: GenerateCandidatesInp
         risks: [],
         evidenceIds: [ev.id, ...input.evidence.map((e) => e.id)],
         candidateSource: "blueprint",
+        compatiblePaths: bp.supportedPaths ?? ["ai", "hybrid"],
       });
     }
   }
@@ -116,6 +117,7 @@ export async function generateOpportunityCandidates(input: GenerateCandidatesInp
         risks: ["Composite candidate — validate specifics with department"],
         evidenceIds: [ev.id],
         candidateSource: "composite",
+        compatiblePaths: ["process_redesign", "deterministic_software", "no_action_yet"],
       });
     }
   }
@@ -165,6 +167,7 @@ export async function generateOpportunityCandidates(input: GenerateCandidatesInp
             risks: [],
             evidenceIds: [ev.id],
             candidateSource: "blueprint",
+            compatiblePaths: bp.supportedPaths ?? ["ai", "hybrid"],
           });
         }
       }

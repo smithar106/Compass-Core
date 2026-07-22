@@ -1,6 +1,6 @@
-import { InterventionPath } from ".";
+import type { InterventionPath } from "./index.js";
 
-export const RANKING_ALGORITHM_VERSION = "four_pass_v1";
+export const RANKING_ALGORITHM_VERSION = "four_pass_v2";
 export type Tier = 1 | 2 | 3 | 4;
 export type Recommendation = "build_now" | "validate_next" | "defer" | "do_not_pursue";
 

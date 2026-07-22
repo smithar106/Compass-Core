@@ -1,14 +1,25 @@
-import type { OpportunityMap, RankedOpportunity, EvidenceRecord, PipelineRunRecord, PipelineContext } from "../types/index.js";
+import type { OpportunityMap, OpportunityMapEntry, RankedOpportunity, RankedIntervention, EvidenceRecord, PipelineRunRecord, PipelineContext, EscalationLevel } from "../types/index.js";
+import { INTERVENTION_ENGINE_VERSION, PRIORITIZATION_VERSION } from "../types/index.js";
 
 interface GenerateExplanationsInput {
   companySummary: string;
   ranked: RankedOpportunity[];
+  rankedInterventions?: RankedIntervention[];
   evidence: EvidenceRecord[];
   sessionId: string;
   pipelineVersion: string;
   stageDurations: Record<string, number>;
   runRecord: PipelineRunRecord;
 }
+
+const PATH_DISPLAY: Record<string, string> = {
+  ai: "AI-assisted automation",
+  deterministic_software: "Deterministic software",
+  process_redesign: "Process redesign",
+  human_work: "Deliberate human ownership",
+  hybrid: "Hybrid (automation + human oversight)",
+  no_action_yet: "No intervention yet",
+};
 
 export async function generateExplanations(input: GenerateExplanationsInput, _context: PipelineContext): Promise<{ opportunityMap: OpportunityMap; evidence: EvidenceRecord[] }> {
   const evidence: EvidenceRecord[] = [...input.evidence];
@@ -48,7 +59,38 @@ export async function generateExplanations(input: GenerateExplanationsInput, _co
   };
 
   // Build implementation sequencing
-  const phases = buildImplementationPhases(opportunities);
+  const phases = buildImplementationPhases(opportunities, input.rankedInterventions ?? []);
+
+  // Priority 8: intervention entries for the customer-facing map. Each entry
+  // carries the full decision record: problem, paths compared, selection,
+  // rejections, impact, effort, confidence, assumptions, metrics, owner,
+  // escalation level, and blueprint availability.
+  const interventionEntries: OpportunityMapEntry[] = (input.rankedInterventions ?? []).map((ri) => {
+    const selected = ri.comparedOptions.find((o) => o.path === ri.selectedPath);
+    const topEscalation: EscalationLevel = ri.escalationRequirements.some((e) => e.type === "security_or_legal_review")
+      ? "security_or_legal_review"
+      : ri.escalationRequirements[0]?.type ?? "business_configurable";
+    return {
+      problemId: ri.problemId,
+      businessProblem: ri.problem,
+      rootCause: ri.problem.description,
+      currentImpact: ri.problem.currentImpact,
+      evidenceIds: ri.problem.evidenceIds,
+      possibleInterventionPaths: ri.comparedOptions.map((o) => o.path),
+      selectedIntervention: ri.selectedPath,
+      whySelected: ri.reasonsSelected,
+      whyAlternativesRejected: ri.reasonsAlternativesRejected,
+      expectedImpact: selected?.expectedImpact ?? ri.problem.currentImpact,
+      estimatedEffort: selected?.estimatedCost ?? { initial: 0, monthly: 0, yearly: 0, implementationComplexity: "low" },
+      timeToValue: selected?.estimatedTimeToValue ?? { min: 0, max: 0, unit: "weeks" },
+      confidence: ri.confidence,
+      assumptions: selected?.assumptions ?? [],
+      successMetrics: ri.successMetrics,
+      requiredOwner: `${ri.problem.department} lead`,
+      technicalEscalationLevel: topEscalation,
+      implementationBlueprintAvailable: ri.tier <= 2 && ri.selectedPath !== "no_action_yet",
+    };
+  });
 
   const opportunityMap: OpportunityMap = {
     mapId: `map-${input.sessionId}-${Date.now()}`,
@@ -56,8 +98,11 @@ export async function generateExplanations(input: GenerateExplanationsInput, _co
     assessmentSessionId: input.sessionId,
     generatedAt: new Date().toISOString(),
     pipelineVersion: input.pipelineVersion,
+    interventionEngineVersion: INTERVENTION_ENGINE_VERSION,
+    prioritizationVersion: PRIORITIZATION_VERSION,
     executiveSummary,
     opportunities,
+    interventionEntries,
     implementationSequencing: {
       strategy: quickWins.length > 0 ? "Quick Wins First" : "Foundational",
       strategyRationale: quickWins.length > 0
@@ -68,6 +113,8 @@ export async function generateExplanations(input: GenerateExplanationsInput, _co
     evidence,
     generationMetadata: {
       ...input.runRecord,
+      interventionEngineVersion: INTERVENTION_ENGINE_VERSION,
+      prioritizationVersion: PRIORITIZATION_VERSION,
       timestamps: {
         ...input.runRecord.timestamps,
         completedAt: new Date().toISOString(),
@@ -77,6 +124,33 @@ export async function generateExplanations(input: GenerateExplanationsInput, _co
   };
 
   return { opportunityMap, evidence };
+}
+
+export function generateInterventionExplanation(ri: RankedIntervention): string {
+  const parts: string[] = [];
+  parts.push(`## ${ri.problem.title}`);
+  parts.push(``);
+  parts.push(`### Business Problem`);
+  parts.push(ri.problem.description);
+  parts.push(`Current impact: ~${ri.problem.currentImpact.userHoursPerWeek} hours/week of manual effort.`);
+  parts.push(``);
+  parts.push(`### Selected Intervention: ${PATH_DISPLAY[ri.selectedPath] ?? ri.selectedPath}`);
+  for (const r of ri.reasonsSelected) parts.push(`- ${r}`);
+  parts.push(``);
+  parts.push(`### Why Alternatives Were Rejected`);
+  for (const rej of ri.reasonsAlternativesRejected) {
+    parts.push(`- **${PATH_DISPLAY[rej.path] ?? rej.path}**: ${rej.primaryReason}`);
+  }
+  parts.push(``);
+  parts.push(`### Confidence`);
+  parts.push(`${(ri.confidence * 100).toFixed(0)}% — tier ${ri.tier}, ranked score ${ri.rankedScore}/40 (engine ${INTERVENTION_ENGINE_VERSION}, prioritization ${PRIORITIZATION_VERSION})`);
+  parts.push(``);
+  parts.push(`### Success Metrics`);
+  for (const m of ri.successMetrics) parts.push(`- ${m.name}: target ${m.targetValue} ${m.unit} (${m.measurementFrequency})`);
+  parts.push(``);
+  parts.push(`### Escalation`);
+  for (const e of ri.escalationRequirements) parts.push(`- ${e.type}: ${e.description}`);
+  return parts.join("\n");
 }
 
 function generateOpportunityExplanation(opp: RankedOpportunity, companySummary: string): string {
@@ -147,36 +221,42 @@ function generateOpportunityExplanation(opp: RankedOpportunity, companySummary: 
   return parts.join("\n");
 }
 
-function buildImplementationPhases(opportunities: RankedOpportunity[]) {
+function buildImplementationPhases(opportunities: RankedOpportunity[], interventions: RankedIntervention[]) {
   const phases: OpportunityMap["implementationSequencing"]["phases"] = [];
   const now = opportunities.filter((o) => o.recommendation === "build_now");
   const next = opportunities.filter((o) => o.recommendation === "validate_next");
   const later = opportunities.filter((o) => o.recommendation === "defer");
+  const nowI = interventions.filter((i) => i.recommendation === "build_now");
+  const nextI = interventions.filter((i) => i.recommendation === "validate_next");
+  const laterI = interventions.filter((i) => i.recommendation === "defer");
 
-  if (now.length > 0) {
+  if (now.length > 0 || nowI.length > 0) {
     phases.push({
       phase: 1,
       name: "Quick Wins",
-      description: "High-feasibility opportunities with immediate business leverage",
+      description: "High-feasibility interventions with immediate business leverage",
       opportunityIds: now.map((o) => o.candidate.id),
+      interventionIds: nowI.map((i) => i.problemId),
       estimatedDuration: "4-8 weeks",
     });
   }
-  if (next.length > 0) {
+  if (next.length > 0 || nextI.length > 0) {
     phases.push({
       phase: 2,
       name: "Validation Phase",
-      description: "Opportunities requiring additional assessment before commitment",
+      description: "Interventions requiring additional assessment before commitment",
       opportunityIds: next.map((o) => o.candidate.id),
+      interventionIds: nextI.map((i) => i.problemId),
       estimatedDuration: "8-12 weeks",
     });
   }
-  if (later.length > 0 || phases.length === 0) {
+  if (later.length > 0 || laterI.length > 0 || phases.length === 0) {
     phases.push({
       phase: phases.length + 1,
       name: "Long-term Opportunities",
-      description: "Opportunities to revisit as organizational maturity grows",
+      description: "Interventions to revisit as organizational maturity grows",
       opportunityIds: later.map((o) => o.candidate.id),
+      interventionIds: laterI.map((i) => i.problemId),
       estimatedDuration: "3-6 months",
     });
   }

@@ -54,7 +54,9 @@ export async function rankOpportunities(input: RankOpportunitiesInput, _context:
     });
   }
 
-  const surviving = feasible.filter((f) => f.feasibility.label !== "fail");
+  // Failed candidates are retained so the map can show do-not-pursue items
+  // explicitly; they are forced to Tier 4 below.
+  const surviving = feasible;
 
   // Pass 2: Business Leverage Assessment
   function leverageLabel(score: number): "pass" | "conditional" | "fail" {
@@ -134,8 +136,9 @@ export async function rankOpportunities(input: RankOpportunitiesInput, _context:
     let recommendation: Recommendation;
 
     const total = fe + bl + ir + sa;
-    if (total >= 30 && fe >= 7 && bl >= 6) { tier = 1; recommendation = "build_now"; }
-    else if (total >= 22 && fe >= 5) { tier = 2; recommendation = "validate_next"; }
+    if (f.feasibility.label === "fail") { tier = 4; recommendation = "do_not_pursue"; }
+    else if (total >= 30 && fe >= 7 && bl >= 6) { tier = 1; recommendation = "build_now"; }
+    else if (total >= 26 && fe >= 5) { tier = 2; recommendation = "validate_next"; }
     else if (total >= 14) { tier = 3; recommendation = "defer"; }
     else { tier = 4; recommendation = "do_not_pursue"; }
 
