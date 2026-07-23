@@ -85,12 +85,31 @@ async function runInterventionBenchmarks(): Promise<{
       const companyResult = await buildCompanyContext({ answers, evidence: [] }, MOCK_CONTEXT);
       const workflowResult = await normalizeWorkflowSignals({ answers, company: companyResult.company, evidence: companyResult.evidence }, MOCK_CONTEXT);
       const problemResult = await generateBusinessProblems({ answers, company: companyResult.company, workflowSignals: workflowResult.signals, evidence: workflowResult.evidence }, MOCK_CONTEXT);
-      const interventionResult = await generateInterventionOptions({
+      // Run root cause analysis and evidence sufficiency first
+      const { generateRootCauseHypotheses } = await import("../stages/03-root-cause-analysis.js");
+      const { analyzeEvidenceSufficiency } = await import("../stages/04-evidence-analysis.js");
+
+      const rootCauseResult = await generateRootCauseHypotheses({
         problems: problemResult.problems,
         answers,
         workflowSignals: workflowResult.signals,
         evidence: problemResult.evidence,
+      }, MOCK_CONTEXT);
+      const evidenceResult = await analyzeEvidenceSufficiency({
+        problems: rootCauseResult.problems,
+        answers,
+        evidence: rootCauseResult.evidence,
+      }, MOCK_CONTEXT);
+
+      const interventionResult = await generateInterventionOptions({
+        problems: rootCauseResult.problems,
+        answers,
+        workflowSignals: workflowResult.signals,
+        evidence: evidenceResult.evidence,
         characteristics: getTemplateCharacteristics(),
+        sufficiencies: evidenceResult.sufficiencies,
+        followUpQuestions: evidenceResult.followUpQuestions,
+        deferredProblems: evidenceResult.deferredProblems,
       }, MOCK_CONTEXT);
       const rankingResult = await rankInterventions({
         problems: problemResult.problems,

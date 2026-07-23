@@ -14,6 +14,8 @@ import type {
   InterventionPath,
   AlternativeRejection,
   RecommendedIntervention,
+  EvidenceSufficiency,
+  FollowUpQuestion,
   Assumption,
   SuccessMetric,
   EscalationRequirement,
@@ -343,6 +345,8 @@ function detectProblems(input: GenerateBusinessProblemsInput, evidence: Evidence
       desiredOutcome: t.desiredOutcome,
       currentImpact: t.impactHint,
       evidenceIds: [evId],
+      rootCauseHypotheses: [],
+      mergedSignalIds: [],
     });
   }
 
@@ -527,6 +531,8 @@ function optionFor(
     evidenceIds: [evidenceId],
     disqualifiers: suitability.disqualifiers,
     eligible,
+    supportingHypothesisIds: [],
+    weakeningHypothesisIds: [],
   };
 }
 
@@ -585,15 +591,45 @@ export async function generateBusinessProblems(
 }
 
 export async function generateInterventionOptions(
-  input: GenerateInterventionOptionsInput & { characteristics?: Map<string, ProblemCharacteristics> },
+  input: GenerateInterventionOptionsInput & {
+    characteristics?: Map<string, ProblemCharacteristics>;
+    sufficiencies?: Map<string, EvidenceSufficiency>;
+    followUpQuestions?: Map<string, FollowUpQuestion[]>;
+    deferredProblems?: string[];
+  },
   _context: PipelineContext,
 ): Promise<{ interventions: RecommendedIntervention[]; evidence: EvidenceRecord[] }> {
   const evidence: EvidenceRecord[] = [...input.evidence];
   const interventions: RecommendedIntervention[] = [];
+  const sufficiencies = input.sufficiencies ?? new Map();
+  const followUpQuestions = input.followUpQuestions ?? new Map();
+  const deferredProblems = new Set(input.deferredProblems ?? []);
 
   for (const problem of input.problems) {
     const chars = (input.characteristics?.get(problem.id)) ?? deriveCharacteristics(problem);
     const impact = problem.currentImpact;
+    const sufficiency = sufficiencies.get(problem.id) ?? evaluateDefaultSufficiency(problem);
+
+    // Priority 5: Gate intervention comparison on evidence sufficiency.
+    // If evidence is insufficient, produce a deferred intervention instead
+    // of a false-confidence recommendation.
+    if (deferredProblems.has(problem.id) || !sufficiency.recommendationAllowed) {
+      const fq = followUpQuestions.get(problem.id) ?? [];
+      interventions.push({
+        problemId: problem.id,
+        selectedPath: "no_action_yet",
+        comparedOptions: [],
+        reasonsSelected: ["Recommendation deferred — insufficient evidence to compare intervention paths"],
+        reasonsAlternativesRejected: [],
+        confidence: 0,
+        successMetrics: [],
+        escalationRequirements: [],
+        evidenceSufficiency: sufficiency,
+        deferredDueToInsufficientEvidence: true,
+        followUpQuestions: fq,
+      });
+      continue;
+    }
 
     const suits: Array<[InterventionPath, SuitabilityResult]> = [
       ["ai", aiSuitability(chars)],
@@ -616,7 +652,18 @@ export async function generateInterventionOptions(
       metadata: { engineVersion: INTERVENTION_ENGINE_VERSION },
     });
 
-    const options = suits.map(([path, s]) => optionFor(path, problem, chars, s, evidenceId));
+    const supportingHypothesisIds = problem.rootCauseHypotheses
+      .filter((h) => h.supportingEvidenceIds.some((eid) => eid.includes(problem.id)))
+      .map((h) => h.id);
+    const weakeningHypothesisIds = problem.rootCauseHypotheses
+      .filter((h) => h.weakeningEvidenceIds.some((eid) => eid.includes(problem.id)))
+      .map((h) => h.id);
+
+    const options = suits.map(([path, s]) => ({
+      ...optionFor(path, problem, chars, s, evidenceId),
+      supportingHypothesisIds,
+      weakeningHypothesisIds,
+    }));
 
     // Deterministic selection: highest suitability among eligible; prefer the
     // simplest (lowest implementation complexity) when scores tie.
@@ -668,10 +715,30 @@ export async function generateInterventionOptions(
       confidence: selected.confidence,
       successMetrics: successMetricsFor(problem, selected.path),
       escalationRequirements: escalation,
+      evidenceSufficiency: sufficiency,
+      deferredDueToInsufficientEvidence: false,
+      followUpQuestions: followUpQuestions.get(problem.id) ?? [],
     });
   }
 
   return { interventions, evidence };
+}
+
+function evaluateDefaultSufficiency(problem: BusinessProblem): EvidenceSufficiency {
+  return {
+    status: problem.rootCauseHypotheses.length > 0 ? "partial" : "insufficient",
+    score: problem.rootCauseHypotheses.length > 0 ? 0.5 : 0,
+    recommendationAllowed: problem.rootCauseHypotheses.length > 0,
+    missingCriticalEvidence: problem.rootCauseHypotheses.length === 0 ? ["No root cause hypotheses generated"] : [],
+    hypothesisConfidenceGaps: problem.rootCauseHypotheses
+      .filter((h) => h.supportingEvidenceIds.length < 1)
+      .map((h) => ({
+        hypothesisId: h.id,
+        currentConfidence: 0,
+        minimumConfidence: 0.4,
+        missingEvidenceCategories: [h.category],
+      })),
+  };
 }
 
 function deriveCharacteristics(problem: BusinessProblem): ProblemCharacteristics {

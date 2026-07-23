@@ -119,10 +119,12 @@ export async function rankInterventions(
     const total = eligibility.score + businessLeverage.score + readiness.score + portfolioPriority.score;
     let tier: Tier;
     let recommendation: Recommendation;
-    if (eligibility.label === "fail") { tier = 4; recommendation = "do_not_pursue"; }
+    // Deferred due to insufficient evidence → always defer with rationale
+    if (rec.deferredDueToInsufficientEvidence) { tier = 3; recommendation = "defer"; }
+    else if (eligibility.label === "fail") { tier = 4; recommendation = "do_not_pursue"; }
     else if (rec.selectedPath === "no_action_yet") { tier = 3; recommendation = "defer"; }
     else if (total >= 30 && businessLeverage.score >= 6) { tier = 1; recommendation = "build_now"; }
-    else if (total >= 22) { tier = 2; recommendation = "validate_next"; }
+    else if (total >= 26) { tier = 2; recommendation = "validate_next"; }
     else if (total >= 14) { tier = 3; recommendation = "defer"; }
     else { tier = 4; recommendation = "do_not_pursue"; }
 

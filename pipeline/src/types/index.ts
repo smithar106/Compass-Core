@@ -2,9 +2,15 @@
 // Canonical domain model: Business Intervention Intelligence
 // Customer-facing artifacts may retain the name "AI Opportunity Map" while the
 // internal domain models business problems and intervention paths.
+//
+// Reasoning pipeline:
+//   BusinessProblem → RootCauseHypotheses → Evidence → EvidenceSufficiency
+//   → InterventionComparison → SelectedIntervention → Blueprint
 
 export const INTERVENTION_ENGINE_VERSION = "intervention_v1";
 export const PRIORITIZATION_VERSION = "four_pass_v2";
+
+export const REASONING_PIPELINE_VERSION = "reasoned_pipeline_v1";
 
 export type EvidenceClass = "User" | "Research" | "Inference" | "Deterministic";
 
@@ -145,6 +151,92 @@ export interface BusinessProblem {
   desiredOutcome: string;
   currentImpact: BusinessImpact;
   evidenceIds: string[];
+  rootCauseHypotheses: RootCauseHypothesis[];
+  mergedSignalIds: string[];
+}
+
+// ─── Reasoned-pipeline domain (Priority 1) ───────────────────────────────────
+
+export interface RootCauseHypothesis {
+  id: string;
+  problemId: string;
+  title: string;
+  description: string;
+  category: "people" | "process" | "technology" | "data" | "policy" | "external";
+  likelihood: "low" | "medium" | "high";
+  supportingEvidenceIds: string[];
+  weakeningEvidenceIds: string[];
+  source: "assessment_signal" | "inference" | "user_provided";
+}
+
+export interface ReasonedEvidence {
+  id: string;
+  type:
+    | "user_fact"
+    | "derived_fact"
+    | "external_source"
+    | "benchmark"
+    | "measurement"
+    | "ai_inference"
+    | "missing";
+  statement: string;
+  confidence: number;
+  supports: string[];
+  weakens: string[];
+  sourceLabel: string;
+}
+
+export interface EvidenceSufficiency {
+  status: "insufficient" | "partial" | "sufficient";
+  score: number;
+  recommendationAllowed: boolean;
+  missingCriticalEvidence: string[];
+  hypothesisConfidenceGaps: Array<{
+    hypothesisId: string;
+    currentConfidence: number;
+    minimumConfidence: number;
+    missingEvidenceCategories: string[];
+  }>;
+}
+
+export interface FollowUpQuestion {
+  id: string;
+  question: string;
+  category: "process" | "data" | "people" | "technology" | "policy" | "impact";
+  reason: string;
+  expectedAnswerType: "boolean" | "scale" | "text" | "number";
+  priority: number;
+  affectsHypotheses: string[];
+  estimatedInformationGain: "low" | "medium" | "high";
+}
+
+// ─── Pipeline debug logging (Priority 3) ─────────────────────────────────────
+
+export type StageName =
+  | "load_assessment"
+  | "build_company_context"
+  | "normalize_workflow_signals"
+  | "generate_business_problems"
+  | "root_cause_analysis"
+  | "evidence_analysis"
+  | "evidence_sufficiency"
+  | "follow_up_questions"
+  | "intervention_comparison"
+  | "rank_interventions"
+  | "generate_candidates"
+  | "rank_opportunities"
+  | "build_evidence_traces"
+  | "generate_explanations"
+  | "persist_opportunity_map";
+
+export interface PipelineStageLog {
+  stage: StageName;
+  startedAt: string;
+  completedAt: string;
+  durationMs: number;
+  inputSize: number;
+  outputSize: number;
+  detail: Record<string, unknown>;
 }
 
 export interface InterventionOption {
@@ -165,6 +257,8 @@ export interface InterventionOption {
   evidenceIds: string[];
   disqualifiers: string[];
   eligible: boolean;
+  supportingHypothesisIds: string[];
+  weakeningHypothesisIds: string[];
 }
 
 export interface AlternativeRejection {
@@ -183,6 +277,9 @@ export interface RecommendedIntervention {
   confidence: number;
   successMetrics: SuccessMetric[];
   escalationRequirements: EscalationRequirement[];
+  evidenceSufficiency: EvidenceSufficiency;
+  deferredDueToInsufficientEvidence: boolean;
+  followUpQuestions: FollowUpQuestion[];
 }
 
 export interface RankedIntervention extends RecommendedIntervention {
