@@ -10,7 +10,7 @@ import type {
   FollowUpQuestion,
   PipelineContext,
 } from "../types/index.js";
-import { REASONING_PIPELINE_VERSION } from "../types/index.js";
+import { PIPELINE_VERSION as REASONING_PIPELINE_VERSION } from "../types/index.js";
 
 export interface EvidenceAnalysisInput {
   problems: BusinessProblem[];

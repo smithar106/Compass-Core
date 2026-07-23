@@ -19,6 +19,7 @@ import type {
   PipelineContext,
 } from "../types/index.js";
 import { PRIORITIZATION_VERSION } from "../types/index.js";
+import type { InterventionOption } from "../types/index.js";
 
 export interface RankInterventionsInput {
   problems: BusinessProblem[];
@@ -49,10 +50,10 @@ export async function rankInterventions(
     // ── Pass 1: Eligibility ────────────────────────────────────────────────
     const p1Details: string[] = [];
     let p1 = 10;
-    if (!selected.eligible) { p1 = 0; p1Details.push(`Selected path ${rec.selectedPath} is ineligible: ${selected.disqualifiers[0] ?? "no reason recorded"}`); }
+    if (selected.eligibility !== "eligible") { p1 = 0; p1Details.push(`Selected path ${rec.selectedPath} is ineligible: ${selected.disqualifiers[0] ?? "no reason recorded"}`); }
     if (problem.evidenceIds.length < 1) { p1 = 0; p1Details.push("Problem has no supporting evidence"); }
     if (rec.comparedOptions.length < 3) { p1 = Math.min(p1, 4); p1Details.push("Fewer than 3 intervention paths were compared — comparison incomplete"); }
-    if (rec.reasonsAlternativesRejected.length < rec.comparedOptions.length - 1) { p1 = Math.min(p1, 5); p1Details.push("Not every rejected path has a recorded reason"); }
+    if (rec.alternativeRejections.length < rec.comparedOptions.length - 1) { p1 = Math.min(p1, 5); p1Details.push("Not every rejected path has a recorded reason"); }
     if (rec.reasonsSelected.length === 0) { p1 = Math.min(p1, 5); p1Details.push("No selection rationale recorded"); }
     if (p1 === 10) p1Details.push("Problem and intervention are valid, evidenced, and fully compared");
     const eligibility = dim(p1, 10, 6, 3, p1Details);

@@ -8,7 +8,7 @@ import type {
   EvidenceRecord,
   PipelineContext,
 } from "../types/index.js";
-import { REASONING_PIPELINE_VERSION } from "../types/index.js";
+import { PIPELINE_VERSION as REASONING_PIPELINE_VERSION } from "../types/index.js";
 
 export interface RootCauseAnalysisInput {
   problems: BusinessProblem[];

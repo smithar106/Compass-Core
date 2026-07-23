@@ -128,7 +128,7 @@ export async function persistOpportunityMap(input: PersistInput, context: Pipeli
           human_judgment_requirement: o.humanJudgmentRequirement,
           reversibility: o.reversibility,
           confidence: o.confidence,
-          eligible: o.eligible,
+          eligible: o.eligibility === "eligible",
           disqualifiers: o.disqualifiers,
           evidence_ids: o.evidenceIds,
           engine_version: input.opportunityMap.interventionEngineVersion,
@@ -173,14 +173,14 @@ export async function persistOpportunityMap(input: PersistInput, context: Pipeli
     const { error: rejectionError } = await context.supabase
       .from("alternative_rejections")
       .upsert(
-        ri.reasonsAlternativesRejected.map((r) => ({
+        ri.alternativeRejections.map((r) => ({
           id: `${ri.problemId}-rej-${r.path}`,
           problem_id: ri.problemId,
           path: r.path,
-          primary_reason: r.primaryReason,
-          secondary_reasons: r.secondaryReasons,
+          primary_reason: r.reasons[0] ?? "No specific reason recorded",
+          secondary_reasons: r.reasons.slice(1),
           evidence_ids: r.evidenceIds,
-        })),
+        })) as any,
         { onConflict: "id" },
       );
     if (rejectionError) {

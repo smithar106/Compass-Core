@@ -79,7 +79,7 @@ export async function generateExplanations(input: GenerateExplanationsInput, _co
       possibleInterventionPaths: ri.comparedOptions.map((o) => o.path),
       selectedIntervention: ri.selectedPath,
       whySelected: ri.reasonsSelected,
-      whyAlternativesRejected: ri.reasonsAlternativesRejected,
+      whyAlternativesRejected: ri.alternativeRejections,
       expectedImpact: selected?.expectedImpact ?? ri.problem.currentImpact,
       estimatedEffort: selected?.estimatedCost ?? { initial: 0, monthly: 0, yearly: 0, implementationComplexity: "low" },
       timeToValue: selected?.estimatedTimeToValue ?? { min: 0, max: 0, unit: "weeks" },
@@ -92,14 +92,23 @@ export async function generateExplanations(input: GenerateExplanationsInput, _co
     };
   });
 
+  const now = new Date().toISOString();
+  const mapId = `map-${input.sessionId}-${Date.now()}`;
+
   const opportunityMap: OpportunityMap = {
-    mapId: `map-${input.sessionId}-${Date.now()}`,
+    id: mapId,
+    mapId,
     companyName: input.companySummary.split(".")[0] || "Organization",
     assessmentSessionId: input.sessionId,
-    generatedAt: new Date().toISOString(),
+    organizationId: undefined,
+    generatedAt: now,
+    createdAt: now,
     pipelineVersion: input.pipelineVersion,
     interventionEngineVersion: INTERVENTION_ENGINE_VERSION,
     prioritizationVersion: PRIORITIZATION_VERSION,
+    evidenceModelVersion: "evidence_v1",
+    problems: (input.rankedInterventions ?? []).map((r) => r.problem).filter(Boolean),
+    prioritizedInterventions: input.rankedInterventions ?? [],
     executiveSummary,
     opportunities,
     interventionEntries,
@@ -138,8 +147,8 @@ export function generateInterventionExplanation(ri: RankedIntervention): string 
   for (const r of ri.reasonsSelected) parts.push(`- ${r}`);
   parts.push(``);
   parts.push(`### Why Alternatives Were Rejected`);
-  for (const rej of ri.reasonsAlternativesRejected) {
-    parts.push(`- **${PATH_DISPLAY[rej.path] ?? rej.path}**: ${rej.primaryReason}`);
+  for (const rej of ri.alternativeRejections) {
+    parts.push(`- **${PATH_DISPLAY[rej.path] ?? rej.path}**: ${rej.reasons.join("; ")}`);
   }
   parts.push(``);
   parts.push(`### Confidence`);

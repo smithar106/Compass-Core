@@ -130,7 +130,7 @@ async function runInterventionBenchmarks(): Promise<{
       const selected = matched.comparedOptions.find((o) => o.path === selectedPath);
 
       if (selectedPath !== expectedPath) {
-        failures.push(`Expected path "${expectedPath}", got "${selectedPath}". Scores: ${matched.comparedOptions.map((o) => `${o.path}=${o.eligible ? "eligible" : "ineligible"}`).join(", ")}`);
+        failures.push(`Expected path "${expectedPath}", got "${selectedPath}". Scores: ${matched.comparedOptions.map((o) => `${o.path}=${o.eligibility}`).join(", ")}`);
       }
 
       // New metric: AI overrecommendation (count total and AI selections)
@@ -139,7 +139,7 @@ async function runInterventionBenchmarks(): Promise<{
 
       // Alternative comparison completeness: every compared option must have a rejection reason (for non-selected)
       const comparedCount = matched.comparedOptions.length;
-      const rejectionCount = matched.reasonsAlternativesRejected.length;
+      const rejectionCount = matched.alternativeRejections.length;
       const expectedRejections = comparedCount - 1;
       if (rejectionCount < expectedRejections) {
         failures.push(`Alternative comparison incomplete: ${rejectionCount}/${expectedRejections} alternatives have rejection reasons`);
@@ -149,8 +149,8 @@ async function runInterventionBenchmarks(): Promise<{
       if (matched.reasonsSelected.length === 0) {
         failures.push("No selection reasons provided");
       }
-      if (matched.reasonsAlternativesRejected.length > 0) {
-        const missingEvidence = matched.reasonsAlternativesRejected.some((r) => !r.evidenceIds || r.evidenceIds.length === 0);
+      if (matched.alternativeRejections.length > 0) {
+        const missingEvidence = matched.alternativeRejections.some((r) => !r.evidenceIds || r.evidenceIds.length === 0);
         if (missingEvidence) failures.push("At least one alternative rejection lacks evidence IDs");
       }
 

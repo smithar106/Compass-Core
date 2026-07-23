@@ -2,15 +2,11 @@
 // Canonical domain model: Business Intervention Intelligence
 // Customer-facing artifacts may retain the name "AI Opportunity Map" while the
 // internal domain models business problems and intervention paths.
-//
-// Reasoning pipeline:
-//   BusinessProblem → RootCauseHypotheses → Evidence → EvidenceSufficiency
-//   → InterventionComparison → SelectedIntervention → Blueprint
 
+export const PIPELINE_VERSION = "compass_pipeline_v1";
 export const INTERVENTION_ENGINE_VERSION = "intervention_v1";
 export const PRIORITIZATION_VERSION = "four_pass_v2";
-
-export const REASONING_PIPELINE_VERSION = "reasoned_pipeline_v1";
+export const EVIDENCE_MODEL_VERSION = "evidence_v1";
 
 export type EvidenceClass = "User" | "Research" | "Inference" | "Deterministic";
 
@@ -144,14 +140,16 @@ export interface EscalationRequirement {
 
 export interface BusinessProblem {
   id: string;
+  assessmentSessionId: string;
   title: string;
   description: string;
   department: Department;
   workflow: string;
   desiredOutcome: string;
   currentImpact: BusinessImpact;
-  evidenceIds: string[];
   rootCauseHypotheses: RootCauseHypothesis[];
+  evidenceIds: string[];
+  confidence: number;
   mergedSignalIds: string[];
 }
 
@@ -239,42 +237,63 @@ export interface PipelineStageLog {
   detail: Record<string, unknown>;
 }
 
+export interface InterventionScoreComponents {
+  aiSuitability: number;
+  deterministicSuitability: number;
+  processRedesignSuitability: number;
+  humanWorkSuitability: number;
+  hybridSuitability: number;
+  noActionSuitability: number;
+  businessLeverage: number;
+  readinessFeasibility: number;
+  portfolioPriority: number;
+  totalScore: number;
+}
+
 export interface InterventionOption {
+  id: string;
+  problemId: string;
   path: InterventionPath;
   summary: string;
+  eligibility: "eligible" | "conditional" | "ineligible";
+  disqualifiers: string[];
   expectedImpact: BusinessImpact;
   estimatedCost: CostEstimate;
   estimatedTimeToValue: TimeEstimate;
   implementationComplexity: number;
   dataReadiness: number;
+  processReadiness: number;
   organizationalReadiness: number;
   technicalRisk: number;
   operationalRisk: number;
+  regulatoryRisk: number;
   humanJudgmentRequirement: number;
   reversibility: number;
   confidence: number;
   assumptions: Assumption[];
   evidenceIds: string[];
-  disqualifiers: string[];
-  eligible: boolean;
+  scoreComponents: InterventionScoreComponents;
   supportingHypothesisIds: string[];
   weakeningHypothesisIds: string[];
 }
 
 export interface AlternativeRejection {
+  optionId: string;
   path: InterventionPath;
-  primaryReason: string;
-  secondaryReasons: string[];
+  status: "rejected" | "deprioritized" | "dependency";
+  reasons: string[];
   evidenceIds: string[];
 }
 
 export interface RecommendedIntervention {
   problemId: string;
+  selectedOptionId: string;
   selectedPath: InterventionPath;
   comparedOptions: InterventionOption[];
   reasonsSelected: string[];
-  reasonsAlternativesRejected: AlternativeRejection[];
+  alternativeRejections: AlternativeRejection[];
   confidence: number;
+  expectedImpact: BusinessImpact;
   successMetrics: SuccessMetric[];
   escalationRequirements: EscalationRequirement[];
   evidenceSufficiency: EvidenceSufficiency;
@@ -535,13 +554,21 @@ export interface OpportunityMapEntry {
 }
 
 export interface OpportunityMap {
-  mapId: string;
-  companyName: string;
+  id: string;
   assessmentSessionId: string;
-  generatedAt: string;
+  organizationId?: string;
+  problems: BusinessProblem[];
+  prioritizedInterventions: RankedIntervention[];
   pipelineVersion: string;
   interventionEngineVersion: string;
   prioritizationVersion: string;
+  evidenceModelVersion: string;
+  createdAt: string;
+
+  // Legacy compatibility fields — preserved for existing consumers.
+  mapId: string;
+  companyName: string;
+  generatedAt: string;
   executiveSummary: {
     headline: string;
     finding: string;
@@ -611,6 +638,28 @@ export interface RunAssessmentInput {
   sessionId: string;
   userId: string;
   organizationId?: string;
+  idempotencyKey?: string;
+}
+
+// ─── Idempotent pipeline run (Priority 10) ───────────────────────────────────
+
+export interface PipelineRun {
+  pipelineRunId: string;
+  assessmentSessionId: string;
+  idempotencyKey: string;
+  inputFingerprint: string;
+  pipelineVersion: string;
+  interventionEngineVersion: string;
+  prioritizationVersion: string;
+  promptVersions: Record<string, string>;
+  status: "pending" | "running" | "completed" | "failed";
+  currentStage: string;
+  retryCount: number;
+  startedAt: string;
+  completedAt?: string;
+  failedAt?: string;
+  outputOpportunityMapId?: string;
+  errorState?: string | null;
 }
 
 export interface Blueprint {

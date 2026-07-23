@@ -14,13 +14,12 @@ import { createLogger } from "./stages/pipeline-log.js";
 import {
   INTERVENTION_ENGINE_VERSION,
   PRIORITIZATION_VERSION,
-  REASONING_PIPELINE_VERSION,
 } from "./types/index.js";
 import type { PipelineContext, OpportunityMap, RunAssessmentInput } from "./types/index.js";
 
-export const PIPELINE_VERSION = "2.1.0";
+const PIPELINE_VERSION = "compass_pipeline_v1";
 export const ALGORITHM_VERSION = PRIORITIZATION_VERSION;
-export { INTERVENTION_ENGINE_VERSION, PRIORITIZATION_VERSION, REASONING_PIPELINE_VERSION };
+export { INTERVENTION_ENGINE_VERSION, PRIORITIZATION_VERSION, PIPELINE_VERSION };
 export const PROMPT_VERSIONS = {
   company_intelligence: "1.0.0",
   opportunity_explanation: "1.0.0",
@@ -66,7 +65,7 @@ export async function runAssessment(input: RunAssessmentInput, supabase: any): P
 
   context.log("pipeline", "Starting reasoned pipeline run", {
     pipelineVersion: PIPELINE_VERSION,
-    reasoningPipelineVersion: REASONING_PIPELINE_VERSION,
+    reasoningPipelineVersion: PIPELINE_VERSION,
     interventionEngineVersion: INTERVENTION_ENGINE_VERSION,
     prioritizationVersion: PRIORITIZATION_VERSION,
     sessionId: input.sessionId,
@@ -284,13 +283,18 @@ export async function runAssessment(input: RunAssessmentInput, supabase: any): P
     try {
       await persistOpportunityMap({
         opportunityMap: {
+          id: `map-${input.sessionId}-failed`,
           mapId: `map-${input.sessionId}-failed`,
           companyName: "Assessment",
           assessmentSessionId: input.sessionId,
           generatedAt: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
           pipelineVersion: PIPELINE_VERSION,
           interventionEngineVersion: INTERVENTION_ENGINE_VERSION,
           prioritizationVersion: PRIORITIZATION_VERSION,
+          evidenceModelVersion: "evidence_v1",
+          problems: [],
+          prioritizedInterventions: [],
           executiveSummary: {
             headline: "Pipeline did not complete",
             finding: `The opportunity discovery pipeline encountered an error: ${errorMessage}`,

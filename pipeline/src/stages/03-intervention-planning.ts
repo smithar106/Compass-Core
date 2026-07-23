@@ -338,6 +338,7 @@ function detectProblems(input: GenerateBusinessProblemsInput, evidence: Evidence
     );
     problems.push({
       id: t.id,
+      assessmentSessionId: "",
       title: t.title,
       description: t.description,
       department: t.department,
@@ -347,6 +348,7 @@ function detectProblems(input: GenerateBusinessProblemsInput, evidence: Evidence
       evidenceIds: [evId],
       rootCauseHypotheses: [],
       mergedSignalIds: [],
+      confidence: 0.7,
     });
   }
 
@@ -495,6 +497,7 @@ function optionFor(
   const c = byComplexity[path];
 
   const eligible = suitability.disqualifiers.length === 0 && suitability.score >= 3;
+  const eligibility: "eligible" | "conditional" | "ineligible" = eligible ? "eligible" : suitability.score >= 1 ? "conditional" : "ineligible";
   const confidence = eligible ? Math.min(0.4 + suitability.score * 0.06, 0.95) : 0.2;
 
   const assumptions: Assumption[] = [];
@@ -530,9 +533,19 @@ function optionFor(
     assumptions,
     evidenceIds: [evidenceId],
     disqualifiers: suitability.disqualifiers,
-    eligible,
+    eligibility,
     supportingHypothesisIds: [],
     weakeningHypothesisIds: [],
+    id: `${problem.id}-${path}`,
+    problemId: problem.id,
+    processReadiness: chars.processMaturity === "documented" ? 7 : 3,
+    regulatoryRisk: chars.regulatoryAccountability ? 7 : 2,
+    scoreComponents: {
+      aiSuitability: 0, deterministicSuitability: 0, processRedesignSuitability: 0,
+      humanWorkSuitability: 0, hybridSuitability: 0, noActionSuitability: 0,
+      businessLeverage: 0, readinessFeasibility: 0, portfolioPriority: 0,
+      totalScore: suitability.score,
+    },
   };
 }
 
@@ -617,11 +630,13 @@ export async function generateInterventionOptions(
       const fq = followUpQuestions.get(problem.id) ?? [];
       interventions.push({
         problemId: problem.id,
+        selectedOptionId: "",
         selectedPath: "no_action_yet",
         comparedOptions: [],
         reasonsSelected: ["Recommendation deferred — insufficient evidence to compare intervention paths"],
-        reasonsAlternativesRejected: [],
+        alternativeRejections: [],
         confidence: 0,
+        expectedImpact: problem.currentImpact,
         successMetrics: [],
         escalationRequirements: [],
         evidenceSufficiency: sufficiency,
@@ -667,7 +682,7 @@ export async function generateInterventionOptions(
 
     // Deterministic selection: highest suitability among eligible; prefer the
     // simplest (lowest implementation complexity) when scores tie.
-    const eligible = options.filter((o) => o.eligible);
+    const eligible = options.filter((o) => o.eligibility === "eligible");
     eligible.sort((a, b) => {
       const sa = suits.find(([p]) => p === a.path)![1].score;
       const sb = suits.find(([p]) => p === b.path)![1].score;
@@ -686,10 +701,15 @@ export async function generateInterventionOptions(
       .filter((o) => o.path !== selected.path)
       .map((o) => {
         const s = suits.find(([p]) => p === o.path)![1];
+        const primaryReason = s.disqualifiers[0] ?? `Lower suitability (${s.score}/10) than ${selected.path} (${selectedSuit.score}/10)`;
+        const secondaryReasons = s.disqualifiers.slice(1);
+        const comments: string[] = [primaryReason, ...secondaryReasons];
+        if (o.eligibility !== "eligible") comments.push("Not eligible under current evidence");
         return {
+          optionId: o.id,
           path: o.path,
-          primaryReason: s.disqualifiers[0] ?? `Lower suitability (${s.score}/10) than ${selected.path} (${selectedSuit.score}/10)`,
-          secondaryReasons: [...s.disqualifiers.slice(1), ...(o.eligible ? [] : ["Not eligible under current evidence"])],
+          status: "rejected" as const,
+          reasons: comments,
           evidenceIds: [evidenceId],
         };
       });
@@ -708,11 +728,13 @@ export async function generateInterventionOptions(
 
     interventions.push({
       problemId: problem.id,
+      selectedOptionId: selected.id,
       selectedPath: selected.path,
       comparedOptions: options,
       reasonsSelected,
-      reasonsAlternativesRejected: rejections,
+      alternativeRejections: rejections,
       confidence: selected.confidence,
+      expectedImpact: selected.expectedImpact,
       successMetrics: successMetricsFor(problem, selected.path),
       escalationRequirements: escalation,
       evidenceSufficiency: sufficiency,
